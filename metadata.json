@@ -1,6 +1,0 @@
-{
-  "name": "UniGuide",
-  "description": "A Random Forest-based decision support system for university degree programme recommendations for Kenyan form-four leavers.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
