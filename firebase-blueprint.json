@@ -1,119 +1,145 @@
 {
+  "_note": "Documents the Firestore schema as actually written by backend/main.py and backend/programmes_catalog.py. Regenerate this by hand if either changes - it is documentation only, nothing reads this file at runtime.",
   "entities": {
     "Admin": {
       "title": "Admin",
-      "description": "Institutional administrator with oversight on cutoffs and audit logs",
+      "description": "Administrator account, granted the role on first sign-in if their email is in ADMIN_EMAILS (backend/.env)",
       "type": "object",
       "properties": {
-        "uid": { "type": "string", "description": "Admin UID" },
-        "email": { "type": "string", "format": "email", "description": "Institutional email address" },
-        "fullName": { "type": "string", "description": "Administrator full name" },
-        "role": { "type": "string", "enum": ["admin"], "description": "Role identifier" },
-        "faculty": { "type": "string", "description": "Faculty or department assigned" },
-        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp of account creation" }
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string", "enum": ["admin"] },
+        "createdAt": { "type": "string", "format": "date-time" }
       },
-      "required": ["uid", "email", "fullName", "role"]
+      "required": ["uid", "email", "role"]
     },
     "Student": {
       "title": "Student",
-      "description": "KCSE high school candidate seeking degree recommendations",
+      "description": "KCSE candidate profile, upserted by POST /api/recommend and created with defaults by POST /api/auth/whoami on first sign-in",
       "type": "object",
       "properties": {
-        "uid": { "type": "string", "description": "Student UID" },
-        "email": { "type": "string", "format": "email", "description": "Candidate email address" },
-        "fullName": { "type": "string", "description": "Candidate full name" },
-        "indexNumber": { "type": "string", "description": "KCSE Index Number format: 12345678/2025" },
-        "role": { "type": "string", "enum": ["student"], "description": "Role identifier" },
-        "kcseMeanGrade": { "type": "string", "description": "Candidate KCSE Mean Grade" },
-        "kcseMeanPoints": { "type": "number", "description": "Total aggregate points (max 84)" },
-        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp of registration" }
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "email": { "type": "string", "format": "email" },
+        "fullName": { "type": "string" },
+        "indexNumber": { "type": "string", "description": "KCSE Index Number, e.g. 12345678/2025" },
+        "role": { "type": "string", "enum": ["student"] },
+        "kcseMeanGrade": { "type": "string", "description": "e.g. B+" },
+        "kcseMeanPoints": { "type": "number", "description": "1-12" },
+        "grades": {
+          "type": "object",
+          "description": "Subject name -> letter grade, e.g. {\"Mathematics\": \"A\", \"Kiswahili\": \"B\"}"
+        },
+        "interests": { "type": "array", "items": { "type": "string" } },
+        "skills": { "type": "array", "items": { "type": "string" } },
+        "strengths": { "type": "array", "items": { "type": "string" } },
+        "aspirations": { "type": "array", "items": { "type": "string" } },
+        "updatedAt": { "type": "string", "format": "date-time" }
       },
-      "required": ["uid", "email", "fullName", "indexNumber", "role"]
+      "required": ["uid", "role"]
     },
     "Programme": {
       "title": "Programme",
-      "description": "KUCCPS accredited university undergraduate degree programme",
+      "description": "University degree programme; the class label the Random Forest model predicts. Full catalog in backend/programmes_catalog.py, mirrored in flutter_app/lib/data/programme_repository.dart",
       "type": "object",
       "properties": {
-        "code": { "type": "string", "description": "Official KUCCPS programme code" },
-        "name": { "type": "string", "description": "Degree title" },
-        "faculty": { "type": "string", "description": "Faculty or School" },
-        "durationYears": { "type": "number", "description": "Duration in academic years" },
-        "category": { "type": "string", "description": "Academic discipline category" },
-        "overview": { "type": "string", "description": "Curriculum overview" },
-        "clusterSubjectGroup": { "type": "string", "description": "Four KUCCPS cluster subjects" },
-        "minimumMeanGrade": { "type": "string", "description": "Minimum required KCSE mean grade" }
+        "id": { "type": "string" },
+        "code": { "type": "string" },
+        "title": { "type": "string", "description": "Degree title - also the exact string the RF model predicts as a class label" },
+        "faculty": { "type": "string" },
+        "minMeanGrade": { "type": "string" },
+        "averageCutoff": { "type": "number", "description": "KUCCPS Cluster Weighted Points cutoff" },
+        "clusterGroup": { "type": "string" },
+        "clusterSubjects": { "type": "array", "items": { "type": "string" } },
+        "minimumSubjectRequirements": { "type": "object", "description": "Subject name -> minimum letter grade" },
+        "description": { "type": "string" },
+        "careerOpportunities": { "type": "array", "items": { "type": "string" } },
+        "requiredSkills": { "type": "array", "items": { "type": "string" } },
+        "professionalCertifications": { "type": "array", "items": { "type": "string" } },
+        "offeringUniversities": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "universityName": { "type": "string" },
+              "universityType": { "type": "string" },
+              "location": { "type": "string" },
+              "latestCutoff": { "type": "number" },
+              "previousCutoff": { "type": "number" },
+              "kuccpsCode": { "type": "string" }
+            }
+          }
+        },
+        "durationYears": { "type": "number" }
       },
-      "required": ["code", "name", "faculty", "durationYears", "category"]
+      "required": ["id", "code", "title", "faculty", "averageCutoff"]
     },
-    "Recommendation": {
-      "title": "Recommendation",
-      "description": "System-generated top-3 degree recommendation with KUCCPS cluster scores and SHAP explainability",
+    "RecommendationBatch": {
+      "title": "RecommendationBatch",
+      "description": "One /api/recommend response, persisted as a single document holding all 3 ranked recommendations (not one document per recommendation)",
       "type": "object",
       "properties": {
-        "programmeId": { "type": "string", "description": "Referenced programme identifier" },
-        "programmeName": { "type": "string", "description": "Degree title" },
-        "rank": { "type": "number", "description": "Rank position (1, 2, or 3)" },
-        "confidence": { "type": "number", "description": "Confidence percentage" },
-        "matchRationale": { "type": "string", "description": "Rationale for recommendation" },
-        "studentClusterScore": { "type": "number", "description": "Student calculated KUCCPS cluster point" },
-        "targetCutoff": { "type": "number", "description": "University cutoff points threshold" },
-        "timestamp": { "type": "string", "format": "date-time", "description": "Inference timestamp" }
-      },
-      "required": ["programmeId", "programmeName", "rank", "confidence"]
+        "createdAt": { "type": "string", "format": "date-time" },
+        "recommendations": {
+          "type": "array",
+          "description": "Exactly 3 items, rank 1-3, highest confidence first",
+          "items": {
+            "type": "object",
+            "properties": {
+              "rank": { "type": "number" },
+              "confidenceScore": { "type": "number", "description": "0.0-1.0, from RandomForestClassifier.predict_proba" },
+              "studentClusterScore": { "type": "number", "description": "Computed KUCCPS CWP for this programme's cluster subjects" },
+              "cutoffDiff": { "type": "number" },
+              "eligibilityStatus": { "type": "string" },
+              "primaryReason": { "type": "string" },
+              "programme": { "$ref": "#/entities/Programme" },
+              "shapExplanations": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "featureName": { "type": "string" },
+                    "category": { "type": "string", "enum": ["Academic", "Interests", "Skills", "Strengths", "Aspirations"] },
+                    "shapValue": { "type": "number" },
+                    "description": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     },
     "AuditLog": {
       "title": "AuditLog",
-      "description": "Administrative audit trail of system operations and inferences",
+      "description": "Written by PUT /api/admin/programmes/{id}; read back by GET /api/admin/audit-logs",
       "type": "object",
       "properties": {
-        "id": { "type": "string", "description": "Log entry identifier" },
-        "timestamp": { "type": "string", "format": "date-time", "description": "Timestamp" },
-        "action": { "type": "string", "description": "Action performed" },
-        "actor": { "type": "string", "description": "User or system agent performing action" },
-        "details": { "type": "string", "description": "Contextual details" }
+        "action": { "type": "string" },
+        "actor": { "type": "string", "description": "Admin's email, or uid if email unavailable" },
+        "details": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
       },
-      "required": ["id", "timestamp", "action", "actor"]
+      "required": ["action", "actor", "timestamp"]
     },
     "Feedback": {
       "title": "Feedback",
-      "description": "Student evaluation and qualitative feedback on recommendations",
+      "description": "Written by POST /api/feedback",
       "type": "object",
       "properties": {
-        "id": { "type": "string", "description": "Feedback identifier" },
-        "studentEmail": { "type": "string", "description": "Candidate email" },
-        "rating": { "type": "number", "description": "Likert rating 1 to 5" },
-        "isAlignedWithCareer": { "type": "boolean", "description": "Career alignment confirmation" },
-        "comments": { "type": "string", "description": "Student remarks" },
-        "timestamp": { "type": "string", "format": "date-time", "description": "Submission time" }
+        "recommendationId": { "type": "string", "description": "The programme id the feedback is about" },
+        "rating": { "type": "number", "description": "1-5" },
+        "comments": { "type": "string" },
+        "submittedAt": { "type": "string", "format": "date-time" }
       },
-      "required": ["id", "rating", "timestamp"]
+      "required": ["recommendationId", "rating"]
     }
   },
   "firestore": {
-    "/admins/{adminId}": {
-      "schema": "Admin",
-      "description": "Admins collection storing institutional administrators"
-    },
-    "/students/{studentId}": {
-      "schema": "Student",
-      "description": "Students collection storing candidates and KCSE credentials"
-    },
-    "/students/{studentId}/recommendations/{recommendationId}": {
-      "schema": "Recommendation",
-      "description": "Candidate top-3 recommendations and explainability scores"
-    },
-    "/programmes/{programmeId}": {
-      "schema": "Programme",
-      "description": "Official KUCCPS degree catalog with cutoffs and clusters"
-    },
-    "/audit_logs/{logId}": {
-      "schema": "AuditLog",
-      "description": "System and administrative action logs"
-    },
-    "/feedback/{feedbackId}": {
-      "schema": "Feedback",
-      "description": "Student satisfaction and accuracy feedback submissions"
-    }
+    "/admins/{uid}": { "schema": "Admin" },
+    "/students/{uid}": { "schema": "Student" },
+    "/students/{uid}/recommendations/{autoId}": { "schema": "RecommendationBatch" },
+    "/students/{uid}/feedback/{autoId}": { "schema": "Feedback" },
+    "/programmes/{programmeId}": { "schema": "Programme", "description": "Seeded from programmes_catalog.py on first read if empty" },
+    "/audit_logs/{autoId}": { "schema": "AuditLog" }
   }
 }

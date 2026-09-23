@@ -1,46 +1,15 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // Helper functions
-    function isAuthenticated() {
-      return request.auth != null;
-    }
-    
-    // Programmes: Publicly readable for candidates and admission officers; writable by administrators
-    match /programmes/{programmeId} {
-      allow read: if true;
-      allow write: if true;
-    }
-    
-    // Administrators collection
-    match /admins/{adminId} {
-      allow read: if true;
-      allow write: if true;
-    }
-    
-    // Students collection
-    match /students/{studentId} {
-      allow read, write: if true;
-      
-      // Subcollections for recommendations
-      match /recommendations/{recommendationId} {
-        allow read, write: if true;
-      }
-      
-      match /savedProgrammes/{savedId} {
-        allow read, write: if true;
-      }
-    }
-    
-    // Audit logs collection
-    match /audit_logs/{logId} {
-      allow read, write: if true;
-    }
-    
-    // Feedback collection
-    match /feedback/{feedbackId} {
-      allow read, write: if true;
+    // All reads and writes go through the FastAPI backend (backend/main.py),
+    // which authenticates callers via Firebase Auth ID tokens and then uses
+    // the Firebase Admin SDK - which is NOT subject to these rules - to
+    // perform CRUD operations (see proposal IR-05). These rules exist purely
+    // as defense-in-depth: they deny every direct client SDK/REST request,
+    // authenticated or not, so a leaked API key or a bug elsewhere can never
+    // expose student data straight from Firestore.
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }
