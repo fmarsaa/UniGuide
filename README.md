@@ -2,9 +2,8 @@
 
 A Random Forest-Based Decision Support System for University Degree Programme Recommendation Among Kenyan Form-Four Leavers.
 
-**Author**: Fatuma Omar Marsa (Admission Number: 159056)  
-**Supervisor**: Deperias Webula Kerre  
-**Institution**: School of Computing and Engineering Sciences, Strathmore University, Nairobi, Kenya.
+**Author**: Fatuma Omar Marsa  
+
 
 ## Features
 
