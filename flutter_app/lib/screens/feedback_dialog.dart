@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/recommendation.dart';
 import '../services/api_service.dart';
+import '../theme/app_colors.dart';
 
 class FeedbackDialog extends StatefulWidget {
   final RecommendationItem recommendation;
@@ -39,12 +40,12 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
           children: [
             Text(
               widget.recommendation.programme.title,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF0F172A)),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary(context)),
             ),
             const SizedBox(height: 4),
             Text(
               'Model Confidence: ${(widget.recommendation.confidenceScore * 100).toStringAsFixed(1)}%',
-              style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+              style: TextStyle(fontSize: 11, color: AppColors.textSecondary(context)),
             ),
             const Divider(height: 20),
             const Text(
@@ -105,15 +106,22 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
               ? null
               : () async {
                   setState(() => _isSubmitting = true);
-                  await ApiService.submitFeedback(
-                    studentId: 'user_159056',
-                    recommendationId: widget.recommendation.programme.id,
-                    rating: _rating,
-                    comments: _commentController.text,
-                  );
-                  setState(() => _isSubmitting = false);
-                  Navigator.pop(context);
-                  widget.onFeedbackSubmitted();
+                  try {
+                    await ApiService.submitFeedback(
+                      recommendationId: widget.recommendation.programme.id,
+                      rating: _rating,
+                      comments: _commentController.text,
+                    );
+                    if (!mounted) return;
+                    Navigator.pop(context);
+                    widget.onFeedbackSubmitted();
+                  } on ApiException catch (e) {
+                    if (!mounted) return;
+                    setState(() => _isSubmitting = false);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Could not submit feedback: ${e.message}'), backgroundColor: Colors.redAccent),
+                    );
+                  }
                 },
           child: _isSubmitting
               ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
