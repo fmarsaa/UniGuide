@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/recommendation.dart';
 import '../models/programme.dart';
+import '../theme/app_colors.dart';
 import '../widgets/shap_bars.dart';
 
 class RecommendationsScreen extends StatelessWidget {
@@ -20,7 +21,7 @@ class RecommendationsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF1F5F9),
+      backgroundColor: AppColors.scaffoldBackground(context),
       appBar: AppBar(
         title: const Text('Top 3 Degree Recommendations', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         backgroundColor: const Color(0xFF14213D),
@@ -133,10 +134,10 @@ class RecommendationsScreen extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBackground(context),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: item.rank == 1 ? const Color(0xFF0EA5A4).withOpacity(0.5) : Colors.grey.shade300,
+          color: item.rank == 1 ? const Color(0xFF0EA5A4).withOpacity(0.5) : AppColors.cardBorder(context),
           width: item.rank == 1 ? 2 : 1,
         ),
         boxShadow: [
@@ -154,9 +155,9 @@ class RecommendationsScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: item.rank == 1 ? const Color(0xFFF0FDFA) : Colors.grey.shade50,
+              color: item.rank == 1 ? const Color(0xFFF0FDFA) : AppColors.chipBackground(context),
               borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
-              border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
+              border: Border(bottom: BorderSide(color: AppColors.cardBorder(context))),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -205,17 +206,17 @@ class RecommendationsScreen extends StatelessWidget {
               children: [
                 Text(
                   item.programme.title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF0F172A),
+                    color: AppColors.textPrimary(context),
                     height: 1.3,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   item.programme.faculty,
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  style: TextStyle(fontSize: 12, color: AppColors.textSecondary(context)),
                 ),
                 const SizedBox(height: 12),
 

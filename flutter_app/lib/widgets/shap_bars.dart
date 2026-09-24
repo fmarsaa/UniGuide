@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/recommendation.dart';
+import '../theme/app_colors.dart';
 
 class ShapExplanationCard extends StatelessWidget {
   final List<ShapFeatureImpact> shapFeatures;
@@ -30,12 +31,20 @@ class ShapExplanationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Bars are scaled relative to the strongest feature in *this* card
+    // (rather than a fixed constant) so relative importance stays legible
+    // regardless of the absolute SHAP value magnitudes a given prediction
+    // happens to produce.
+    final double maxAbsShap = shapFeatures.isEmpty
+        ? 1.0
+        : shapFeatures.map((f) => f.shapValue.abs()).reduce((a, b) => a > b ? a : b).clamp(0.0001, double.infinity);
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey.shade50,
+        color: AppColors.chipBackground(context),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: AppColors.cardBorder(context)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,12 +53,12 @@ class ShapExplanationCard extends StatelessWidget {
             children: [
               Icon(Icons.auto_graph, size: 18, color: Colors.indigo.shade700),
               const SizedBox(width: 8),
-              const Text(
+              Text(
                 'SHAP Feature Importance (Explainability)',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 13,
-                  color: Color(0xFF14213D),
+                  color: AppColors.textPrimary(context),
                 ),
               ),
             ],
@@ -57,17 +66,17 @@ class ShapExplanationCard extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             primaryReason,
-            style: TextStyle(fontSize: 12, color: Colors.grey.shade700, height: 1.4),
+            style: TextStyle(fontSize: 12, color: AppColors.textSecondary(context), height: 1.4),
           ),
           const Divider(height: 20),
-          const Text(
+          Text(
             'Attribution to Random Forest Classification Decision:',
-            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.grey),
+            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textSecondary(context)),
           ),
           const SizedBox(height: 10),
           ...shapFeatures.map((feat) {
             final isPositive = feat.shapValue >= 0;
-            final double normalizedWidth = (feat.shapValue.abs() / 0.4).clamp(0.1, 1.0);
+            final double normalizedWidth = (feat.shapValue.abs() / maxAbsShap).clamp(0.05, 1.0);
             final color = _getCategoryColor(feat.category);
 
             return Padding(
@@ -98,9 +107,10 @@ class ShapExplanationCard extends StatelessWidget {
                           const SizedBox(width: 6),
                           Text(
                             feat.featureName,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
+                              color: AppColors.textPrimary(context),
                             ),
                           ),
                         ],
@@ -121,7 +131,7 @@ class ShapExplanationCard extends StatelessWidget {
                     child: LinearProgressIndicator(
                       value: normalizedWidth,
                       minHeight: 6,
-                      backgroundColor: Colors.grey.shade200,
+                      backgroundColor: AppColors.cardBorder(context),
                       valueColor: AlwaysStoppedAnimation<Color>(
                         isPositive ? const Color(0xFF0EA5A4) : Colors.red.shade400,
                       ),
@@ -130,7 +140,7 @@ class ShapExplanationCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     feat.description,
-                    style: TextStyle(fontSize: 10.5, color: Colors.grey.shade600),
+                    style: TextStyle(fontSize: 10.5, color: AppColors.textSecondary(context)),
                   ),
                 ],
               ),
