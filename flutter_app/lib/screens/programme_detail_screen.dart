@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/programme.dart';
+import '../theme/app_colors.dart';
 
 class ProgrammeDetailScreen extends StatelessWidget {
   final Programme programme;
@@ -9,7 +10,7 @@ class ProgrammeDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppColors.scaffoldBackground(context),
       appBar: AppBar(
         title: Text(programme.code, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         backgroundColor: const Color(0xFF14213D),
@@ -24,9 +25,9 @@ class ProgrammeDetailScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.cardBackground(context),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.grey.shade200),
+                border: Border.all(color: AppColors.cardBorder(context)),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.03),
@@ -51,16 +52,16 @@ class ProgrammeDetailScreen extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     programme.title,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF0F172A)),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary(context)),
                   ),
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      _buildMetricChip(Icons.calendar_today, '${programme.durationYears} Years Full-Time'),
+                      _buildMetricChip(context, Icons.calendar_today, '${programme.durationYears} Years Full-Time'),
                       const SizedBox(width: 10),
-                      _buildMetricChip(Icons.grade, 'Min Grade: ${programme.minMeanGrade}'),
+                      _buildMetricChip(context, Icons.grade, 'Min Grade: ${programme.minMeanGrade}'),
                       const SizedBox(width: 10),
-                      _buildMetricChip(Icons.analytics, 'Avg: ${programme.averageCutoff} pts'),
+                      _buildMetricChip(context, Icons.analytics, 'Avg: ${programme.averageCutoff} pts'),
                     ],
                   ),
                 ],
@@ -69,29 +70,29 @@ class ProgrammeDetailScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Section 1: Overview
-            _buildSectionHeader('Programme Overview'),
+            _buildSectionHeader(context, 'Programme Overview'),
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.cardBackground(context),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade200),
+                border: Border.all(color: AppColors.cardBorder(context)),
               ),
               child: Text(
                 programme.description,
-                style: TextStyle(fontSize: 13, color: Colors.grey.shade700, height: 1.5),
+                style: TextStyle(fontSize: 13, color: AppColors.textSecondary(context), height: 1.5),
               ),
             ),
             const SizedBox(height: 16),
 
             // Section 2: Minimum Admission & Cluster Prerequisites
-            _buildSectionHeader('KUCCPS Subject Prerequisites'),
+            _buildSectionHeader(context, 'KUCCPS Subject Prerequisites'),
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.cardBackground(context),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade200),
+                border: Border.all(color: AppColors.cardBorder(context)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,15 +125,15 @@ class ProgrammeDetailScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Section 3: Offering Universities & Cutoff Points
-            _buildSectionHeader('Accredited Kenyan Universities Offering Programme'),
+            _buildSectionHeader(context, 'Accredited Kenyan Universities Offering Programme'),
             ...programme.offeringUniversities.map((uni) {
               return Container(
                 margin: const EdgeInsets.only(bottom: 10),
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.cardBackground(context),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey.shade200),
+                  border: Border.all(color: AppColors.cardBorder(context)),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -141,10 +142,10 @@ class ProgrammeDetailScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(uni.universityName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                          Text(uni.universityName, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary(context))),
                           const SizedBox(height: 2),
                           Text('${uni.universityType} • ${uni.location} • KUCCPS Code: ${uni.kuccpsCode}',
-                              style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
+                              style: TextStyle(fontSize: 11, color: AppColors.textSecondary(context))),
                         ],
                       ),
                     ),
@@ -155,7 +156,7 @@ class ProgrammeDetailScreen extends StatelessWidget {
                           '${uni.latestCutoff.toStringAsFixed(2)} pts',
                           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF0EA5A4)),
                         ),
-                        Text('Prev: ${uni.previousCutoff.toStringAsFixed(2)}', style: TextStyle(fontSize: 10, color: Colors.grey.shade500)),
+                        Text('Prev: ${uni.previousCutoff.toStringAsFixed(2)}', style: TextStyle(fontSize: 10, color: AppColors.textSecondary(context))),
                       ],
                     ),
                   ],
@@ -165,7 +166,7 @@ class ProgrammeDetailScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Section 4: Career Pathways
-            _buildSectionHeader('Career Pathways & Professional Roles'),
+            _buildSectionHeader(context, 'Career Pathways & Professional Roles'),
             Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -180,7 +181,7 @@ class ProgrammeDetailScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Section 5: Professional Certifications
-            _buildSectionHeader('Industry Certifications & Professional Bodies'),
+            _buildSectionHeader(context, 'Industry Certifications & Professional Bodies'),
             Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -199,30 +200,30 @@ class ProgrammeDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMetricChip(IconData icon, String label) {
+  Widget _buildMetricChip(BuildContext context, IconData icon, String label) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
+        color: AppColors.chipBackground(context),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 13, color: Colors.grey.shade700),
+          Icon(icon, size: 13, color: AppColors.textSecondary(context)),
           const SizedBox(width: 4),
-          Text(label, style: TextStyle(fontSize: 11, color: Colors.grey.shade800, fontWeight: FontWeight.w600)),
+          Text(label, style: TextStyle(fontSize: 11, color: AppColors.textPrimary(context), fontWeight: FontWeight.w600)),
         ],
       ),
     );
   }
 
-  Widget _buildSectionHeader(String title) {
+  Widget _buildSectionHeader(BuildContext context, String title) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0, top: 4.0),
       child: Text(
         title,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF0F172A)),
+        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary(context)),
       ),
     );
   }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/programme.dart';
 import '../data/programme_repository.dart';
+import '../services/api_service.dart';
+import '../theme/app_colors.dart';
 import 'programme_detail_screen.dart';
 
 class ProgrammeCatalogScreen extends StatefulWidget {
@@ -14,6 +16,10 @@ class _ProgrammeCatalogScreenState extends State<ProgrammeCatalogScreen> {
   String _selectedCategory = 'All';
   String _searchQuery = '';
 
+  List<Programme> _programmes = ProgrammeRepository.allProgrammes;
+  bool _isLoading = true;
+  bool _usingOfflineFallback = false;
+
   final List<String> _categories = [
     'All',
     'Medicine & Health',
@@ -24,8 +30,34 @@ class _ProgrammeCatalogScreenState extends State<ProgrammeCatalogScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _loadProgrammes();
+  }
+
+  Future<void> _loadProgrammes() async {
+    setState(() => _isLoading = true);
+    try {
+      final live = await ApiService.fetchProgrammes();
+      setState(() {
+        _programmes = live;
+        _usingOfflineFallback = false;
+        _isLoading = false;
+      });
+    } on ApiException {
+      // Server unreachable: fall back to the bundled catalog rather than
+      // showing an empty directory. Real data, just possibly stale cutoffs.
+      setState(() {
+        _programmes = ProgrammeRepository.allProgrammes;
+        _usingOfflineFallback = true;
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final filtered = ProgrammeRepository.allProgrammes.where((prog) {
+    final filtered = _programmes.where((prog) {
       final matchesSearch = prog.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
           prog.code.toLowerCase().contains(_searchQuery.toLowerCase()) ||
           prog.faculty.toLowerCase().contains(_searchQuery.toLowerCase());
@@ -43,7 +75,7 @@ class _ProgrammeCatalogScreenState extends State<ProgrammeCatalogScreen> {
     }).toList();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppColors.scaffoldBackground(context),
       appBar: AppBar(
         title: const Text(
           'University Programme Directory',
@@ -52,9 +84,40 @@ class _ProgrammeCatalogScreenState extends State<ProgrammeCatalogScreen> {
         backgroundColor: const Color(0xFF14213D),
         foregroundColor: Colors.white,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            tooltip: 'Refresh',
+            onPressed: _loadProgrammes,
+          ),
+        ],
       ),
       body: Column(
         children: [
+          if (_isLoading)
+            const LinearProgressIndicator(
+              minHeight: 2,
+              color: Color(0xFF0EA5A4),
+              backgroundColor: Color(0xFF14213D),
+            ),
+          if (_usingOfflineFallback)
+            Container(
+              width: double.infinity,
+              color: Colors.amber.shade50,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                children: [
+                  Icon(Icons.cloud_off, size: 14, color: Colors.amber.shade800),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      'Server unreachable - showing the bundled catalog, cutoffs may be out of date.',
+                      style: TextStyle(fontSize: 11, color: Colors.amber.shade900),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           // Search & Filter Header
           Container(
             color: const Color(0xFF14213D),
@@ -119,9 +182,9 @@ class _ProgrammeCatalogScreenState extends State<ProgrammeCatalogScreen> {
                 return Container(
                   margin: const EdgeInsets.only(bottom: 12),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.cardBackground(context),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade200),
+                    border: Border.all(color: AppColors.cardBorder(context)),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.02),
@@ -134,7 +197,7 @@ class _ProgrammeCatalogScreenState extends State<ProgrammeCatalogScreen> {
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     title: Text(
                       prog.title,
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF0F172A)),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textPrimary(context)),
                     ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,7 +205,7 @@ class _ProgrammeCatalogScreenState extends State<ProgrammeCatalogScreen> {
                         const SizedBox(height: 4),
                         Text(
                           '${prog.faculty} • ${prog.durationYears} Years',
-                          style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                          style: TextStyle(fontSize: 11, color: AppColors.textSecondary(context)),
                         ),
                         const SizedBox(height: 6),
                         Row(
@@ -161,7 +224,7 @@ class _ProgrammeCatalogScreenState extends State<ProgrammeCatalogScreen> {
                             const SizedBox(width: 8),
                             Text(
                               'Min: ${prog.minMeanGrade}',
-                              style: TextStyle(fontSize: 11, color: Colors.grey.shade700, fontWeight: FontWeight.w600),
+                              style: TextStyle(fontSize: 11, color: AppColors.textSecondary(context), fontWeight: FontWeight.w600),
                             ),
                           ],
                         ),
