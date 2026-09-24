@@ -28,6 +28,9 @@
 - Flutter SDK (version >= 3.0.0)
 - Android Studio with Android SDK (API 33+) or VS Code with Flutter Extension
 - Android Device or Android Virtual Device (AVD) emulator running
+- The FastAPI backend running locally (see `backend/README.md`) - the app has
+  no offline/demo mode: it calls the real Random Forest backend for every
+  recommendation and does not fabricate results if the server is unreachable.
 
 ### 2. Install Dependencies
 ```bash
@@ -35,9 +38,25 @@ cd flutter_app
 flutter pub get
 ```
 
-### 3. Launch on Connected Android Device or Emulator
+### 3. Configure Firebase
+The app uses `firebase_auth` for real sign-in/registration. Register an
+Android app under the same Firebase project the backend's service account
+belongs to, then either:
+- run `flutterfire configure` from `flutter_app/` (recommended - generates
+  `lib/firebase_options.dart` and wires `android/app/google-services.json`), or
+- manually download `google-services.json` from the Firebase Console and
+  place it at `flutter_app/android/app/google-services.json`.
+
+Both paths are gitignored since they contain project-specific identifiers.
+
+### 4. Launch on Connected Android Device or Emulator
 ```bash
 flutter run
+```
+Pointing at a real device (not the emulator) or a non-default backend host?
+Override the API base URL:
+```bash
+flutter run --dart-define=API_BASE_URL=http://<your-lan-ip>:8000
 ```
 
 To target a specific Android device:
