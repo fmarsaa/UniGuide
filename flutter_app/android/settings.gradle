@@ -17,8 +17,22 @@ pluginManagement {
 }
 
 plugins {
-    id "dev.flutter.flutter-gradle-plugin" version "1.0.0" apply false
+    // NOTE: this must be "flutter-plugin-loader" (applied immediately, no
+    // "apply false") - that's what actually wires every pub package's native
+    // Android dependency, and the Flutter engine embedding JAR itself, into
+    // the app module. The previous "flutter-gradle-plugin" id declared here
+    // with "apply false" was a no-op: nothing from pubspec.yaml (including
+    // firebase_core/firebase_auth) was ever reaching the Android classpath,
+    // and even plain FlutterActivity failed to compile as a result.
+    id "dev.flutter.flutter-plugin-loader" version "1.0.0"
     id "com.android.application" version "8.11.1" apply false
+    // Reads android/app/google-services.json (see flutter_app/README.md) so
+    // FirebaseApp.initializeApp() actually has a project to talk to.
+    id "com.google.gms.google-services" version "4.4.2" apply false
+    // Required once Firebase Android SDKs are on the classpath (they're built
+    // with Kotlin); this project template didn't declare it, so the build
+    // fell back to a Kotlin version older than this Flutter version requires.
+    id "org.jetbrains.kotlin.android" version "2.2.20" apply false
 }
 
 include ":app"

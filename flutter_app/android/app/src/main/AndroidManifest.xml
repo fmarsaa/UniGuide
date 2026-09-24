@@ -3,7 +3,15 @@
     <application
         android:label="UniGuide"
         android:name="${applicationName}"
-        android:icon="@drawable/ic_launcher">
+        android:icon="@drawable/ic_launcher"
+        android:usesCleartextTraffic="true">
+        <!-- Android blocks plain HTTP by default for apps targeting API 28+.
+             The documented dev backend runs on http://10.0.2.2:8000 (or a LAN
+             IP set via the dart-define flag API_BASE_URL), so this exception
+             is required for the app to reach it at all. If API_BASE_URL is
+             switched to an https:// backend for a real deployment, this has
+             no effect either way: it only permits cleartext, never forces it. -->
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

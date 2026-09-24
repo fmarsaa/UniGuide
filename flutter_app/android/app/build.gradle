@@ -1,6 +1,10 @@
 plugins {
     id "com.android.application"
+    id "org.jetbrains.kotlin.android"
     id "dev.flutter.flutter-gradle-plugin"
+    // Requires android/app/google-services.json to be present - see
+    // flutter_app/README.md "Configure Firebase" for how to generate it.
+    id "com.google.gms.google-services"
 }
 
 def localProperties = new Properties()
@@ -16,7 +20,8 @@ def flutterVersionName = localProperties.getProperty("flutter.versionName") ?: "
 
 android {
     namespace = "edu.strathmore.uniguide"
-    compileSdk = 35
+    // shared_preferences_android requires compiling against SDK 36+ (backward compatible).
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
