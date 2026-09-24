@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+/// Real Firebase Authentication sign-in / sign-up. On success this simply
+/// completes - main.dart listens to FirebaseAuth.instance.authStateChanges()
+/// and reacts automatically, then resolves the caller's role via the backend.
 class AuthScreen extends StatefulWidget {
-  final Function(String role) onLoginSuccess;
-
-  const AuthScreen({Key? key, required this.onLoginSuccess}) : super(key: key);
+  const AuthScreen({Key? key}) : super(key: key);
 
   @override
   State<AuthScreen> createState() => _AuthScreenState();
@@ -13,11 +15,11 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _isLoginMode = true;
   bool _obscurePassword = true;
   bool _isLoading = false;
+  String? _errorText;
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _indexController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -26,30 +28,166 @@ class _AuthScreenState extends State<AuthScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _nameController.dispose();
-    _indexController.dispose();
     super.dispose();
   }
 
   void _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _errorText = null;
+    });
 
-    await Future.delayed(const Duration(milliseconds: 600));
-
-    final email = _emailController.text.trim().toLowerCase();
+    final email = _emailController.text.trim();
     final password = _passwordController.text;
 
-    setState(() => _isLoading = false);
-
-    // Automatic role detection:
-    // Admin credentials route directly to the Administrator Portal
-    if (email == 'admin@uniguide.ac.ke' || email == 'admin@strathmore.edu' || email == 'admin' || email.startsWith('admin@')) {
-      widget.onLoginSuccess('administrator');
-    } else {
-      // All other valid user logins route to the Student Decision Support System
-      widget.onLoginSuccess('student');
+    try {
+      if (_isLoginMode) {
+        await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+      } else {
+        final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+        if (_nameController.text.trim().isNotEmpty) {
+          await credential.user?.updateDisplayName(_nameController.text.trim());
+        }
+        await credential.user?.sendEmailVerification();
+      }
+      // Success: FirebaseAuth.authStateChanges() in main.dart takes it from here -
+      // it shows an EmailVerificationScreen for a newly-registered, unverified user.
+    } on FirebaseAuthException catch (e) {
+      setState(() => _errorText = _messageForAuthError(e));
+    } catch (e) {
+      setState(() => _errorText = 'Something went wrong. Please try again.');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  String _messageForAuthError(FirebaseAuthException e) {
+    switch (e.code) {
+      case 'invalid-email':
+        return 'That email address looks invalid.';
+      case 'user-disabled':
+        return 'This account has been disabled.';
+      case 'user-not-found':
+      case 'wrong-password':
+      case 'invalid-credential':
+        return 'Incorrect email or password.';
+      case 'email-already-in-use':
+        return 'An account already exists for that email. Try signing in instead.';
+      case 'weak-password':
+        return 'Please choose a stronger password (at least 6 characters).';
+      case 'network-request-failed':
+        return 'Network error - check your connection and try again.';
+      default:
+        return e.message ?? 'Authentication failed (${e.code}).';
+    }
+  }
+
+  Future<void> _showForgotPasswordDialog() async {
+    final resetEmailController = TextEditingController(text: _emailController.text.trim());
+    final formKey = GlobalKey<FormState>();
+    bool isSending = false;
+    String? message;
+    bool isError = false;
+
+    await showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          backgroundColor: const Color(0xFF1E293B),
+          title: const Text('Reset Password', style: TextStyle(color: Colors.white, fontSize: 18)),
+          content: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Enter your account email and we'll send a link to reset your password.",
+                  style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12),
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: resetEmailController,
+                  keyboardType: TextInputType.emailAddress,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: _inputDecoration(
+                    label: 'Email Address',
+                    icon: Icons.email_outlined,
+                    hint: 'student@uniguide.ac.ke',
+                  ),
+                  validator: (val) {
+                    if (val == null || val.trim().isEmpty) return 'Please enter your email';
+                    if (!val.contains('@')) return 'Please enter a valid email';
+                    return null;
+                  },
+                ),
+                if (message != null) ...[
+                  const SizedBox(height: 12),
+                  Text(
+                    message!,
+                    style: TextStyle(color: isError ? Colors.redAccent : const Color(0xFF2DD4BF), fontSize: 12),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: isSending ? null : () => Navigator.pop(ctx),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0EA5A4), foregroundColor: Colors.white),
+              onPressed: isSending
+                  ? null
+                  : () async {
+                      if (!formKey.currentState!.validate()) return;
+                      setDialogState(() {
+                        isSending = true;
+                        message = null;
+                      });
+                      try {
+                        await FirebaseAuth.instance.sendPasswordResetEmail(
+                          email: resetEmailController.text.trim(),
+                        );
+                        setDialogState(() {
+                          isSending = false;
+                          isError = false;
+                          message = 'Reset link sent - check your inbox (and spam folder).';
+                        });
+                      } on FirebaseAuthException catch (e) {
+                        setDialogState(() {
+                          isSending = false;
+                          isError = true;
+                          message = e.code == 'user-not-found'
+                              ? 'No account found for that email.'
+                              : (e.message ?? 'Could not send the reset email.');
+                        });
+                      } catch (_) {
+                        setDialogState(() {
+                          isSending = false;
+                          isError = true;
+                          message = 'Could not send the reset email.';
+                        });
+                      }
+                    },
+              child: isSending
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    )
+                  : const Text('Send Reset Link'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -154,6 +292,23 @@ class _AuthScreenState extends State<AuthScreen> {
                         ),
                         const SizedBox(height: 22),
 
+                        if (_errorText != null) ...[
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.red.withOpacity(0.12),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Colors.redAccent.withOpacity(0.4)),
+                            ),
+                            child: Text(
+                              _errorText!,
+                              style: const TextStyle(color: Colors.redAccent, fontSize: 12),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+
                         // Registration extra fields
                         if (!_isLoginMode) ...[
                           TextFormField(
@@ -166,16 +321,6 @@ class _AuthScreenState extends State<AuthScreen> {
                             ),
                             validator: (val) =>
                                 val == null || val.trim().isEmpty ? 'Please enter your name' : null,
-                          ),
-                          const SizedBox(height: 16),
-                          TextFormField(
-                            controller: _indexController,
-                            style: const TextStyle(color: Colors.white),
-                            decoration: _inputDecoration(
-                              label: 'KCSE Index Number',
-                              icon: Icons.badge_outlined,
-                              hint: 'e.g. 12345678/2025',
-                            ),
                           ),
                           const SizedBox(height: 16),
                         ],
@@ -232,7 +377,21 @@ class _AuthScreenState extends State<AuthScreen> {
                             return null;
                           },
                         ),
-                        const SizedBox(height: 24),
+                        if (_isLoginMode) ...[
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: _isLoading ? null : _showForgotPasswordDialog,
+                              style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: const Size(0, 0)),
+                              child: const Text(
+                                'Forgot password?',
+                                style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                        ] else
+                          const SizedBox(height: 24),
 
                         // Submit Button
                         ElevatedButton(
@@ -282,6 +441,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       onPressed: () {
                         setState(() {
                           _isLoginMode = !_isLoginMode;
+                          _errorText = null;
                           _formKey.currentState?.reset();
                         });
                       },
