@@ -30,7 +30,10 @@ signal from the model that actually gets deployed.
 """
 
 import json
+import os
 import pickle
+import shutil
+from datetime import datetime
 
 from sklearn.base import clone
 from sklearn.compose import ColumnTransformer
@@ -185,10 +188,25 @@ def train_and_evaluate_model():
     print("Step 7: Refitting the final pipeline on the FULL dataset for deployment (hyperparameters validated above; no reason to withhold data from the model that actually serves)...")
     final_pipeline = clone(pipeline).set_params(**best_params)
     final_pipeline.fit(X, y)
+
+    # Model versioning/rollback: before overwriting the artifact main.py
+    # actually loads, archive whatever was previously deployed (pipeline +
+    # its metrics) under a timestamp. If a retrain ever regresses, the
+    # previous model can be restored with a plain file copy instead of
+    # re-running an old experiment by hand.
+    if os.path.exists("rf_model_pipeline.pkl"):
+        os.makedirs("model_backups", exist_ok=True)
+        stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        shutil.copy("rf_model_pipeline.pkl", f"model_backups/rf_model_pipeline_{stamp}.pkl")
+        if os.path.exists("model_metrics.json"):
+            shutil.copy("model_metrics.json", f"model_backups/model_metrics_{stamp}.json")
+        print(f"  (previous deployed model backed up to model_backups/*_{stamp}.*)")
+
     with open("rf_model_pipeline.pkl", "wb") as f:
         pickle.dump(final_pipeline, f)
 
     print("Training complete! Model artifacts saved to rf_model_pipeline.pkl and model_metrics.json.")
+    print("To roll back: copy the desired model_backups/rf_model_pipeline_<timestamp>.pkl over rf_model_pipeline.pkl (and its matching model_metrics_<timestamp>.json over model_metrics.json), then restart the backend.")
 
 
 if __name__ == "__main__":
