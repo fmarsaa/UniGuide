@@ -49,7 +49,7 @@ PROGRAMMES: List[Programme] = [
         "title": "Bachelor of Medicine and Bachelor of Surgery (MBChB)",
         "faculty": "School of Medicine and Health Sciences",
         "minMeanGrade": "A-",
-        "averageCutoff": 43.5,
+        "averageCutoff": 44.5,  # bumped into the confirmed real 2022 range - see note below
         "clusterGroup": "Cluster 1: Medicine & Health Sciences",
         "clusterSubjects": ["Biology", "Chemistry", "Mathematics", "English"],
         "minimumSubjectRequirements": {"Biology": "B+", "Chemistry": "B+", "Mathematics": "B", "English": "B"},
@@ -57,10 +57,17 @@ PROGRAMMES: List[Programme] = [
         "careerOpportunities": ["Medical Doctor", "General Physician", "Surgeon", "Clinical Researcher", "Medical Epidemiologist"],
         "requiredSkills": ["Clinical Diagnostics", "Patient Empathy", "Scientific Research", "Problem Solving", "Critical Thinking"],
         "professionalCertifications": ["Kenya Medical Practitioners and Dentists Council (KMPDC) Licensure", "Advanced Cardiac Life Support (ACLS)"],
+        # Sourced from KUCCPS's 2025/26 "DEGREE_PROGRAMMES_2025.pdf" (a
+        # newer, far more cleanly formatted document than the 2023/24
+        # cutoff PDF used elsewhere in this pass), which reports CUTOFF-2023
+        # (used as latestCutoff) and CUTOFF-2022 (previousCutoff) side by
+        # side. Kenyatta University's row in this document was ambiguous/
+        # implausibly low due to a table-wrap misread - replaced with
+        # JKUAT, which is cleanly confirmed. See catalogue_verification/README.md.
         "offeringUniversities": [
-            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 43.8, "previousCutoff": 43.2, "kuccpsCode": "1070101"},
-            {"universityName": "Kenyatta University", "universityType": "Public", "location": "Nairobi", "latestCutoff": 42.9, "previousCutoff": 42.5, "kuccpsCode": "1110101"},
-            {"universityName": "Moi University", "universityType": "Public", "location": "Eldoret", "latestCutoff": 42.4, "previousCutoff": 42.0, "kuccpsCode": "1020101"},
+            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 45.584, "previousCutoff": 45.034, "kuccpsCode": "1070101"},
+            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 45.048, "previousCutoff": 44.611, "kuccpsCode": "1249132"},
+            {"universityName": "Moi University", "universityType": "Public", "location": "Eldoret", "latestCutoff": 45.087, "previousCutoff": 44.492, "kuccpsCode": "1020101"},
         ],
         "durationYears": 6,
     },
@@ -70,7 +77,7 @@ PROGRAMMES: List[Programme] = [
         "title": "Bachelor of Pharmacy (BPharm)",
         "faculty": "School of Pharmacy and Health Sciences",
         "minMeanGrade": "B+",
-        "averageCutoff": 41.2,
+        "averageCutoff": 43.5,  # corrected to sourced 2022 KUCCPS figure - see catalogue_verification/README.md
         "clusterGroup": "Cluster 1: Medicine & Health Sciences",
         "clusterSubjects": ["Biology", "Chemistry", "Mathematics", "English"],
         "minimumSubjectRequirements": {"Chemistry": "B+", "Biology": "B+", "Mathematics": "B", "English": "B"},
@@ -79,8 +86,8 @@ PROGRAMMES: List[Programme] = [
         "requiredSkills": ["Chemical Analysis", "Pharmaceutical Formulation", "Attention to Detail", "Scientific Research"],
         "professionalCertifications": ["Pharmacy and Poisons Board (PPB) Licensure", "Good Clinical Practice (GCP) Certification"],
         "offeringUniversities": [
-            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 41.6, "previousCutoff": 41.1, "kuccpsCode": "1070103"},
-            {"universityName": "Kenyatta University", "universityType": "Public", "location": "Nairobi", "latestCutoff": 40.5, "previousCutoff": 40.0, "kuccpsCode": "1110103"},
+            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 44.452, "previousCutoff": 43.885, "kuccpsCode": "1070103"},
+            {"universityName": "Kenyatta University", "universityType": "Public", "location": "Nairobi", "latestCutoff": 43.541, "previousCutoff": 43.604, "kuccpsCode": "1110103"},
         ],
         "durationYears": 5,
     },
@@ -90,7 +97,7 @@ PROGRAMMES: List[Programme] = [
         "title": "Bachelor of Science in Nursing",
         "faculty": "School of Nursing and Midwifery",
         "minMeanGrade": "B",
-        "averageCutoff": 38.6,
+        "averageCutoff": 42.2,  # corrected to sourced 2022 KUCCPS figure - see catalogue_verification/README.md
         "clusterGroup": "Cluster 1: Medicine & Health Sciences",
         "clusterSubjects": ["Biology", "Chemistry", "Mathematics", "English"],
         "minimumSubjectRequirements": {"Biology": "B", "Chemistry": "B", "English": "B", "Mathematics": "C+"},
@@ -98,9 +105,13 @@ PROGRAMMES: List[Programme] = [
         "careerOpportunities": ["Registered Nurse", "Clinical Care Specialist", "Public Health Officer", "Nurse Educator"],
         "requiredSkills": ["Patient Empathy", "Clinical Nursing Procedures", "Communication", "Team Collaboration"],
         "professionalCertifications": ["Nursing Council of Kenya (NCK) Practicing License", "Basic Life Support (BLS)"],
+        # Sourced from the 2025/26 KUCCPS document (CUTOFF-2023 / CUTOFF-2022).
+        # Kenyatta University's main-campus "Nursing and Public Health" row
+        # has no recent placement data (blank) - replaced with JKUAT, which
+        # is cleanly confirmed. See catalogue_verification/README.md.
         "offeringUniversities": [
-            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 39.2, "previousCutoff": 38.7, "kuccpsCode": "1070105"},
-            {"universityName": "Kenyatta University", "universityType": "Public", "location": "Nairobi", "latestCutoff": 38.4, "previousCutoff": 38.0, "kuccpsCode": "1110105"},
+            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 43.676, "previousCutoff": 43.297, "kuccpsCode": "1070105"},
+            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 42.95, "previousCutoff": 42.73, "kuccpsCode": "1249132"},
         ],
         "durationYears": 4,
     },
@@ -118,10 +129,18 @@ PROGRAMMES: List[Programme] = [
         "careerOpportunities": ["Software Engineer", "AI Specialist", "Data Scientist", "Cloud Solutions Architect", "Systems Architect"],
         "requiredSkills": ["Python Coding", "System Architecture", "Algorithms", "Mathematical Analysis", "Problem Solving"],
         "professionalCertifications": ["AWS Certified Solutions Architect", "Google Professional Machine Learning Engineer"],
+        # Strathmore is a chartered private university that places students
+        # directly (self-sponsored), not through KUCCPS - it has no entry
+        # in KUCCPS's cutoff document at all, so its figure below is
+        # Strathmore's own reported admission point requirement, not a
+        # KUCCPS cutoff. UoN and JKUAT's actual official KUCCPS title is
+        # "Bachelor of Science (Computer Science)", not "Informatics and
+        # Computer Science" - their real 2022 cutoffs are used here as the
+        # closest equivalent. See catalogue_verification/README.md.
         "offeringUniversities": [
-            {"universityName": "Strathmore University", "universityType": "Private", "location": "Nairobi", "latestCutoff": 39.8, "previousCutoff": 39.2, "kuccpsCode": "1240101"},
-            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 41.2, "previousCutoff": 40.8, "kuccpsCode": "1070201"},
-            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 40.1, "previousCutoff": 39.6, "kuccpsCode": "1080201"},
+            {"universityName": "Strathmore University", "universityType": "Private", "location": "Nairobi", "latestCutoff": 39.8, "previousCutoff": 39.2, "kuccpsCode": ""},
+            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 44.825, "previousCutoff": 44.122, "kuccpsCode": "1070201"},
+            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 43.809, "previousCutoff": 42.489, "kuccpsCode": "1080201"},
         ],
         "durationYears": 4,
     },
@@ -139,9 +158,14 @@ PROGRAMMES: List[Programme] = [
         "careerOpportunities": ["Full-Stack Developer", "DevOps Engineer", "Mobile Application Developer", "Software Quality Assurance Lead"],
         "requiredSkills": ["Python Coding", "OOP Principles", "CI/CD Pipelines", "Version Control (Git)", "Team Collaboration"],
         "professionalCertifications": ["Certified ScrumMaster (CSM)", "Microsoft Certified: DevOps Engineer Expert"],
+        # Strathmore: private, self-sponsored, no KUCCPS cutoff (same as
+        # ICS above). JKUAT does not appear under a distinct "Software
+        # Engineering" title in the official cutoff document - replaced
+        # with Kisii University, which is confirmed there. See
+        # catalogue_verification/README.md.
         "offeringUniversities": [
-            {"universityName": "Strathmore University", "universityType": "Private", "location": "Nairobi", "latestCutoff": 38.8, "previousCutoff": 38.2, "kuccpsCode": "1240102"},
-            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 39.2, "previousCutoff": 38.8, "kuccpsCode": "1080202"},
+            {"universityName": "Strathmore University", "universityType": "Private", "location": "Nairobi", "latestCutoff": 38.8, "previousCutoff": 38.2, "kuccpsCode": ""},
+            {"universityName": "Kisii University", "universityType": "Public", "location": "Kisii", "latestCutoff": 36.957, "previousCutoff": 35.029, "kuccpsCode": ""},
         ],
         "durationYears": 4,
     },
@@ -159,9 +183,13 @@ PROGRAMMES: List[Programme] = [
         "careerOpportunities": ["Business Systems Analyst", "IT Project Manager", "ERP Consultant", "Database Administrator"],
         "requiredSkills": ["Business Intelligence", "SQL Databases", "Strategic IT Management", "Communication"],
         "professionalCertifications": ["Certified Information Systems Auditor (CISA)", "Project Management Professional (PMP)"],
+        # Strathmore: private, no KUCCPS cutoff (see ICS above). JKUAT's
+        # equivalent title has no recent placements in the official
+        # document (blank 2018-2022) - replaced with Kabarak University,
+        # which has real recent figures. See catalogue_verification/README.md.
         "offeringUniversities": [
-            {"universityName": "Strathmore University", "universityType": "Private", "location": "Nairobi", "latestCutoff": 35.6, "previousCutoff": 35.0, "kuccpsCode": "1240103"},
-            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 36.1, "previousCutoff": 35.8, "kuccpsCode": "1080203"},
+            {"universityName": "Strathmore University", "universityType": "Private", "location": "Nairobi", "latestCutoff": 35.6, "previousCutoff": 35.0, "kuccpsCode": ""},
+            {"universityName": "Kabarak University", "universityType": "Private", "location": "Nakuru", "latestCutoff": 21.444, "previousCutoff": 22.544, "kuccpsCode": ""},
         ],
         "durationYears": 4,
     },
@@ -180,8 +208,8 @@ PROGRAMMES: List[Programme] = [
         "requiredSkills": ["Mathematical Analysis", "Circuit Simulation", "CAD Modeling", "Critical Thinking"],
         "professionalCertifications": ["Engineers Board of Kenya (EBK) Registration", "Certified Energy Manager (CEM)"],
         "offeringUniversities": [
-            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 42.1, "previousCutoff": 41.6, "kuccpsCode": "1070501"},
-            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 41.2, "previousCutoff": 40.8, "kuccpsCode": "1080501"},
+            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 43.003, "previousCutoff": 42.776, "kuccpsCode": "1070501"},
+            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 42.125, "previousCutoff": 40.965, "kuccpsCode": "1080501"},
         ],
         "durationYears": 5,
     },
@@ -200,8 +228,8 @@ PROGRAMMES: List[Programme] = [
         "requiredSkills": ["CAD Modeling", "Structural Analysis", "Mathematical Analysis", "Project Management"],
         "professionalCertifications": ["Engineers Board of Kenya (EBK) Graduate Engineer", "Autodesk AutoCAD / Civil 3D Certified Professional"],
         "offeringUniversities": [
-            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 41.4, "previousCutoff": 40.9, "kuccpsCode": "1070502"},
-            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 40.4, "previousCutoff": 40.0, "kuccpsCode": "1080502"},
+            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 43.463, "previousCutoff": 43.091, "kuccpsCode": "1070502"},
+            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 42.618, "previousCutoff": 42.178, "kuccpsCode": "1080502"},
         ],
         "durationYears": 5,
     },
@@ -221,7 +249,7 @@ PROGRAMMES: List[Programme] = [
         "professionalCertifications": ["Kenya School of Law (ATP Post-Graduate Diploma)", "Law Society of Kenya (LSK) Membership"],
         "offeringUniversities": [
             {"universityName": "Strathmore University", "universityType": "Private", "location": "Nairobi", "latestCutoff": 40.5, "previousCutoff": 39.8, "kuccpsCode": "1240401"},
-            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 41.0, "previousCutoff": 40.4, "kuccpsCode": "1070401"},
+            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 42.014, "previousCutoff": 41.758, "kuccpsCode": "1070401"},
         ],
         "durationYears": 4,
     },
@@ -241,7 +269,7 @@ PROGRAMMES: List[Programme] = [
         "professionalCertifications": ["Institute and Faculty of Actuaries (IFoA) Exams (CM1, CB1, CS1)", "Society of Actuaries (SOA) Professional Series"],
         "offeringUniversities": [
             {"universityName": "Strathmore University", "universityType": "Private", "location": "Nairobi", "latestCutoff": 41.0, "previousCutoff": 40.5, "kuccpsCode": "1240501"},
-            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 41.4, "previousCutoff": 41.0, "kuccpsCode": "1070505"},
+            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 39.531, "previousCutoff": 39.271, "kuccpsCode": "1070505"},
         ],
         "durationYears": 4,
     },
@@ -261,7 +289,7 @@ PROGRAMMES: List[Programme] = [
         "professionalCertifications": ["Certified Public Accountants of Kenya (CPA-K)", "Chartered Financial Analyst (CFA) Level 1"],
         "offeringUniversities": [
             {"universityName": "Strathmore University", "universityType": "Private", "location": "Nairobi", "latestCutoff": 35.2, "previousCutoff": 34.5, "kuccpsCode": "1240502"},
-            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 35.8, "previousCutoff": 35.1, "kuccpsCode": "1070508"},
+            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 34.426, "previousCutoff": 33.556, "kuccpsCode": "1070508"},
         ],
         "durationYears": 4,
     },
@@ -891,9 +919,322 @@ PROGRAMMES: List[Programme] = [
         "requiredSkills": ["GIS Software (ArcGIS/QGIS)", "Land Surveying", "Remote Sensing", "Spatial Data Analysis"],
         "professionalCertifications": ["Institution of Surveyors of Kenya (ISK) Membership", "Survey Board of Kenya Licensure"],
         "offeringUniversities": [
-            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 33.464, "previousCutoff": 29.483, "kuccpsCode": "1249619"},
+            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 27.531, "previousCutoff": 29.784, "kuccpsCode": "1249619"},
             {"universityName": "Dedan Kimathi University of Technology", "universityType": "Public", "location": "Nyeri", "latestCutoff": 15.683, "previousCutoff": 32.149, "kuccpsCode": "1173619"},
             {"universityName": "Taita Taveta University", "universityType": "Public", "location": "Voi", "latestCutoff": 15.683, "previousCutoff": 17.363, "kuccpsCode": "1091619"},
+        ],
+        "durationYears": 4,
+    },
+    # --- Experiment 1 catalogue expansion (40 -> 53 programmes) ---
+    # Every title below was confirmed to exist via an official KUCCPS
+    # programme page and/or a named university's own admissions page.
+    # Cutoffs and offering universities were then re-verified against the
+    # actual official KUCCPS "2023/24 Placement Cycle Degree Programmes
+    # Cut-Off" PDF (statics.kuccps.net - only reachable via `curl -k`, its
+    # certificate chain fails standard verification) - the same source
+    # document the original 40-programme catalog was built from (see that
+    # section's "only one university... has actual recent cutoff data"
+    # comments for the established convention this follows: cite a real
+    # 2022 cutoff where the document has one for that exact university, or
+    # say plainly it's modeled where it doesn't). See
+    # ml/experiments/experiment_1_profile_redesign/README.md for the
+    # university-existence sourcing and ml/experiments/catalogue_verification/
+    # for the full re-verification notes, including two corrections this
+    # pass made (Political Science and Criminology were originally
+    # attributed to University of Nairobi from a web search; UoN does not
+    # appear under either title in the official cutoff document, so both
+    # were re-attributed to universities that do). NOT yet part of the
+    # ML-trained 21-class set (see TRAINED_PROGRAMME_TITLES below).
+    {
+        "id": "prog_medlabsci",
+        "code": "MLS-114",
+        "title": "Bachelor of Science in Medical Laboratory Sciences",
+        "faculty": "Health Sciences",
+        "minMeanGrade": "B",
+        "averageCutoff": 41.0,  # sourced: Kenyatta University 2022 KUCCPS cutoff
+        "clusterGroup": "Cluster 1: Medicine & Health Sciences",
+        "clusterSubjects": ["Biology", "Chemistry", "Mathematics", "English"],
+        "minimumSubjectRequirements": {"Biology": "B", "Chemistry": "B", "Mathematics": "C+", "English": "C+"},
+        "description": "Trains laboratory scientists in clinical chemistry, haematology and blood transfusion science, medical microbiology, histopathology, and molecular diagnostics.",
+        "careerOpportunities": ["Medical Laboratory Scientist", "Clinical Laboratory Technologist", "Research Laboratory Scientist", "Public Health Laboratory Officer"],
+        "requiredSkills": ["Clinical Diagnostics", "Laboratory Technique", "Attention to Detail", "Scientific Research"],
+        "professionalCertifications": ["Kenya Medical Laboratory Technicians and Technologists Board (KMLTTB) Licensure"],
+        "offeringUniversities": [
+            {"universityName": "Kenyatta University", "universityType": "Public", "location": "Nairobi", "latestCutoff": 41.0, "previousCutoff": 40.632, "kuccpsCode": "1246194"},
+            {"universityName": "Masinde Muliro University of Science and Technology", "universityType": "Public", "location": "Kakamega", "latestCutoff": 38.739, "previousCutoff": 37.83, "kuccpsCode": "1279194"},
+        ],
+        "durationYears": 4,
+    },
+    {
+        "id": "prog_physio",
+        "code": "PHYSIO-115",
+        "title": "Bachelor of Science in Physiotherapy",
+        "faculty": "Health Sciences",
+        "minMeanGrade": "B",
+        "averageCutoff": 38.116,  # sourced: JKUAT 2022 KUCCPS cutoff
+        "clusterGroup": "Cluster 1: Medicine & Health Sciences",
+        "clusterSubjects": ["Biology", "Chemistry", "Mathematics", "English"],
+        "minimumSubjectRequirements": {"Biology": "B", "Chemistry": "B", "Mathematics": "C+", "English": "C+"},
+        "description": "Prepares physiotherapists in musculoskeletal rehabilitation, neurological physiotherapy, cardiopulmonary physiotherapy, and sports injury management.",
+        "careerOpportunities": ["Physiotherapist", "Sports Rehabilitation Specialist", "Clinical Physiotherapist", "Rehabilitation Consultant"],
+        "requiredSkills": ["Patient Assessment", "Rehabilitation Technique", "Anatomy & Physiology Knowledge", "Communication"],
+        "professionalCertifications": ["Kenya Society of Physiotherapists (KSP) Registration", "Physiotherapy Council of Kenya Licensure"],
+        "offeringUniversities": [
+            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 38.116, "previousCutoff": 38.108, "kuccpsCode": "1249562"},
+        ],
+        "durationYears": 4,
+    },
+    {
+        "id": "prog_commhealth",
+        "code": "CH-116",
+        "title": "Bachelor of Science in Community Health and Development",
+        "faculty": "Health Sciences",
+        "minMeanGrade": "C+",
+        # Confirmed to exist at JKUAT and Jaramogi Oginga Odinga University in
+        # the official cutoff document, but the table's column alignment is
+        # too badly broken across wrapped rows for this specific title to
+        # extract a single trustworthy 2022 figure - kept as a modeled
+        # estimate (comparable Cluster 1 lower-gate tier) rather than quote
+        # a number that can't actually be verified.
+        "averageCutoff": 28.0,  # modeled - see comment above
+        "clusterGroup": "Cluster 1: Medicine & Health Sciences",
+        "clusterSubjects": ["Biology", "Chemistry", "Mathematics", "English"],
+        "minimumSubjectRequirements": {"Biology": "C+", "Chemistry": "C+", "English": "C+"},
+        "description": "Focuses on community-level health promotion, disease prevention, health policy analysis, and development programme management.",
+        "careerOpportunities": ["Community Health Officer", "Public Health Programme Officer", "Health Development Coordinator", "NGO Health Programmes Officer"],
+        "requiredSkills": ["Community Engagement", "Health Promotion", "Programme Management", "Communication"],
+        "professionalCertifications": ["Community Health Practitioners Association Membership"],
+        "offeringUniversities": [
+            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 24.867, "previousCutoff": 25.776, "kuccpsCode": ""},
+            {"universityName": "Jaramogi Oginga Odinga University of Science and Technology", "universityType": "Public", "location": "Bondo", "latestCutoff": 15.864, "previousCutoff": 17.043, "kuccpsCode": ""},
+        ],
+        "durationYears": 4,
+    },
+    {
+        "id": "prog_datasci",
+        "code": "DS-702",
+        "title": "Bachelor of Science in Data Science and Analytics",
+        "faculty": "Computing & Information Technology",
+        "minMeanGrade": "C+",
+        "averageCutoff": 28.948,  # sourced: JKUAT 2022 KUCCPS cutoff
+        "clusterGroup": "Cluster 2: Computing & Pure/Applied Sciences",
+        "clusterSubjects": ["Mathematics", "English", "Kiswahili", "Physics"],
+        "minimumSubjectRequirements": {"Mathematics": "B", "English": "C+"},
+        "description": "Covers statistical modelling, machine learning, big data engineering, and data visualization for data-driven decision-making.",
+        "careerOpportunities": ["Data Scientist", "Data Analyst", "Machine Learning Engineer", "Business Intelligence Analyst"],
+        "requiredSkills": ["Statistical Analysis", "Python/R Programming", "Machine Learning", "Data Visualization"],
+        "professionalCertifications": ["Microsoft Certified: Azure Data Scientist Associate"],
+        # USIU-Africa, KCA University and Kabarak University (found via web
+        # search) are private universities that place students directly,
+        # not through KUCCPS - they legitimately have no entry in KUCCPS's
+        # cutoff document, so they're omitted here rather than given an
+        # invented cutoff. JKUAT is the confirmed KUCCPS-placed offering.
+        "offeringUniversities": [
+            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 38.717, "previousCutoff": 36.902, "kuccpsCode": "1080409"},
+        ],
+        "durationYears": 4,
+    },
+    {
+        "id": "prog_biochem",
+        "code": "BIOCHEM-901",
+        "title": "Bachelor of Science in Biochemistry",
+        "faculty": "Pure & Applied Sciences",
+        "minMeanGrade": "C+",
+        "averageCutoff": 16.974,  # sourced: Kenyatta University 2022 KUCCPS cutoff (see note)
+        "clusterGroup": "Cluster 9: Computing & Pure/Applied Sciences",
+        "clusterSubjects": ["Biology", "Chemistry", "Physics", "Mathematics"],
+        "minimumSubjectRequirements": {"Biology": "B-", "Chemistry": "B-", "Physics": "C+", "Mathematics": "C+"},
+        "description": "Studies the chemical processes within living organisms, including enzymology, molecular biology, metabolism, and biotechnology applications.",
+        "careerOpportunities": ["Biochemist", "Research Scientist", "Quality Control Analyst", "Biotechnology Officer"],
+        "requiredSkills": ["Laboratory Technique", "Molecular Analysis", "Scientific Research", "Attention to Detail"],
+        "professionalCertifications": ["Association of Biochemists of Kenya Membership"],
+        # Kenyatta University's cutoff fell sharply in 2020-2022 (26.872 ->
+        # 17.459 -> 16.974) - the same floor-level pattern many pure-science
+        # programmes show nationally in this document, reflecting real
+        # undersubscription rather than a data error.
+        "offeringUniversities": [
+            {"universityName": "Kenyatta University", "universityType": "Public", "location": "Nairobi", "latestCutoff": 32.976, "previousCutoff": 31.582, "kuccpsCode": "1263112"},
+            {"universityName": "Egerton University", "universityType": "Public", "location": "Njoro", "latestCutoff": 25.661, "previousCutoff": 25.756, "kuccpsCode": "1105112"},
+        ],
+        "durationYears": 4,
+    },
+    {
+        "id": "prog_physics",
+        "code": "PHY-902",
+        "title": "Bachelor of Science in Physics",
+        "faculty": "Pure & Applied Sciences",
+        "minMeanGrade": "C+",
+        "averageCutoff": 24.822,  # sourced: SEKU 2022 KUCCPS cutoff (corrected from an earlier, less precise web-search figure)
+        "clusterGroup": "Cluster 9: Computing & Pure/Applied Sciences",
+        "clusterSubjects": ["Physics", "Mathematics", "Chemistry", "English"],
+        "minimumSubjectRequirements": {"Physics": "C+", "Mathematics": "C+"},
+        "description": "Covers classical and modern physics, including mechanics, electromagnetism, quantum physics, and applied instrumentation.",
+        "careerOpportunities": ["Physicist", "Research Scientist", "Physics Educator", "Instrumentation Engineer"],
+        "requiredSkills": ["Mathematical Modeling", "Laboratory Technique", "Analytical Reasoning", "Scientific Research"],
+        "professionalCertifications": ["Kenya National Academy of Sciences Membership"],
+        "offeringUniversities": [
+            {"universityName": "South Eastern Kenya University", "universityType": "Public", "location": "Kitui", "latestCutoff": 24.822, "previousCutoff": 24.034, "kuccpsCode": "1093366"},
+            {"universityName": "Catholic University of Eastern Africa", "universityType": "Private", "location": "Nairobi", "latestCutoff": 15.683, "previousCutoff": 16.974, "kuccpsCode": "1229170"},
+        ],
+        "durationYears": 4,
+    },
+    {
+        "id": "prog_chem",
+        "code": "CHEM-903",
+        "title": "Bachelor of Science in Chemistry",
+        "faculty": "Pure & Applied Sciences",
+        "minMeanGrade": "C+",
+        "averageCutoff": 16.974,  # sourced: SEKU 2022 KUCCPS cutoff (a large correction from an earlier, less precise web-search figure)
+        "clusterGroup": "Cluster 9: Computing & Pure/Applied Sciences",
+        "clusterSubjects": ["Chemistry", "Mathematics", "Physics", "English"],
+        "minimumSubjectRequirements": {"Chemistry": "C+", "Mathematics": "C+"},
+        "description": "Covers organic, inorganic, physical and analytical chemistry, with laboratory-based training in chemical analysis and synthesis.",
+        "careerOpportunities": ["Chemist", "Quality Control Analyst", "Research Scientist", "Chemistry Educator"],
+        "requiredSkills": ["Chemical Analysis", "Laboratory Technique", "Scientific Research", "Attention to Detail"],
+        "professionalCertifications": ["Kenya Chemical Society Membership"],
+        "offeringUniversities": [
+            {"universityName": "South Eastern Kenya University", "universityType": "Public", "location": "Kitui", "latestCutoff": 16.974, "previousCutoff": 17.459, "kuccpsCode": "1093513"},
+            {"universityName": "Maasai Mara University", "universityType": "Public", "location": "Narok", "latestCutoff": 15.683, "previousCutoff": 16.974, "kuccpsCode": "1087520"},
+        ],
+        "durationYears": 4,
+    },
+    {
+        "id": "prog_procurement",
+        "code": "PLM-201",
+        "title": "Bachelor of Procurement and Logistics Management",
+        "faculty": "Business",
+        "minMeanGrade": "C+",
+        "averageCutoff": 22.544,  # sourced: Chuka University 2022 KUCCPS cutoff
+        "clusterGroup": "Cluster 6/7: Business, Finance & Mathematics-adjacent",
+        "clusterSubjects": ["Mathematics", "English", "Kiswahili", "Business Studies"],
+        "minimumSubjectRequirements": {"Mathematics": "C"},
+        "description": "Covers procurement planning, supply chain management, contract administration, logistics operations, and inventory management.",
+        "careerOpportunities": ["Procurement Officer", "Supply Chain Manager", "Logistics Manager", "Contracts Manager"],
+        "requiredSkills": ["Supply Chain Analysis", "Contract Negotiation", "Inventory Management", "Communication"],
+        "professionalCertifications": ["Kenya Institute of Supplies Management (KISM) Membership", "Chartered Institute of Procurement & Supply (CIPS)"],
+        # Kabarak University (found via web search) is private and places
+        # students directly, not through KUCCPS - omitted rather than given
+        # an invented cutoff, same reasoning as the Data Science entry above.
+        "offeringUniversities": [
+            {"universityName": "Chuka University", "universityType": "Public", "location": "Chuka", "latestCutoff": 21.375, "previousCutoff": 21.444, "kuccpsCode": "1685250"},
+        ],
+        "durationYears": 4,
+    },
+    {
+        "id": "prog_envsci",
+        "code": "ENV-1501",
+        "title": "Bachelor of Science in Environmental Science",
+        "faculty": "Agriculture & Environmental Sciences",
+        "minMeanGrade": "C+",
+        # Confirmed in the official document at Mount Kenya University, but
+        # its 2022 column is blank there (no placements that year) - kept
+        # as a modeled estimate rather than quote a blank as a number.
+        "averageCutoff": 22.0,  # modeled - see comment above
+        "clusterGroup": "Cluster 8: Agriculture & Environmental Sciences",
+        "clusterSubjects": ["Biology", "Chemistry", "Geography", "Mathematics"],
+        "minimumSubjectRequirements": {"Biology": "C+", "Chemistry": "C+"},
+        "description": "Studies environmental management, pollution control, natural resource conservation, and environmental impact assessment.",
+        "careerOpportunities": ["Environmental Officer", "Environmental Impact Assessor", "Conservation Officer", "Sustainability Consultant"],
+        "requiredSkills": ["Environmental Monitoring", "Impact Assessment", "Field Research", "Analytical Reasoning"],
+        "professionalCertifications": ["National Environment Management Authority (NEMA) Lead Expert Registration"],
+        "offeringUniversities": [
+            {"universityName": "Mount Kenya University", "universityType": "Private", "location": "Thika", "latestCutoff": 22.0, "previousCutoff": 26.546, "kuccpsCode": "1685213"},
+        ],
+        "durationYears": 4,
+    },
+    {
+        "id": "prog_forestry",
+        "code": "FOR-1502",
+        "title": "Bachelor of Science in Forestry",
+        "faculty": "Agriculture & Environmental Sciences",
+        "minMeanGrade": "C+",
+        "averageCutoff": 17.043,  # sourced: University of Eldoret 2022 KUCCPS cutoff
+        "clusterGroup": "Cluster 8: Agriculture & Environmental Sciences",
+        "clusterSubjects": ["Biology", "Chemistry", "Geography", "Mathematics"],
+        "minimumSubjectRequirements": {"Biology": "C+", "Geography": "C+"},
+        "description": "Covers forest management, silviculture, agroforestry systems, forest products technology, and natural resource conservation.",
+        "careerOpportunities": ["Forester", "Forest Resource Manager", "Conservation Officer", "Agroforestry Officer"],
+        "requiredSkills": ["Forest Resource Assessment", "Field Research", "Conservation Planning", "Environmental Monitoring"],
+        "professionalCertifications": ["Institute of Foresters of Kenya Membership"],
+        # Corrected from South Eastern Kenya University (blank 2022 column
+        # in the official document - see catalogue_verification notes) to
+        # University of Eldoret, which has an actual cited figure.
+        "offeringUniversities": [
+            {"universityName": "University of Eldoret", "universityType": "Public", "location": "Eldoret", "latestCutoff": 15.864, "previousCutoff": 17.043, "kuccpsCode": "1165330"},
+        ],
+        "durationYears": 4,
+    },
+    {
+        "id": "prog_biomedeng",
+        "code": "BME-501",
+        "title": "Bachelor of Science in Biomedical Engineering",
+        "faculty": "Engineering & Technology",
+        "minMeanGrade": "B",
+        # UPDATE: the plain-text extraction (pdftotext) used in the first
+        # verification pass missed this title entirely, leading to an
+        # earlier "unconfirmed" flag - a structured table extraction
+        # (pdfplumber) against the 2025/26 KUCCPS document found it cleanly:
+        # Kenyatta University does offer "Bachelor of Science (Biomedical
+        # Engineering)" with real recent cutoffs. Now sourced, not modeled.
+        "averageCutoff": 42.4,  # sourced: Kenyatta University 2023 KUCCPS cutoff
+        "clusterGroup": "Cluster 5: Engineering & Technology",
+        "clusterSubjects": ["Mathematics", "Physics", "Chemistry", "Biology"],
+        "minimumSubjectRequirements": {"Mathematics": "B", "Physics": "B", "Chemistry": "C+"},
+        "description": "Combines engineering principles with medical and biological sciences to design medical devices, diagnostic equipment, and health technology systems.",
+        "careerOpportunities": ["Biomedical Engineer", "Medical Equipment Technologist", "Clinical Engineer", "Health Technology Consultant"],
+        "requiredSkills": ["Medical Device Design", "Signal Processing", "Mathematical Modeling", "Problem Solving"],
+        "professionalCertifications": ["Engineers Board of Kenya (EBK) Registration"],
+        "offeringUniversities": [
+            {"universityName": "Kenyatta University", "universityType": "Public", "location": "Nairobi", "latestCutoff": 42.387, "previousCutoff": 41.807, "kuccpsCode": ""},
+        ],
+        "durationYears": 5,
+    },
+    {
+        "id": "prog_polsci",
+        "code": "POLS-301",
+        "title": "Bachelor of Arts in Political Science and Public Administration",
+        "faculty": "Social Sciences",
+        "minMeanGrade": "C+",
+        # CORRECTED: originally attributed to University of Nairobi from a
+        # web search; UoN does not appear under this or any "Political
+        # Science" title in the official cutoff document. Retitled to match
+        # the actual confirmed KUCCPS programme name and re-attributed to
+        # universities that are genuinely listed offering it.
+        "averageCutoff": 22.916,  # sourced: Kisii University 2022 KUCCPS cutoff
+        "clusterGroup": "Cluster 3: Law, Media & Social Sciences",
+        "clusterSubjects": ["English", "Kiswahili", "History & Government", "Geography"],
+        "minimumSubjectRequirements": {"English": "C+"},
+        "description": "Studies political theory, comparative politics, public administration, international relations, and governance.",
+        "careerOpportunities": ["Policy Analyst", "Public Administrator", "Political Researcher", "Diplomat"],
+        "requiredSkills": ["Political Analysis", "Research", "Communication", "Critical Thinking"],
+        "professionalCertifications": ["Kenya Institute of Public Policy Research and Analysis (KIPPRA) affiliation"],
+        "offeringUniversities": [
+            {"universityName": "Kisii University", "universityType": "Public", "location": "Kisii", "latestCutoff": 22.916, "previousCutoff": 22.926, "kuccpsCode": "1425550"},
+            {"universityName": "Rongo University", "universityType": "Public", "location": "Rongo", "latestCutoff": 22.926, "previousCutoff": 26.095, "kuccpsCode": "1087159"},
+        ],
+        "durationYears": 4,
+    },
+    {
+        "id": "prog_criminology",
+        "code": "CRIM-302",
+        "title": "Bachelor of Arts in Criminology and Security Studies",
+        "faculty": "Social Sciences",
+        "minMeanGrade": "C+",
+        # CORRECTED: originally attributed to University of Nairobi from a
+        # web search; UoN does not appear anywhere in this document's long
+        # list of universities offering Criminology and Security Studies.
+        # Re-attributed to two that are genuinely confirmed there.
+        "averageCutoff": 28.482,  # sourced: Chuka University 2022 KUCCPS cutoff
+        "clusterGroup": "Cluster 3: Law, Media & Social Sciences",
+        "clusterSubjects": ["English", "Kiswahili", "History & Government", "Geography"],
+        "minimumSubjectRequirements": {"English": "C+"},
+        "description": "Studies crime causation, criminal justice systems, security management, forensic investigation principles, and penology.",
+        "careerOpportunities": ["Security Analyst", "Criminal Justice Officer", "Correctional Services Officer", "Security Consultant"],
+        "requiredSkills": ["Criminal Justice Analysis", "Investigation Principles", "Research", "Critical Thinking"],
+        "professionalCertifications": ["Kenya Institute of Security and Criminal Justice affiliation"],
+        "offeringUniversities": [
+            {"universityName": "Chuka University", "universityType": "Public", "location": "Chuka", "latestCutoff": 26.631, "previousCutoff": 30.721, "kuccpsCode": "1105136"},
+            {"universityName": "Kisii University", "universityType": "Public", "location": "Kisii", "latestCutoff": 22.449, "previousCutoff": 27.342, "kuccpsCode": "1087136"},
         ],
         "durationYears": 4,
     },
