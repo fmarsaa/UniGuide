@@ -18,6 +18,11 @@
 .vscode/
 *.iml
 
+# Claude Code tooling state (not project source)
+.claude/
+.agents/
+skills-lock.json
+
 # Python
 **/__pycache__/
 **/*.py[cod]
@@ -36,6 +41,9 @@ flutter_app/android/app/google-services.json
 backend/rf_model_pipeline.pkl
 backend/model_metrics.json
 backend/synthetic_student_profiles.csv
+
+# Build logs
+flutter_app/build_output.txt
 
 # OS
 .DS_Store
