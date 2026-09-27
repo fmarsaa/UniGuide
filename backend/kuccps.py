@@ -142,7 +142,16 @@ def extract_ml_feature_points(grades: Dict[str, str], mean_grade: str = "C+") ->
     }
 
 
-def eligibility_status(student_score: float, cutoff: float) -> str:
+def eligibility_status(student_score: float, cutoff: float, meets_requirements: bool = True) -> str:
+    """`meets_requirements` is the hard KUCCPS minimum-subject-grade gate
+    (see meets_minimum_requirements above) - a student who fails it cannot
+    be admitted regardless of how close their Cluster Weighted Points are
+    to the cutoff, so that case gets its own explicit message rather than
+    being folded into "High Risk", which would wrongly imply admission is
+    merely unlikely rather than impossible without improving specific
+    subject grades."""
+    if not meets_requirements:
+        return "Does Not Meet Minimum Subject Requirements"
     diff = round(student_score - cutoff, 1)
     if diff >= 0.0:
         return f"Likely Admission (+{diff} pts margin)"

@@ -37,6 +37,11 @@ class RecommendationItem {
   final double studentClusterScore;
   final double cutoffDiff; // studentScore - programme.averageCutoff
   final String eligibilityStatus; // 'Likely Admission', 'Competitive', etc.
+  // False means the student's KCSE subject grades fail this programme's real
+  // KUCCPS minimum requirements outright - the backend still returns it (as
+  // a fallback so the list isn't empty) but it is NOT a genuine match, and
+  // the UI must say so rather than presenting it like the others.
+  final bool meetsMinimumRequirements;
   final List<ShapFeatureImpact> shapExplanations;
   final String primaryReason;
 
@@ -47,6 +52,7 @@ class RecommendationItem {
     required this.studentClusterScore,
     required this.cutoffDiff,
     required this.eligibilityStatus,
+    required this.meetsMinimumRequirements,
     required this.shapExplanations,
     required this.primaryReason,
   });
@@ -59,6 +65,7 @@ class RecommendationItem {
       studentClusterScore: (json['studentClusterScore'] as num?)?.toDouble() ?? 0.0,
       cutoffDiff: (json['cutoffDiff'] as num?)?.toDouble() ?? 0.0,
       eligibilityStatus: json['eligibilityStatus'] ?? 'Likely Admission',
+      meetsMinimumRequirements: json['meetsMinimumRequirements'] ?? true,
       shapExplanations: (json['shapExplanations'] as List? ?? [])
           .map((s) => ShapFeatureImpact.fromJson(s))
           .toList(),

@@ -39,11 +39,13 @@ from kuccps import (
     eligibility_status,
     extract_ml_feature_points,
     grade_to_points,
+    meets_minimum_requirements,
     points_to_grade,
     raw_cluster_points,
 )
 from programmes_catalog import CATALOG_BY_ID, CATALOG_BY_TITLE, PROGRAMMES
-from synthetic_data_generator import TRAIT_COLUMN_INFO, build_trait_features
+from synthetic_data_generator import FALLBACK_ORDER, TRAIT_COLUMN_INFO, build_cluster_score_features, build_trait_features
+from catalogue_freshness import check_catalogue_freshness
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO)
@@ -177,6 +179,7 @@ def profile_to_feature_row(payload: StudentProfilePayload):
     row = {FEATURE_COLUMN[subject]: feature_points[subject] for subject in ML_FEATURE_SUBJECTS}
     row["mean_points"] = mean_points
     row.update(build_trait_features(payload.interests or [], payload.skills or [], payload.strengths or []))
+    row.update(build_cluster_score_features(grades, mean_grade))
     row["aspiration"] = payload.aspirations[0] if payload.aspirations else ""
     return pd.DataFrame([row]), grades, mean_grade
 
@@ -383,7 +386,39 @@ def get_recommendations(payload: StudentProfilePayload, decoded: dict = Depends(
     proba = _pipeline.predict_proba(row_df)[0]
     classes = _pipeline.classes_
     n_classes = len(classes)
-    top_idx = np.argsort(-proba)[:3]
+
+    # The training labels this model learned from were only ever assigned
+    # among programmes a synthetic profile actually met the real KUCCPS
+    # minimum subject-grade requirements for (see
+    # synthetic_data_generator.assign_programme_label) - ranking by raw
+    # probability alone, with no gate, would recommend programmes a real
+    # student cannot be admitted to at all, mislabeled only as "high risk"
+    # by eligibility_status() rather than "does not qualify". Filter to
+    # genuinely eligible programmes first, exactly mirroring how the
+    # training data was generated.
+    eligible_mask = [
+        meets_minimum_requirements(grades, CATALOG_BY_TITLE[c]["minimumSubjectRequirements"], mean_grade)
+        for c in classes
+    ]
+    eligible_idx = [i for i in range(n_classes) if eligible_mask[i]]
+    top_idx = sorted(eligible_idx, key=lambda i: -proba[i])[:3]
+
+    # A student who doesn't meet the minimum requirements for ANY of the 21
+    # trained programmes still needs a useful answer, not an empty one -
+    # fill remaining slots from the same low-barrier fallback the training
+    # generator itself falls back to (FALLBACK_ORDER). Every result is
+    # still explicitly marked further down with whether it was a genuine
+    # eligible match or one of these fallback suggestions, so the app can
+    # be honest about the difference rather than presenting both the same way.
+    if len(top_idx) < 3:
+        for title in FALLBACK_ORDER:
+            if title not in classes:
+                continue
+            idx = int(np.where(classes == title)[0][0])
+            if idx not in top_idx:
+                top_idx.append(idx)
+            if len(top_idx) == 3:
+                break
 
     X_trans = _pipeline.named_steps["preprocessor"].transform(row_df)
     feature_names = _pipeline.named_steps["preprocessor"].get_feature_names_out()
@@ -408,12 +443,15 @@ def get_recommendations(payload: StudentProfilePayload, decoded: dict = Depends(
         shap_list = top_shap_explanations(class_shap, feature_names, row_values)
         primary_reason = build_primary_reason(shap_list, title, confidence)
 
+        meets_requirements = eligible_mask[class_idx]
+
         results.append({
             "rank": rank,
             "confidenceScore": round(confidence, 3),
             "studentClusterScore": cwp,
             "cutoffDiff": cutoff_diff,
-            "eligibilityStatus": eligibility_status(cwp, programme["averageCutoff"]),
+            "eligibilityStatus": eligibility_status(cwp, programme["averageCutoff"], meets_requirements),
+            "meetsMinimumRequirements": meets_requirements,
             "primaryReason": primary_reason,
             "programme": programme,
             "shapExplanations": shap_list,
@@ -508,6 +546,95 @@ def list_feedback(decoded: dict = Depends(require_admin)):
 
     entries.sort(key=lambda e: e.get("submittedAt") or "", reverse=True)
     return entries[:50]
+
+
+@app.post("/api/admin/catalogue-freshness/check")
+def run_catalogue_freshness_check(decoded: dict = Depends(require_admin)):
+    """Admin-triggered only (see catalogue_freshness.py's module docstring
+    for why this isn't a silent automatic background job) - re-fetches
+    KUCCPS's own cutoff document and flags any offering-university entry
+    that may no longer be real. Never edits the catalog itself; only
+    proposes flags for a human to review via the dismiss endpoint below or
+    the existing PUT /api/admin/programmes/{id}."""
+    db = get_db()
+    if db is None:
+        raise HTTPException(status_code=503, detail="Firestore is not configured on the server.")
+
+    try:
+        flags = check_catalogue_freshness()
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Could not complete the freshness check: {e}")
+
+    existing_open = {
+        (doc.get("programmeId"), doc.get("universityName"))
+        for doc in db.collection("catalogue_flags").where("status", "==", "open").stream()
+    }
+
+    new_count = 0
+    for flag in flags:
+        key = (flag["programmeId"], flag["universityName"])
+        if key in existing_open:
+            continue  # already flagged and still unresolved - don't duplicate
+        db.collection("catalogue_flags").document().set(
+            {**flag, "status": "open", "detectedAt": fb_firestore.SERVER_TIMESTAMP}
+        )
+        new_count += 1
+
+    db.collection("audit_logs").document().set(
+        {
+            "action": "Catalogue Freshness Check Run",
+            "actor": decoded.get("email") or decoded["uid"],
+            "details": f"Checked {len(PROGRAMMES)} programmes against KUCCPS; {len(flags)} potential issues found, {new_count} newly flagged.",
+            "timestamp": fb_firestore.SERVER_TIMESTAMP,
+        }
+    )
+
+    return {"checked_programmes": len(PROGRAMMES), "total_flags_found": len(flags), "newly_flagged": new_count}
+
+
+@app.get("/api/admin/catalogue-freshness/flags")
+def list_catalogue_freshness_flags(decoded: dict = Depends(require_admin)):
+    db = get_db()
+    if db is None:
+        raise HTTPException(status_code=503, detail="Firestore is not configured on the server.")
+    query = db.collection("catalogue_flags").where("status", "==", "open").order_by(
+        "detectedAt", direction=fb_firestore.Query.DESCENDING
+    )
+    flags = []
+    for doc in query.stream():
+        entry = doc.to_dict()
+        entry["id"] = doc.id
+        detected_at = entry.get("detectedAt")
+        entry["detectedAt"] = detected_at.isoformat() if hasattr(detected_at, "isoformat") else str(detected_at)
+        flags.append(entry)
+    return flags
+
+
+@app.post("/api/admin/catalogue-freshness/flags/{flag_id}/dismiss")
+def dismiss_catalogue_freshness_flag(flag_id: str, decoded: dict = Depends(require_admin)):
+    db = get_db()
+    if db is None:
+        raise HTTPException(status_code=503, detail="Firestore is not configured on the server.")
+    doc_ref = db.collection("catalogue_flags").document(flag_id)
+    if not doc_ref.get().exists:
+        raise HTTPException(status_code=404, detail="Unknown flag id.")
+
+    doc_ref.update(
+        {
+            "status": "dismissed",
+            "dismissedBy": decoded.get("email") or decoded["uid"],
+            "dismissedAt": fb_firestore.SERVER_TIMESTAMP,
+        }
+    )
+    db.collection("audit_logs").document().set(
+        {
+            "action": "Catalogue Freshness Flag Dismissed",
+            "actor": decoded.get("email") or decoded["uid"],
+            "details": f"Dismissed flag {flag_id}",
+            "timestamp": fb_firestore.SERVER_TIMESTAMP,
+        }
+    )
+    return {"status": "dismissed"}
 
 
 if __name__ == "__main__":

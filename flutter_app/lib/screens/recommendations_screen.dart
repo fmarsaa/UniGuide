@@ -220,30 +220,70 @@ class RecommendationsScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
 
+                // A student whose KCSE subject grades fail this programme's
+                // real KUCCPS minimum requirements outright still gets a
+                // result (so the list is never empty), but it must be
+                // flagged unmistakably as NOT a genuine match rather than
+                // shown with the same reassuring blue pill as the others.
+                if (!item.meetsMinimumRequirements) ...[
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.red.shade200),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.error_outline, size: 16, color: Colors.red.shade700),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            'Does not meet minimum subject requirements — shown as a fallback suggestion, not a qualifying match.',
+                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.red.shade900),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                ],
+
                 // KUCCPS Cutoff Status Pill
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Colors.blue.shade50,
+                    color: item.meetsMinimumRequirements ? Colors.blue.shade50 : Colors.grey.shade100,
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.blue.shade200),
+                    border: Border.all(color: item.meetsMinimumRequirements ? Colors.blue.shade200 : Colors.grey.shade300),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.verified, size: 16, color: Colors.blue.shade700),
+                          Icon(
+                            item.meetsMinimumRequirements ? Icons.verified : Icons.block,
+                            size: 16,
+                            color: item.meetsMinimumRequirements ? Colors.blue.shade700 : Colors.grey.shade700,
+                          ),
                           const SizedBox(width: 6),
                           Text(
                             item.eligibilityStatus,
-                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.blue.shade900),
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: item.meetsMinimumRequirements ? Colors.blue.shade900 : Colors.grey.shade800,
+                            ),
                           ),
                         ],
                       ),
                       Text(
                         'Cutoff: ${item.programme.averageCutoff} pts',
-                        style: TextStyle(fontSize: 11, color: Colors.blue.shade800),
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: item.meetsMinimumRequirements ? Colors.blue.shade800 : Colors.grey.shade700,
+                        ),
                       ),
                     ],
                   ),
