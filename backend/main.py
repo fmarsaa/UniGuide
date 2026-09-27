@@ -372,6 +372,51 @@ def list_programmes():
     return PROGRAMMES
 
 
+def select_recommended_indices(
+    proba: np.ndarray, classes: np.ndarray, grades: Dict[str, str], mean_grade: str
+) -> tuple:
+    """Ranks genuinely eligible programmes by predicted probability, falling
+    back to FALLBACK_ORDER when fewer than 3 are eligible. Returns
+    (top_idx, eligible_mask). Factored out of get_recommendations so it's
+    unit-testable (backend/tests/test_recommend_eligibility.py) without
+    going through the HTTP layer, Firebase Auth, or Firestore persistence.
+
+    The training labels this model learned from were only ever assigned
+    among programmes a synthetic profile actually met the real KUCCPS
+    minimum subject-grade requirements for (see
+    synthetic_data_generator.assign_programme_label) - ranking by raw
+    probability alone, with no gate, would recommend programmes a real
+    student cannot be admitted to at all, mislabeled only as "high risk"
+    by eligibility_status() rather than "does not qualify". Filter to
+    genuinely eligible programmes first, exactly mirroring how the
+    training data was generated. A student who doesn't meet the minimum
+    requirements for ANY trained programme still needs a useful answer,
+    not an empty one - fill remaining slots from the same low-barrier
+    fallback the training generator itself falls back to. Every result is
+    still explicitly marked (by the caller, via eligible_mask) with
+    whether it was a genuine eligible match or a fallback suggestion, so
+    the app can be honest about the difference.
+    """
+    n_classes = len(classes)
+    eligible_mask = [
+        meets_minimum_requirements(grades, CATALOG_BY_TITLE[c]["minimumSubjectRequirements"], mean_grade)
+        for c in classes
+    ]
+    eligible_idx = [i for i in range(n_classes) if eligible_mask[i]]
+    top_idx = sorted(eligible_idx, key=lambda i: -proba[i])[:3]
+
+    if len(top_idx) < 3:
+        for title in FALLBACK_ORDER:
+            if title not in classes:
+                continue
+            idx = int(np.where(classes == title)[0][0])
+            if idx not in top_idx:
+                top_idx.append(idx)
+            if len(top_idx) == 3:
+                break
+    return top_idx, eligible_mask
+
+
 @app.post("/api/recommend")
 def get_recommendations(payload: StudentProfilePayload, decoded: dict = Depends(require_auth)):
     if _pipeline is None or _explainer is None:
@@ -387,38 +432,7 @@ def get_recommendations(payload: StudentProfilePayload, decoded: dict = Depends(
     classes = _pipeline.classes_
     n_classes = len(classes)
 
-    # The training labels this model learned from were only ever assigned
-    # among programmes a synthetic profile actually met the real KUCCPS
-    # minimum subject-grade requirements for (see
-    # synthetic_data_generator.assign_programme_label) - ranking by raw
-    # probability alone, with no gate, would recommend programmes a real
-    # student cannot be admitted to at all, mislabeled only as "high risk"
-    # by eligibility_status() rather than "does not qualify". Filter to
-    # genuinely eligible programmes first, exactly mirroring how the
-    # training data was generated.
-    eligible_mask = [
-        meets_minimum_requirements(grades, CATALOG_BY_TITLE[c]["minimumSubjectRequirements"], mean_grade)
-        for c in classes
-    ]
-    eligible_idx = [i for i in range(n_classes) if eligible_mask[i]]
-    top_idx = sorted(eligible_idx, key=lambda i: -proba[i])[:3]
-
-    # A student who doesn't meet the minimum requirements for ANY of the 21
-    # trained programmes still needs a useful answer, not an empty one -
-    # fill remaining slots from the same low-barrier fallback the training
-    # generator itself falls back to (FALLBACK_ORDER). Every result is
-    # still explicitly marked further down with whether it was a genuine
-    # eligible match or one of these fallback suggestions, so the app can
-    # be honest about the difference rather than presenting both the same way.
-    if len(top_idx) < 3:
-        for title in FALLBACK_ORDER:
-            if title not in classes:
-                continue
-            idx = int(np.where(classes == title)[0][0])
-            if idx not in top_idx:
-                top_idx.append(idx)
-            if len(top_idx) == 3:
-                break
+    top_idx, eligible_mask = select_recommended_indices(proba, classes, grades, mean_grade)
 
     X_trans = _pipeline.named_steps["preprocessor"].transform(row_df)
     feature_names = _pipeline.named_steps["preprocessor"].get_feature_names_out()
