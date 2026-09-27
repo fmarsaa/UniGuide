@@ -210,4 +210,46 @@ class ApiService {
       return Programme.fromJson(jsonDecode(response.body));
     });
   }
+
+  /// Admin-only: re-fetches KUCCPS's own cutoff document server-side and
+  /// flags any offering-university entry that may no longer be real (see
+  /// backend/catalogue_freshness.py). Longer timeout than other calls -
+  /// this downloads and parses a PDF, not a quick Firestore read.
+  static Future<Map<String, dynamic>> runCatalogueFreshnessCheck() {
+    return _withRetry('Could not run the catalogue freshness check', () async {
+      final headers = await _authHeaders();
+      final response = await http
+          .post(Uri.parse('$baseUrl/api/admin/catalogue-freshness/check'), headers: headers)
+          .timeout(const Duration(seconds: 60));
+      if (response.statusCode != 200) throw _errorFor(response);
+      return jsonDecode(response.body) as Map<String, dynamic>;
+    });
+  }
+
+  /// Admin-only: lists currently open (undismissed) catalogue freshness flags.
+  static Future<List<Map<String, dynamic>>> fetchCatalogueFreshnessFlags() {
+    return _withRetry('Could not load catalogue freshness flags', () async {
+      final headers = await _authHeaders();
+      final response = await http
+          .get(Uri.parse('$baseUrl/api/admin/catalogue-freshness/flags'), headers: headers)
+          .timeout(const Duration(seconds: 10));
+      if (response.statusCode != 200) throw _errorFor(response);
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.cast<Map<String, dynamic>>();
+    });
+  }
+
+  /// Admin-only: dismisses a catalogue freshness flag after manual review.
+  static Future<void> dismissCatalogueFreshnessFlag(String flagId) {
+    return _withRetry('Could not dismiss the flag', () async {
+      final headers = await _authHeaders();
+      final response = await http
+          .post(
+            Uri.parse('$baseUrl/api/admin/catalogue-freshness/flags/$flagId/dismiss'),
+            headers: headers,
+          )
+          .timeout(const Duration(seconds: 10));
+      if (response.statusCode != 200) throw _errorFor(response);
+    });
+  }
 }
