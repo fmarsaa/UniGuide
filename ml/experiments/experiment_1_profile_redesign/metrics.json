@@ -1,0 +1,183 @@
+{
+  "accuracy": 0.8720661157024794,
+  "weighted_f1": 0.8709356338875031,
+  "confusion_matrix_labels": [
+    "Bachelor of Architecture",
+    "Bachelor of Arts in Journalism and Mass Communication",
+    "Bachelor of Commerce (BCom) - Finance & Accounting",
+    "Bachelor of Dental Surgery (BDS)",
+    "Bachelor of Economics",
+    "Bachelor of Laws (LLB)",
+    "Bachelor of Medicine and Bachelor of Surgery (MBChB)",
+    "Bachelor of Pharmacy (BPharm)",
+    "Bachelor of Quantity Surveying",
+    "Bachelor of Science in Actuarial Science",
+    "Bachelor of Science in Agriculture",
+    "Bachelor of Science in Business Information Technology (BBIT)",
+    "Bachelor of Science in Civil Engineering",
+    "Bachelor of Science in Electrical and Electronic Engineering",
+    "Bachelor of Science in Food, Nutrition and Dietetics",
+    "Bachelor of Science in Informatics and Computer Science",
+    "Bachelor of Science in Mathematics",
+    "Bachelor of Science in Mechanical Engineering",
+    "Bachelor of Science in Nursing",
+    "Bachelor of Science in Software Engineering",
+    "Bachelor of Veterinary Medicine (BVM)"
+  ],
+  "evaluation_method": "5-fold StratifiedKFold cross_val_predict, out-of-fold predictions across the full dataset",
+  "n_total": 6050,
+  "n_classes": 21,
+  "thin_class_floor": 200,
+  "best_params": {
+    "classifier__max_depth": null,
+    "classifier__min_samples_leaf": 1,
+    "classifier__n_estimators": 350
+  },
+  "holdout_reference": {
+    "n_train": 4840,
+    "n_test": 1210,
+    "accuracy": 0.8826446280991735,
+    "weighted_f1": 0.8819857928115812,
+    "classification_report": {
+      "Bachelor of Architecture": {
+        "precision": 0.88,
+        "recall": 0.9361702127659575,
+        "f1-score": 0.9072164948453608,
+        "support": 47.0
+      },
+      "Bachelor of Arts in Journalism and Mass Communication": {
+        "precision": 0.8709677419354839,
+        "recall": 0.9473684210526315,
+        "f1-score": 0.907563025210084,
+        "support": 57.0
+      },
+      "Bachelor of Commerce (BCom) - Finance & Accounting": {
+        "precision": 0.890625,
+        "recall": 0.8507462686567164,
+        "f1-score": 0.8702290076335878,
+        "support": 67.0
+      },
+      "Bachelor of Dental Surgery (BDS)": {
+        "precision": 0.9433962264150944,
+        "recall": 0.9615384615384616,
+        "f1-score": 0.9523809523809523,
+        "support": 52.0
+      },
+      "Bachelor of Economics": {
+        "precision": 0.7931034482758621,
+        "recall": 0.9019607843137255,
+        "f1-score": 0.8440366972477065,
+        "support": 51.0
+      },
+      "Bachelor of Laws (LLB)": {
+        "precision": 0.8983050847457628,
+        "recall": 0.8833333333333333,
+        "f1-score": 0.8907563025210085,
+        "support": 60.0
+      },
+      "Bachelor of Medicine and Bachelor of Surgery (MBChB)": {
+        "precision": 0.9387755102040817,
+        "recall": 0.8679245283018868,
+        "f1-score": 0.9019607843137255,
+        "support": 53.0
+      },
+      "Bachelor of Pharmacy (BPharm)": {
+        "precision": 0.8888888888888888,
+        "recall": 0.9795918367346939,
+        "f1-score": 0.9320388349514563,
+        "support": 49.0
+      },
+      "Bachelor of Quantity Surveying": {
+        "precision": 0.9090909090909091,
+        "recall": 0.9433962264150944,
+        "f1-score": 0.9259259259259259,
+        "support": 53.0
+      },
+      "Bachelor of Science in Actuarial Science": {
+        "precision": 0.9491525423728814,
+        "recall": 0.875,
+        "f1-score": 0.9105691056910569,
+        "support": 64.0
+      },
+      "Bachelor of Science in Agriculture": {
+        "precision": 0.9019607843137255,
+        "recall": 0.9019607843137255,
+        "f1-score": 0.9019607843137255,
+        "support": 51.0
+      },
+      "Bachelor of Science in Business Information Technology (BBIT)": {
+        "precision": 0.8181818181818182,
+        "recall": 0.7627118644067796,
+        "f1-score": 0.7894736842105263,
+        "support": 59.0
+      },
+      "Bachelor of Science in Civil Engineering": {
+        "precision": 0.9090909090909091,
+        "recall": 0.8771929824561403,
+        "f1-score": 0.8928571428571429,
+        "support": 57.0
+      },
+      "Bachelor of Science in Electrical and Electronic Engineering": {
+        "precision": 0.8928571428571429,
+        "recall": 0.9615384615384616,
+        "f1-score": 0.9259259259259259,
+        "support": 52.0
+      },
+      "Bachelor of Science in Food, Nutrition and Dietetics": {
+        "precision": 0.8888888888888888,
+        "recall": 0.8727272727272727,
+        "f1-score": 0.8807339449541285,
+        "support": 55.0
+      },
+      "Bachelor of Science in Informatics and Computer Science": {
+        "precision": 0.8317757009345794,
+        "recall": 0.8317757009345794,
+        "f1-score": 0.8317757009345794,
+        "support": 107.0
+      },
+      "Bachelor of Science in Mathematics": {
+        "precision": 0.9649122807017544,
+        "recall": 0.7746478873239436,
+        "f1-score": 0.859375,
+        "support": 71.0
+      },
+      "Bachelor of Science in Mechanical Engineering": {
+        "precision": 0.864406779661017,
+        "recall": 0.9107142857142857,
+        "f1-score": 0.8869565217391304,
+        "support": 56.0
+      },
+      "Bachelor of Science in Nursing": {
+        "precision": 0.8793103448275862,
+        "recall": 0.9444444444444444,
+        "f1-score": 0.9107142857142857,
+        "support": 54.0
+      },
+      "Bachelor of Science in Software Engineering": {
+        "precision": 0.7105263157894737,
+        "recall": 0.675,
+        "f1-score": 0.6923076923076923,
+        "support": 40.0
+      },
+      "Bachelor of Veterinary Medicine (BVM)": {
+        "precision": 0.9122807017543859,
+        "recall": 0.9454545454545454,
+        "f1-score": 0.9285714285714286,
+        "support": 55.0
+      },
+      "accuracy": 0.8826446280991735,
+      "macro avg": {
+        "precision": 0.8826903342347737,
+        "recall": 0.8859618239250799,
+        "f1-score": 0.8830156782023537,
+        "support": 1210.0
+      },
+      "weighted avg": {
+        "precision": 0.8840674630981383,
+        "recall": 0.8826446280991735,
+        "f1-score": 0.8819857928115812,
+        "support": 1210.0
+      }
+    }
+  }
+}

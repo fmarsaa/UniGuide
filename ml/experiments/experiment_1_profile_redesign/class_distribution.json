@@ -1,0 +1,134 @@
+{
+  "total_profiles": 6050,
+  "balanced_target_profiles": 6000,
+  "topup_profiles": 50,
+  "thin_class_floor": 200,
+  "classes": [
+    {
+      "programme": "Bachelor of Science in Informatics and Computer Science",
+      "count": 536,
+      "before_topup_count": 519,
+      "topped_up": false
+    },
+    {
+      "programme": "Bachelor of Science in Mathematics",
+      "count": 356,
+      "before_topup_count": 355,
+      "topped_up": false
+    },
+    {
+      "programme": "Bachelor of Commerce (BCom) - Finance & Accounting",
+      "count": 336,
+      "before_topup_count": 336,
+      "topped_up": false
+    },
+    {
+      "programme": "Bachelor of Science in Actuarial Science",
+      "count": 321,
+      "before_topup_count": 320,
+      "topped_up": false
+    },
+    {
+      "programme": "Bachelor of Laws (LLB)",
+      "count": 298,
+      "before_topup_count": 298,
+      "topped_up": false
+    },
+    {
+      "programme": "Bachelor of Science in Business Information Technology (BBIT)",
+      "count": 293,
+      "before_topup_count": 292,
+      "topped_up": false
+    },
+    {
+      "programme": "Bachelor of Arts in Journalism and Mass Communication",
+      "count": 286,
+      "before_topup_count": 286,
+      "topped_up": false
+    },
+    {
+      "programme": "Bachelor of Science in Civil Engineering",
+      "count": 284,
+      "before_topup_count": 284,
+      "topped_up": false
+    },
+    {
+      "programme": "Bachelor of Science in Mechanical Engineering",
+      "count": 280,
+      "before_topup_count": 280,
+      "topped_up": false
+    },
+    {
+      "programme": "Bachelor of Veterinary Medicine (BVM)",
+      "count": 277,
+      "before_topup_count": 277,
+      "topped_up": false
+    },
+    {
+      "programme": "Bachelor of Science in Food, Nutrition and Dietetics",
+      "count": 277,
+      "before_topup_count": 277,
+      "topped_up": false
+    },
+    {
+      "programme": "Bachelor of Science in Nursing",
+      "count": 270,
+      "before_topup_count": 270,
+      "topped_up": false
+    },
+    {
+      "programme": "Bachelor of Quantity Surveying",
+      "count": 267,
+      "before_topup_count": 267,
+      "topped_up": false
+    },
+    {
+      "programme": "Bachelor of Medicine and Bachelor of Surgery (MBChB)",
+      "count": 266,
+      "before_topup_count": 266,
+      "topped_up": false
+    },
+    {
+      "programme": "Bachelor of Dental Surgery (BDS)",
+      "count": 258,
+      "before_topup_count": 258,
+      "topped_up": false
+    },
+    {
+      "programme": "Bachelor of Science in Electrical and Electronic Engineering",
+      "count": 258,
+      "before_topup_count": 258,
+      "topped_up": false
+    },
+    {
+      "programme": "Bachelor of Economics",
+      "count": 255,
+      "before_topup_count": 255,
+      "topped_up": false
+    },
+    {
+      "programme": "Bachelor of Science in Agriculture",
+      "count": 254,
+      "before_topup_count": 253,
+      "topped_up": false
+    },
+    {
+      "programme": "Bachelor of Pharmacy (BPharm)",
+      "count": 243,
+      "before_topup_count": 243,
+      "topped_up": false
+    },
+    {
+      "programme": "Bachelor of Architecture",
+      "count": 235,
+      "before_topup_count": 235,
+      "topped_up": false
+    },
+    {
+      "programme": "Bachelor of Science in Software Engineering",
+      "count": 200,
+      "before_topup_count": 171,
+      "topped_up": true
+    }
+  ]
+}

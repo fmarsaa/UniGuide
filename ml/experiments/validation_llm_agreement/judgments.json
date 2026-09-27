@@ -1,0 +1,862 @@
+[
+  {
+    "index": 1,
+    "profile": {
+      "grades": {
+        "Mathematics": "B",
+        "English": "B",
+        "Kiswahili": "C+",
+        "Biology": "B-",
+        "Chemistry": "B-",
+        "Physics": "B-",
+        "History": "B-",
+        "Business Studies": "B-",
+        "Geography": "B-"
+      },
+      "mean_points": 8,
+      "interests": [
+        "Software Development & Coding",
+        "Journalism & Media Production",
+        "Business Systems & Enterprise Technology"
+      ],
+      "skills": [
+        "Clinical Diagnostics & Health Care",
+        "Python & Software Programming"
+      ],
+      "strengths": [
+        "Logical & Analytical Reasoning",
+        "Creative Problem Solving",
+        "Team Collaboration"
+      ],
+      "aspiration": "Technology Professional (General)"
+    },
+    "llm_independent_judgment": "Bachelor of Science in Software Engineering",
+    "rule_actual_label": "Bachelor of Science in Software Engineering",
+    "agree": true
+  },
+  {
+    "index": 2,
+    "profile": {
+      "grades": {
+        "Mathematics": "A",
+        "English": "B+",
+        "Kiswahili": "A-",
+        "Biology": "A-",
+        "Chemistry": "A-",
+        "Physics": "B-",
+        "History": "B+",
+        "Business Studies": "B-",
+        "Geography": "B+"
+      },
+      "mean_points": 10,
+      "interests": [
+        "Software Development & Coding",
+        "Mechanical Systems & Manufacturing"
+      ],
+      "skills": [
+        "Python & Software Programming",
+        "Problem Solving & Analytical Logic",
+        "Critical Thinking & Persuasive Debate"
+      ],
+      "strengths": [
+        "Perseverance & Discipline",
+        "Creative Problem Solving"
+      ],
+      "aspiration": "Technology Professional (General)"
+    },
+    "llm_independent_judgment": "Bachelor of Science in Software Engineering",
+    "rule_actual_label": "Bachelor of Science in Informatics and Computer Science",
+    "agree": false
+  },
+  {
+    "index": 3,
+    "profile": {
+      "grades": {
+        "Mathematics": "B",
+        "English": "B",
+        "Kiswahili": "B-",
+        "Biology": "B",
+        "Chemistry": "C",
+        "Physics": "B-",
+        "History": "C",
+        "Business Studies": "B-",
+        "Geography": "B-"
+      },
+      "mean_points": 8,
+      "interests": [
+        "Software Development & Coding",
+        "Veterinary & Animal Health Care",
+        "Mathematical Research & Data Science"
+      ],
+      "skills": [
+        "Problem Solving & Analytical Logic",
+        "Team Collaboration & Leadership"
+      ],
+      "strengths": [
+        "Logical & Analytical Reasoning",
+        "Empathy & Human Care",
+        "Creative Problem Solving"
+      ],
+      "aspiration": "Software Engineer / AI Architect"
+    },
+    "llm_independent_judgment": "Bachelor of Science in Informatics and Computer Science",
+    "rule_actual_label": "Bachelor of Science in Software Engineering",
+    "agree": false
+  },
+  {
+    "index": 4,
+    "profile": {
+      "grades": {
+        "Mathematics": "B",
+        "English": "C+",
+        "Kiswahili": "B-",
+        "Biology": "C",
+        "Chemistry": "C",
+        "Physics": "B-",
+        "History": "C+",
+        "Business Studies": "C+",
+        "Geography": "C+"
+      },
+      "mean_points": 7,
+      "interests": [
+        "Software Development & Coding",
+        "Dental & Oral Health Care",
+        "Economic Policy & Market Analysis"
+      ],
+      "skills": [
+        "Python & Software Programming",
+        "Problem Solving & Analytical Logic"
+      ],
+      "strengths": [
+        "Logical & Analytical Reasoning",
+        "Creative Problem Solving"
+      ],
+      "aspiration": "Technology Professional (General)"
+    },
+    "llm_independent_judgment": "Bachelor of Science in Software Engineering",
+    "rule_actual_label": "Bachelor of Science in Software Engineering",
+    "agree": true
+  },
+  {
+    "index": 5,
+    "profile": {
+      "grades": {
+        "Mathematics": "C+",
+        "English": "C+",
+        "Kiswahili": "B-",
+        "Biology": "B-",
+        "Chemistry": "B-",
+        "Physics": "B-",
+        "History": "C+",
+        "Business Studies": "C+",
+        "Geography": "C+"
+      },
+      "mean_points": 7,
+      "interests": [
+        "Software Development & Coding",
+        "Data Analytics & Statistics",
+        "Architecture & Building Design"
+      ],
+      "skills": [
+        "Python & Software Programming",
+        "Problem Solving & Analytical Logic",
+        "Cost Estimation & Construction Economics"
+      ],
+      "strengths": [
+        "Logical & Analytical Reasoning",
+        "Empathy & Human Care",
+        "Creative Problem Solving"
+      ],
+      "aspiration": "Technology Professional (General)"
+    },
+    "llm_independent_judgment": "Bachelor of Science in Informatics and Computer Science",
+    "rule_actual_label": "Bachelor of Science in Informatics and Computer Science",
+    "agree": true
+  },
+  {
+    "index": 6,
+    "profile": {
+      "grades": {
+        "Mathematics": "B-",
+        "English": "C-",
+        "Kiswahili": "C",
+        "Biology": "C",
+        "Chemistry": "D+",
+        "Physics": "B-",
+        "History": "C",
+        "Business Studies": "C",
+        "Geography": "C"
+      },
+      "mean_points": 6,
+      "interests": [
+        "Software Development & Coding",
+        "Journalism & Media Production"
+      ],
+      "skills": [
+        "Mathematical & Quantitative Analysis",
+        "Attention to Detail"
+      ],
+      "strengths": [
+        "Logical & Analytical Reasoning",
+        "Team Collaboration"
+      ],
+      "aspiration": "Journalist / Media Professional"
+    },
+    "llm_independent_judgment": "Bachelor of Arts in Journalism and Mass Communication",
+    "rule_actual_label": "Bachelor of Science in Informatics and Computer Science",
+    "agree": false
+  },
+  {
+    "index": 7,
+    "profile": {
+      "grades": {
+        "Mathematics": "B",
+        "English": "C",
+        "Kiswahili": "D+",
+        "Biology": "C-",
+        "Chemistry": "D+",
+        "Physics": "B",
+        "History": "C-",
+        "Business Studies": "C-",
+        "Geography": "C-"
+      },
+      "mean_points": 5,
+      "interests": [
+        "Pharmaceutical Sciences",
+        "Artificial Intelligence & Machine Learning",
+        "Mechanical Systems & Manufacturing"
+      ],
+      "skills": [
+        "Mathematical & Quantitative Analysis",
+        "Critical Thinking & Persuasive Debate",
+        "Agricultural & Environmental Science"
+      ],
+      "strengths": [
+        "Logical & Analytical Reasoning",
+        "Attention to Precision",
+        "Team Collaboration"
+      ],
+      "aspiration": "Software Engineer / AI Architect"
+    },
+    "llm_independent_judgment": "Bachelor of Science in Informatics and Computer Science",
+    "rule_actual_label": "Bachelor of Science in Informatics and Computer Science",
+    "agree": true
+  },
+  {
+    "index": 8,
+    "profile": {
+      "grades": {
+        "Mathematics": "B+",
+        "English": "B+",
+        "Kiswahili": "B+",
+        "Biology": "B",
+        "Chemistry": "C+",
+        "Physics": "B",
+        "History": "B",
+        "Business Studies": "B",
+        "Geography": "B"
+      },
+      "mean_points": 9,
+      "interests": [
+        "Artificial Intelligence & Machine Learning",
+        "Agribusiness & Food Sustainability"
+      ],
+      "skills": [
+        "Financial Modeling & Accounting",
+        "Team Collaboration & Leadership",
+        "News Writing & Media Research"
+      ],
+      "strengths": [
+        "Perseverance & Discipline",
+        "Logical & Analytical Reasoning",
+        "Team Collaboration"
+      ],
+      "aspiration": "Finance & Business Professional (General)"
+    },
+    "llm_independent_judgment": "Bachelor of Commerce (BCom) - Finance & Accounting",
+    "rule_actual_label": "Bachelor of Science in Business Information Technology (BBIT)",
+    "agree": false
+  },
+  {
+    "index": 9,
+    "profile": {
+      "grades": {
+        "Mathematics": "B-",
+        "English": "B-",
+        "Kiswahili": "C",
+        "Biology": "C",
+        "Chemistry": "D",
+        "Physics": "C-",
+        "History": "C-",
+        "Business Studies": "D",
+        "Geography": "D+"
+      },
+      "mean_points": 5,
+      "interests": [
+        "Pharmaceutical Sciences",
+        "Agribusiness & Food Sustainability"
+      ],
+      "skills": [
+        "Python & Software Programming",
+        "Problem Solving & Analytical Logic",
+        "Financial Modeling & Accounting"
+      ],
+      "strengths": [
+        "Perseverance & Discipline",
+        "Team Collaboration"
+      ],
+      "aspiration": "Finance & Business Professional (General)"
+    },
+    "llm_independent_judgment": "Bachelor of Commerce (BCom) - Finance & Accounting",
+    "rule_actual_label": "Bachelor of Commerce (BCom) - Finance & Accounting",
+    "agree": true
+  },
+  {
+    "index": 10,
+    "profile": {
+      "grades": {
+        "Mathematics": "B-",
+        "English": "B",
+        "Kiswahili": "D+",
+        "Biology": "C-",
+        "Chemistry": "D+",
+        "Physics": "C-",
+        "History": "C-",
+        "Business Studies": "D",
+        "Geography": "C-"
+      },
+      "mean_points": 5,
+      "interests": [
+        "Agribusiness & Food Sustainability",
+        "Business Systems & Enterprise Technology"
+      ],
+      "skills": [
+        "Financial Modeling & Accounting",
+        "Team Collaboration & Leadership"
+      ],
+      "strengths": [
+        "Perseverance & Discipline",
+        "Empathy & Human Care",
+        "Team Collaboration"
+      ],
+      "aspiration": "Cybersecurity Architect"
+    },
+    "llm_independent_judgment": "Bachelor of Science in Business Information Technology (BBIT)",
+    "rule_actual_label": "Bachelor of Science in Business Information Technology (BBIT)",
+    "agree": true
+  },
+  {
+    "index": 11,
+    "profile": {
+      "grades": {
+        "Mathematics": "C+",
+        "English": "B-",
+        "Kiswahili": "B-",
+        "Biology": "C",
+        "Chemistry": "B",
+        "Physics": "C",
+        "History": "B-",
+        "Business Studies": "B-",
+        "Geography": "B-"
+      },
+      "mean_points": 8,
+      "interests": [
+        "Agribusiness & Food Sustainability",
+        "Economic Policy & Market Analysis"
+      ],
+      "skills": [
+        "Mathematical & Quantitative Analysis",
+        "Team Collaboration & Leadership"
+      ],
+      "strengths": [
+        "Logical & Analytical Reasoning",
+        "Leadership & Strategic Direction",
+        "Team Collaboration"
+      ],
+      "aspiration": "Quantitative Analyst / Researcher (General)"
+    },
+    "llm_independent_judgment": "Bachelor of Economics",
+    "rule_actual_label": "Bachelor of Economics",
+    "agree": true
+  },
+  {
+    "index": 12,
+    "profile": {
+      "grades": {
+        "Mathematics": "B+",
+        "English": "B",
+        "Kiswahili": "B",
+        "Biology": "B-",
+        "Chemistry": "C",
+        "Physics": "B-",
+        "History": "B-",
+        "Business Studies": "B-",
+        "Geography": "C+"
+      },
+      "mean_points": 8,
+      "interests": [
+        "Corporate Law & Constitutional Advocacy",
+        "Veterinary & Animal Health Care",
+        "Economic Policy & Market Analysis"
+      ],
+      "skills": [
+        "Python & Software Programming",
+        "Mathematical & Quantitative Analysis",
+        "Financial Modeling & Accounting"
+      ],
+      "strengths": [
+        "Logical & Analytical Reasoning",
+        "Team Collaboration"
+      ],
+      "aspiration": "Economist / Policy Analyst"
+    },
+    "llm_independent_judgment": "Bachelor of Economics",
+    "rule_actual_label": "Bachelor of Economics",
+    "agree": true
+  },
+  {
+    "index": 13,
+    "profile": {
+      "grades": {
+        "Mathematics": "B-",
+        "English": "B+",
+        "Kiswahili": "B+",
+        "Biology": "B-",
+        "Chemistry": "B",
+        "Physics": "B",
+        "History": "B",
+        "Business Studies": "C+",
+        "Geography": "B+"
+      },
+      "mean_points": 9,
+      "interests": [
+        "Mechanical Systems & Manufacturing",
+        "Economic Policy & Market Analysis"
+      ],
+      "skills": [
+        "Mathematical & Quantitative Analysis",
+        "Critical Thinking & Persuasive Debate",
+        "Team Collaboration & Leadership"
+      ],
+      "strengths": [
+        "Creative Problem Solving",
+        "Leadership & Strategic Direction"
+      ],
+      "aspiration": "Economist / Policy Analyst"
+    },
+    "llm_independent_judgment": "Bachelor of Economics",
+    "rule_actual_label": "Bachelor of Economics",
+    "agree": true
+  },
+  {
+    "index": 14,
+    "profile": {
+      "grades": {
+        "Mathematics": "B",
+        "English": "C",
+        "Kiswahili": "C",
+        "Biology": "D+",
+        "Chemistry": "C-",
+        "Physics": "C-",
+        "History": "C",
+        "Business Studies": "C",
+        "Geography": "C"
+      },
+      "mean_points": 6,
+      "interests": [
+        "Pharmaceutical Sciences",
+        "Journalism & Media Production"
+      ],
+      "skills": [
+        "Mathematical & Quantitative Analysis",
+        "Attention to Detail"
+      ],
+      "strengths": [
+        "Logical & Analytical Reasoning",
+        "Creative Problem Solving",
+        "Team Collaboration"
+      ],
+      "aspiration": "Quantitative Analyst / Researcher (General)"
+    },
+    "llm_independent_judgment": "Bachelor of Science in Mathematics",
+    "rule_actual_label": "Bachelor of Science in Mathematics",
+    "agree": true
+  },
+  {
+    "index": 15,
+    "profile": {
+      "grades": {
+        "Mathematics": "B",
+        "English": "C+",
+        "Kiswahili": "C+",
+        "Biology": "C-",
+        "Chemistry": "C",
+        "Physics": "D+",
+        "History": "C",
+        "Business Studies": "C",
+        "Geography": "C"
+      },
+      "mean_points": 6,
+      "interests": [
+        "Data Analytics & Statistics",
+        "Mathematical Research & Data Science"
+      ],
+      "skills": [
+        "Problem Solving & Analytical Logic",
+        "Attention to Detail"
+      ],
+      "strengths": [
+        "Logical & Analytical Reasoning",
+        "Attention to Precision",
+        "Leadership & Strategic Direction"
+      ],
+      "aspiration": "Quantitative Analyst / Researcher (General)"
+    },
+    "llm_independent_judgment": "Bachelor of Science in Mathematics",
+    "rule_actual_label": "Bachelor of Science in Mathematics",
+    "agree": true
+  },
+  {
+    "index": 16,
+    "profile": {
+      "grades": {
+        "Mathematics": "B+",
+        "English": "B+",
+        "Kiswahili": "A-",
+        "Biology": "B-",
+        "Chemistry": "A-",
+        "Physics": "B+",
+        "History": "B+",
+        "Business Studies": "B",
+        "Geography": "B+"
+      },
+      "mean_points": 10,
+      "interests": [
+        "Civil Infrastructure & Structural Engineering",
+        "Financial Markets & Investment Banking",
+        "Agribusiness & Food Sustainability"
+      ],
+      "skills": [
+        "Problem Solving & Analytical Logic",
+        "Team Collaboration & Leadership"
+      ],
+      "strengths": [
+        "Logical & Analytical Reasoning",
+        "Creative Problem Solving",
+        "Leadership & Strategic Direction"
+      ],
+      "aspiration": "Finance & Business Professional (General)"
+    },
+    "llm_independent_judgment": "Bachelor of Commerce (BCom) - Finance & Accounting",
+    "rule_actual_label": "Bachelor of Commerce (BCom) - Finance & Accounting",
+    "agree": true
+  },
+  {
+    "index": 17,
+    "profile": {
+      "grades": {
+        "Mathematics": "B-",
+        "English": "B",
+        "Kiswahili": "C+",
+        "Biology": "C+",
+        "Chemistry": "C+",
+        "Physics": "C+",
+        "History": "C+",
+        "Business Studies": "C+",
+        "Geography": "C+"
+      },
+      "mean_points": 7,
+      "interests": [
+        "Financial Markets & Investment Banking",
+        "Agribusiness & Food Sustainability",
+        "Food Science & Nutrition"
+      ],
+      "skills": [
+        "Financial Modeling & Accounting",
+        "Team Collaboration & Leadership",
+        "Agricultural & Environmental Science"
+      ],
+      "strengths": [
+        "Perseverance & Discipline",
+        "Leadership & Strategic Direction"
+      ],
+      "aspiration": "Finance & Business Professional (General)"
+    },
+    "llm_independent_judgment": "Bachelor of Commerce (BCom) - Finance & Accounting",
+    "rule_actual_label": "Bachelor of Commerce (BCom) - Finance & Accounting",
+    "agree": true
+  },
+  {
+    "index": 18,
+    "profile": {
+      "grades": {
+        "Mathematics": "A-",
+        "English": "A-",
+        "Kiswahili": "B",
+        "Biology": "A-",
+        "Chemistry": "A",
+        "Physics": "B+",
+        "History": "B+",
+        "Business Studies": "B+",
+        "Geography": "B+"
+      },
+      "mean_points": 10,
+      "interests": [
+        "Healthcare & Clinical Medicine",
+        "Civil Infrastructure & Structural Engineering"
+      ],
+      "skills": [
+        "Scientific Laboratory Research",
+        "Team Collaboration & Leadership"
+      ],
+      "strengths": [
+        "Perseverance & Discipline",
+        "Logical & Analytical Reasoning",
+        "Leadership & Strategic Direction"
+      ],
+      "aspiration": "Medical Doctor (Physician/Surgeon)"
+    },
+    "llm_independent_judgment": "Bachelor of Medicine and Bachelor of Surgery (MBChB)",
+    "rule_actual_label": "Bachelor of Medicine and Bachelor of Surgery (MBChB)",
+    "agree": true
+  },
+  {
+    "index": 19,
+    "profile": {
+      "grades": {
+        "Mathematics": "B+",
+        "English": "B+",
+        "Kiswahili": "C-",
+        "Biology": "A-",
+        "Chemistry": "A-",
+        "Physics": "D+",
+        "History": "D+",
+        "Business Studies": "D+",
+        "Geography": "D+"
+      },
+      "mean_points": 4,
+      "interests": [
+        "Healthcare & Clinical Medicine",
+        "Food Science & Nutrition"
+      ],
+      "skills": [
+        "Clinical Diagnostics & Health Care",
+        "Team Collaboration & Leadership",
+        "Agricultural & Environmental Science"
+      ],
+      "strengths": [
+        "Logical & Analytical Reasoning",
+        "Creative Problem Solving"
+      ],
+      "aspiration": "Medical Doctor (Physician/Surgeon)"
+    },
+    "llm_independent_judgment": "Bachelor of Medicine and Bachelor of Surgery (MBChB)",
+    "rule_actual_label": "Bachelor of Medicine and Bachelor of Surgery (MBChB)",
+    "agree": true
+  },
+  {
+    "index": 20,
+    "profile": {
+      "grades": {
+        "Mathematics": "A",
+        "English": "A-",
+        "Kiswahili": "A-",
+        "Biology": "B+",
+        "Chemistry": "B+",
+        "Physics": "B+",
+        "History": "B+",
+        "Business Studies": "B+",
+        "Geography": "B+"
+      },
+      "mean_points": 10,
+      "interests": [
+        "Healthcare & Clinical Medicine",
+        "Patient Care & Nursing",
+        "Mathematical Research & Data Science"
+      ],
+      "skills": [
+        "Problem Solving & Analytical Logic",
+        "Team Collaboration & Leadership"
+      ],
+      "strengths": [
+        "Perseverance & Discipline",
+        "Empathy & Human Care",
+        "Creative Problem Solving"
+      ],
+      "aspiration": "Mechanical Engineer"
+    },
+    "llm_independent_judgment": "Bachelor of Science in Nursing",
+    "rule_actual_label": "Bachelor of Medicine and Bachelor of Surgery (MBChB)",
+    "agree": false
+  },
+  {
+    "index": 21,
+    "profile": {
+      "grades": {
+        "Mathematics": "A",
+        "English": "B",
+        "Kiswahili": "B+",
+        "Biology": "B+",
+        "Chemistry": "A-",
+        "Physics": "B+",
+        "History": "B+",
+        "Business Studies": "B+",
+        "Geography": "B+"
+      },
+      "mean_points": 10,
+      "interests": [
+        "Healthcare & Clinical Medicine",
+        "Patient Care & Nursing",
+        "Cybersecurity & Network Defense"
+      ],
+      "skills": [
+        "Clinical Diagnostics & Health Care",
+        "Attention to Detail"
+      ],
+      "strengths": [
+        "Empathy & Human Care",
+        "Team Collaboration"
+      ],
+      "aspiration": "Healthcare Professional (General)"
+    },
+    "llm_independent_judgment": "Bachelor of Science in Nursing",
+    "rule_actual_label": "Bachelor of Medicine and Bachelor of Surgery (MBChB)",
+    "agree": false
+  },
+  {
+    "index": 22,
+    "profile": {
+      "grades": {
+        "Mathematics": "C+",
+        "English": "B",
+        "Kiswahili": "B",
+        "Biology": "C",
+        "Chemistry": "D+",
+        "Physics": "C",
+        "History": "C-",
+        "Business Studies": "C",
+        "Geography": "C"
+      },
+      "mean_points": 6,
+      "interests": [
+        "Corporate Law & Constitutional Advocacy",
+        "Mechanical Systems & Manufacturing"
+      ],
+      "skills": [
+        "Critical Thinking & Persuasive Debate",
+        "Attention to Detail"
+      ],
+      "strengths": [
+        "Perseverance & Discipline",
+        "Leadership & Strategic Direction",
+        "Team Collaboration"
+      ],
+      "aspiration": "Public Policy & Communications Professional (General)"
+    },
+    "llm_independent_judgment": "Bachelor of Laws (LLB)",
+    "rule_actual_label": "Bachelor of Laws (LLB)",
+    "agree": true
+  },
+  {
+    "index": 23,
+    "profile": {
+      "grades": {
+        "Mathematics": "B-",
+        "English": "B",
+        "Kiswahili": "A-",
+        "Biology": "C+",
+        "Chemistry": "C",
+        "Physics": "C+",
+        "History": "C+",
+        "Business Studies": "C+",
+        "Geography": "C-"
+      },
+      "mean_points": 7,
+      "interests": [
+        "Data Analytics & Statistics",
+        "Robotics, Mechatronics & Automation",
+        "Corporate Law & Constitutional Advocacy"
+      ],
+      "skills": [
+        "Critical Thinking & Persuasive Debate",
+        "CAD Modeling & Spatial Engineering"
+      ],
+      "strengths": [
+        "Perseverance & Discipline",
+        "Leadership & Strategic Direction"
+      ],
+      "aspiration": "Dentist"
+    },
+    "llm_independent_judgment": "Bachelor of Laws (LLB)",
+    "rule_actual_label": "Bachelor of Laws (LLB)",
+    "agree": true
+  },
+  {
+    "index": 24,
+    "profile": {
+      "grades": {
+        "Mathematics": "B",
+        "English": "C+",
+        "Kiswahili": "C+",
+        "Biology": "B-",
+        "Chemistry": "C",
+        "Physics": "C+",
+        "History": "C+",
+        "Business Studies": "C+",
+        "Geography": "C+"
+      },
+      "mean_points": 7,
+      "interests": [
+        "Robotics, Mechatronics & Automation",
+        "Agribusiness & Food Sustainability"
+      ],
+      "skills": [
+        "Scientific Laboratory Research",
+        "Attention to Detail",
+        "Agricultural & Environmental Science"
+      ],
+      "strengths": [
+        "Perseverance & Discipline",
+        "Logical & Analytical Reasoning"
+      ],
+      "aspiration": "Dentist"
+    },
+    "llm_independent_judgment": "Bachelor of Science in Agriculture",
+    "rule_actual_label": "Bachelor of Science in Agriculture",
+    "agree": true
+  },
+  {
+    "index": 25,
+    "profile": {
+      "grades": {
+        "Mathematics": "C",
+        "English": "C",
+        "Kiswahili": "C-",
+        "Biology": "B-",
+        "Chemistry": "C",
+        "Physics": "C",
+        "History": "C",
+        "Business Studies": "C",
+        "Geography": "C"
+      },
+      "mean_points": 6,
+      "interests": [
+        "Corporate Law & Constitutional Advocacy",
+        "Agribusiness & Food Sustainability",
+        "Economic Policy & Market Analysis"
+      ],
+      "skills": [
+        "Scientific Laboratory Research",
+        "Attention to Detail"
+      ],
+      "strengths": [
+        "Perseverance & Discipline",
+        "Creative Problem Solving"
+      ],
+      "aspiration": "Agricultural & Environmental Professional (General)"
+    },
+    "llm_independent_judgment": "Bachelor of Science in Agriculture",
+    "rule_actual_label": "Bachelor of Science in Agriculture",
+    "agree": true
+  }
+]

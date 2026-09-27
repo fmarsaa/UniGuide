@@ -1,0 +1,29 @@
+{
+  "total_profiles": 6612,
+  "base_random_profiles": 6000,
+  "targeted_oversample_profiles": 612,
+  "thin_class_floor": 175,
+  "classes": [
+    {"programme": "Bachelor of Science in Informatics and Computer Science", "count": 985, "oversampled": false},
+    {"programme": "Bachelor of Science in Mathematics", "count": 795, "oversampled": false},
+    {"programme": "Bachelor of Commerce (BCom) - Finance & Accounting", "count": 573, "oversampled": false},
+    {"programme": "Bachelor of Economics", "count": 406, "oversampled": false},
+    {"programme": "Bachelor of Arts in Journalism and Mass Communication", "count": 364, "oversampled": false},
+    {"programme": "Bachelor of Science in Food, Nutrition and Dietetics", "count": 364, "oversampled": false},
+    {"programme": "Bachelor of Science in Business Information Technology (BBIT)", "count": 351, "oversampled": false},
+    {"programme": "Bachelor of Science in Software Engineering", "count": 292, "oversampled": false},
+    {"programme": "Bachelor of Veterinary Medicine (BVM)", "count": 256, "oversampled": false},
+    {"programme": "Bachelor of Science in Agriculture", "count": 225, "oversampled": false},
+    {"programme": "Bachelor of Quantity Surveying", "count": 219, "oversampled": false},
+    {"programme": "Bachelor of Science in Nursing", "count": 216, "oversampled": false},
+    {"programme": "Bachelor of Science in Mechanical Engineering", "count": 195, "oversampled": false},
+    {"programme": "Bachelor of Architecture", "count": 185, "oversampled": false},
+    {"programme": "Bachelor of Medicine and Bachelor of Surgery (MBChB)", "count": 180, "oversampled": true, "original_count": 69},
+    {"programme": "Bachelor of Dental Surgery (BDS)", "count": 177, "oversampled": true, "original_count": 58},
+    {"programme": "Bachelor of Science in Electrical and Electronic Engineering", "count": 175, "oversampled": true, "original_count": 117},
+    {"programme": "Bachelor of Pharmacy (BPharm)", "count": 175, "oversampled": true, "original_count": 35},
+    {"programme": "Bachelor of Science in Civil Engineering", "count": 175, "oversampled": true, "original_count": 89},
+    {"programme": "Bachelor of Science in Actuarial Science", "count": 167, "oversampled": false},
+    {"programme": "Bachelor of Laws (LLB)", "count": 137, "oversampled": false}
+  ]
+}

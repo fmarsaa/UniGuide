@@ -41,38 +41,59 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
 
 from kuccps import ML_FEATURE_SUBJECTS, FEATURE_COLUMN
-from synthetic_data_generator import THIN_CLASS_FLOOR, create_synthetic_dataset, TRAIT_FEATURE_COLUMNS
+from synthetic_data_generator import (
+    CLUSTER_SCORE_FEATURE_COLUMNS,
+    THIN_CLASS_FLOOR,
+    TRAIT_FEATURE_COLUMNS,
+    create_synthetic_dataset,
+)
+
+# Experiment 2 toggle: include the per-programme Cluster-Weighted-Points-vs-
+# cutoff features (see synthetic_data_generator.build_cluster_score_features)
+# alongside Experiment 1's feature set, as a controlled A/B comparison
+# against ml/experiments/experiment_1_profile_redesign (87.21% accuracy,
+# without these features). Per the original brainstorm's own rule: keep this
+# True only if the comparison in ml/experiments/experiment_2_cluster_score/
+# actually shows it helps - do not leave it on "because it sounds useful".
+INCLUDE_CLUSTER_SCORE_FEATURES = False
 
 # One numeric feature per subject that actually feeds a real KUCCPS cluster
 # requirement somewhere in programmes_catalog.py (5 compulsory + 4 optional
 # cluster-relevant subjects), plus overall mean points, plus one boolean
 # feature per interest/skill/strength a student can select (TRAIT_FEATURE_
-# COLUMNS - every option they picked, not just the first). Kept in sync with
+# COLUMNS - every option they picked, not just the first), plus (Experiment 2
+# only) one cluster-score feature per trained programme. Kept in sync with
 # kuccps.ML_FEATURE_SUBJECTS / FEATURE_COLUMN and synthetic_data_generator's
-# trait columns so training and serving (main.py) can never disagree on the
-# feature schema.
-NUMERIC_FEATURES = [FEATURE_COLUMN[s] for s in ML_FEATURE_SUBJECTS] + ["mean_points"] + TRAIT_FEATURE_COLUMNS
+# trait/cluster-score columns so training and serving (main.py) can never
+# disagree on the feature schema.
+NUMERIC_FEATURES = (
+    [FEATURE_COLUMN[s] for s in ML_FEATURE_SUBJECTS]
+    + ["mean_points"]
+    + TRAIT_FEATURE_COLUMNS
+    + (CLUSTER_SCORE_FEATURE_COLUMNS if INCLUDE_CLUSTER_SCORE_FEATURES else [])
+)
 CATEGORICAL_FEATURES = ["aspiration"]
 FEATURE_COLUMNS = NUMERIC_FEATURES + CATEGORICAL_FEATURES
 TARGET_COLUMN = "programme_label"
 
-# Some programmes (e.g. MBChB, BPharm, BDS, Civil, EEE) have strict grade
-# gates so far fewer synthetic profiles are naturally eligible for them.
-# N=6000 base profiles + targeted oversampling of those five up to
-# THIN_CLASS_FLOOR (see synthetic_data_generator.oversample_thin_classes)
-# + balanced class weights + a hyperparameter search together address that
-# imbalance, instead of just accepting whatever the first guessed
-# hyperparameters give on an unreliable small test slice.
-DATASET_SIZE = 6000
+# Experiment 1: every one of the 21 trained programmes is now generated with
+# a thematic bias toward it (see synthetic_data_generator._build_profile_for_
+# target), not just the 5 hardest-gated ones - so N=6000 balanced-target
+# profiles + a uniform THIN_CLASS_FLOOR top-up pass for any class that still
+# fell short + balanced class weights + a hyperparameter search together
+# address class imbalance, instead of just accepting whatever the first
+# guessed hyperparameters give on an unreliable small test slice.
+DATASET_SIZE = 15000  # scaled from 6000 for 21 classes to keep ~similar per-class density across 53
 PARAM_GRID = {
     "classifier__n_estimators": [200, 350],
     "classifier__max_depth": [12, 18, None],
     "classifier__min_samples_leaf": [1, 2],
+    "classifier__max_features": ["sqrt", "log2"],
 }
 
 
 def train_and_evaluate_model():
-    print(f"Step 1: Generating validated synthetic student dataset (N={DATASET_SIZE} base + targeted oversampling to a floor of {THIN_CLASS_FLOOR} for the 5 strict-gate classes)...")
+    print(f"Step 1: Generating validated synthetic student dataset (N={DATASET_SIZE} balanced-target profiles + a floor of {THIN_CLASS_FLOOR} for every one of the 21 trained classes)...")
     df = create_synthetic_dataset(DATASET_SIZE)
     print(f"Total profiles after oversampling: {len(df)}")
     print(df["programme_label"].value_counts().to_string())
