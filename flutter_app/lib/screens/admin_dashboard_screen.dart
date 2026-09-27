@@ -45,6 +45,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   double? _modelAccuracy;
   double? _modelWeightedF1;
 
+  List<Map<String, dynamic>> _freshnessFlags = [];
+  bool _isLoadingFreshness = true;
+  bool _isRunningFreshnessCheck = false;
+  String? _freshnessError;
+  String? _freshnessCheckMessage;
+
   @override
   void initState() {
     super.initState();
@@ -54,6 +60,58 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     _loadAuditLogs();
     _loadStudentFeedback();
     _loadModelMetrics();
+    _loadFreshnessFlags();
+  }
+
+  Future<void> _loadFreshnessFlags() async {
+    setState(() {
+      _isLoadingFreshness = true;
+      _freshnessError = null;
+    });
+    try {
+      final flags = await ApiService.fetchCatalogueFreshnessFlags();
+      setState(() {
+        _freshnessFlags = flags;
+        _isLoadingFreshness = false;
+      });
+    } on ApiException catch (e) {
+      setState(() {
+        _freshnessError = e.message;
+        _isLoadingFreshness = false;
+      });
+    }
+  }
+
+  Future<void> _runFreshnessCheck() async {
+    setState(() {
+      _isRunningFreshnessCheck = true;
+      _freshnessCheckMessage = null;
+    });
+    try {
+      final result = await ApiService.runCatalogueFreshnessCheck();
+      setState(() {
+        _freshnessCheckMessage =
+            'Checked ${result['checked_programmes']} programmes against KUCCPS - ${result['newly_flagged']} new issue(s) found.';
+        _isRunningFreshnessCheck = false;
+      });
+      await _loadFreshnessFlags();
+    } on ApiException catch (e) {
+      setState(() {
+        _freshnessCheckMessage = 'Check failed: ${e.message}';
+        _isRunningFreshnessCheck = false;
+      });
+    }
+  }
+
+  Future<void> _dismissFreshnessFlag(String flagId) async {
+    try {
+      await ApiService.dismissCatalogueFreshnessFlag(flagId);
+      setState(() => _freshnessFlags.removeWhere((f) => f['id'] == flagId));
+    } on ApiException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not dismiss: ${e.message}'), backgroundColor: Colors.redAccent),
+      );
+    }
   }
 
   Future<void> _loadModelMetrics() async {
@@ -254,6 +312,63 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           ),
           const SizedBox(height: 22),
 
+          // Catalogue Freshness - re-checks the catalog against KUCCPS's own
+          // published data and flags anything that may have changed, rather
+          // than relying purely on an admin noticing on their own.
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  'Catalogue Freshness',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary(context)),
+                ),
+              ),
+              ElevatedButton.icon(
+                onPressed: _isRunningFreshnessCheck ? null : _runFreshnessCheck,
+                icon: _isRunningFreshnessCheck
+                    ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                    : const Icon(Icons.sync, size: 16),
+                label: Text(_isRunningFreshnessCheck ? 'Checking...' : 'Check Now'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF38BDF8),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Re-checks the catalog against KUCCPS\'s own published cutoff data. Never edits anything automatically - only flags a university-programme pair for your review when it may have changed.',
+            style: TextStyle(fontSize: 12, color: AppColors.textSecondary(context)),
+          ),
+          const SizedBox(height: 12),
+          if (_freshnessCheckMessage != null) ...[
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: const Color(0xFF38BDF8).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: const Color(0xFF38BDF8).withOpacity(0.3)),
+              ),
+              child: Text(_freshnessCheckMessage!, style: const TextStyle(color: Color(0xFF38BDF8), fontSize: 12)),
+            ),
+            const SizedBox(height: 10),
+          ],
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: AppColors.cardBackground(context),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.cardBorder(context)),
+            ),
+            child: _buildFreshnessFlagsBody(),
+          ),
+          const SizedBox(height: 22),
+
           // Audit Trails & Activity Logs
           Text(
             'System Audit Trails & Model Inference Logs',
@@ -389,6 +504,79 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           const SizedBox(height: 24),
         ],
       ),
+    );
+  }
+
+  Widget _buildFreshnessFlagsBody() {
+    if (_isLoadingFreshness) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 12),
+        child: Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF38BDF8)))),
+      );
+    }
+    if (_freshnessError != null) {
+      return Row(
+        children: [
+          Expanded(
+            child: Text(
+              'Could not load freshness flags: $_freshnessError',
+              style: TextStyle(fontSize: 12, color: AppColors.textSecondary(context)),
+            ),
+          ),
+          TextButton(onPressed: _loadFreshnessFlags, child: const Text('Retry')),
+        ],
+      );
+    }
+    if (_freshnessFlags.isEmpty) {
+      return Row(
+        children: [
+          const Icon(Icons.check_circle_outline, size: 16, color: Color(0xFF0EA5A4)),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'No open flags. Run "Check Now" to compare the catalog against KUCCPS\'s latest published data.',
+              style: TextStyle(fontSize: 12, color: AppColors.textSecondary(context)),
+            ),
+          ),
+        ],
+      );
+    }
+    return Column(
+      children: _freshnessFlags.map((flag) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(top: 2.0),
+                child: Icon(Icons.warning_amber_rounded, size: 16, color: Color(0xFFF59E0B)),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${flag['programmeTitle'] ?? 'Unknown programme'} - ${flag['universityName'] ?? 'Unknown university'}',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppColors.textPrimary(context)),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      (flag['details'] ?? '').toString(),
+                      style: TextStyle(fontSize: 11, color: AppColors.textSecondary(context), height: 1.3),
+                    ),
+                  ],
+                ),
+              ),
+              TextButton(
+                onPressed: () => _dismissFreshnessFlag(flag['id'] as String),
+                child: const Text('Dismiss', style: TextStyle(fontSize: 11)),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
     );
   }
 
