@@ -41,6 +41,7 @@ flutter_app/android/app/google-services.json
 backend/rf_model_pipeline.pkl
 backend/model_metrics.json
 backend/synthetic_student_profiles.csv
+backend/model_backups/
 
 # Build logs
 flutter_app/build_output.txt
