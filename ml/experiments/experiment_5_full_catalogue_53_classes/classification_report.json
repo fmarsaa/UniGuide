@@ -1,0 +1,333 @@
+{
+  "Bachelor of Architecture": {
+    "precision": 0.8436363636363636,
+    "recall": 0.943089430894309,
+    "f1-score": 0.8905950095969289,
+    "support": 246.0
+  },
+  "Bachelor of Arts in Counseling Psychology": {
+    "precision": 0.8846153846153846,
+    "recall": 0.9583333333333334,
+    "f1-score": 0.92,
+    "support": 288.0
+  },
+  "Bachelor of Arts in Criminology and Security Studies": {
+    "precision": 0.9019607843137255,
+    "recall": 0.8492307692307692,
+    "f1-score": 0.8748019017432647,
+    "support": 325.0
+  },
+  "Bachelor of Arts in Journalism and Mass Communication": {
+    "precision": 0.8724137931034482,
+    "recall": 0.92,
+    "f1-score": 0.8955752212389381,
+    "support": 275.0
+  },
+  "Bachelor of Arts in Political Science and Public Administration": {
+    "precision": 0.8851351351351351,
+    "recall": 0.9458483754512635,
+    "f1-score": 0.9144851657940664,
+    "support": 277.0
+  },
+  "Bachelor of Arts in Sociology": {
+    "precision": 0.8670694864048338,
+    "recall": 0.9025157232704403,
+    "f1-score": 0.884437596302003,
+    "support": 318.0
+  },
+  "Bachelor of Business Management": {
+    "precision": 0.8565737051792829,
+    "recall": 0.9227467811158798,
+    "f1-score": 0.8884297520661157,
+    "support": 233.0
+  },
+  "Bachelor of Commerce (BCom) - Finance & Accounting": {
+    "precision": 0.8586572438162544,
+    "recall": 0.7570093457943925,
+    "f1-score": 0.804635761589404,
+    "support": 321.0
+  },
+  "Bachelor of Dental Surgery (BDS)": {
+    "precision": 0.8660130718954249,
+    "recall": 0.9233449477351916,
+    "f1-score": 0.893760539629005,
+    "support": 287.0
+  },
+  "Bachelor of Economics": {
+    "precision": 0.867704280155642,
+    "recall": 0.8079710144927537,
+    "f1-score": 0.8367729831144465,
+    "support": 276.0
+  },
+  "Bachelor of Education (Arts)": {
+    "precision": 0.8552188552188552,
+    "recall": 0.9584905660377359,
+    "f1-score": 0.9039145907473309,
+    "support": 265.0
+  },
+  "Bachelor of Education (Science)": {
+    "precision": 0.8634920634920635,
+    "recall": 0.8888888888888888,
+    "f1-score": 0.8760064412238325,
+    "support": 306.0
+  },
+  "Bachelor of Engineering in Chemical Engineering": {
+    "precision": 0.8475073313782991,
+    "recall": 0.8050139275766016,
+    "f1-score": 0.8257142857142857,
+    "support": 359.0
+  },
+  "Bachelor of Laws (LLB)": {
+    "precision": 0.9257950530035336,
+    "recall": 0.8264984227129337,
+    "f1-score": 0.8733333333333333,
+    "support": 317.0
+  },
+  "Bachelor of Medicine and Bachelor of Surgery (MBChB)": {
+    "precision": 0.8842443729903537,
+    "recall": 0.8540372670807453,
+    "f1-score": 0.8688783570300158,
+    "support": 322.0
+  },
+  "Bachelor of Pharmacy (BPharm)": {
+    "precision": 0.8379446640316206,
+    "recall": 0.9217391304347826,
+    "f1-score": 0.8778467908902692,
+    "support": 230.0
+  },
+  "Bachelor of Procurement and Logistics Management": {
+    "precision": 0.8631578947368421,
+    "recall": 0.8945454545454545,
+    "f1-score": 0.8785714285714286,
+    "support": 275.0
+  },
+  "Bachelor of Quantity Surveying": {
+    "precision": 0.8434163701067615,
+    "recall": 0.9045801526717557,
+    "f1-score": 0.8729281767955801,
+    "support": 262.0
+  },
+  "Bachelor of Science in Actuarial Science": {
+    "precision": 0.9411764705882353,
+    "recall": 0.7519582245430809,
+    "f1-score": 0.8359941944847605,
+    "support": 383.0
+  },
+  "Bachelor of Science in Agriculture": {
+    "precision": 0.8689320388349514,
+    "recall": 0.895,
+    "f1-score": 0.8817733990147784,
+    "support": 200.0
+  },
+  "Bachelor of Science in Biochemistry": {
+    "precision": 0.86328125,
+    "recall": 0.8532818532818532,
+    "f1-score": 0.858252427184466,
+    "support": 259.0
+  },
+  "Bachelor of Science in Biomedical Engineering": {
+    "precision": 0.8697068403908795,
+    "recall": 0.8841059602649006,
+    "f1-score": 0.8768472906403941,
+    "support": 302.0
+  },
+  "Bachelor of Science in Business Information Technology (BBIT)": {
+    "precision": 0.8372093023255814,
+    "recall": 0.7659574468085106,
+    "f1-score": 0.8,
+    "support": 282.0
+  },
+  "Bachelor of Science in Chemistry": {
+    "precision": 0.8224852071005917,
+    "recall": 0.9266666666666666,
+    "f1-score": 0.8714733542319749,
+    "support": 300.0
+  },
+  "Bachelor of Science in Civil Engineering": {
+    "precision": 0.8538461538461538,
+    "recall": 0.8774703557312253,
+    "f1-score": 0.8654970760233918,
+    "support": 253.0
+  },
+  "Bachelor of Science in Community Health and Development": {
+    "precision": 0.8804347826086957,
+    "recall": 0.804635761589404,
+    "f1-score": 0.8408304498269896,
+    "support": 302.0
+  },
+  "Bachelor of Science in Data Science and Analytics": {
+    "precision": 0.8529411764705882,
+    "recall": 0.87,
+    "f1-score": 0.8613861386138614,
+    "support": 200.0
+  },
+  "Bachelor of Science in Electrical and Electronic Engineering": {
+    "precision": 0.9261992619926199,
+    "recall": 0.9227941176470589,
+    "f1-score": 0.9244935543278084,
+    "support": 272.0
+  },
+  "Bachelor of Science in Environmental Science": {
+    "precision": 0.867816091954023,
+    "recall": 0.9179331306990881,
+    "f1-score": 0.8921713441654358,
+    "support": 329.0
+  },
+  "Bachelor of Science in Food Science and Technology": {
+    "precision": 0.8411552346570397,
+    "recall": 0.8759398496240601,
+    "f1-score": 0.858195211786372,
+    "support": 266.0
+  },
+  "Bachelor of Science in Food, Nutrition and Dietetics": {
+    "precision": 0.8539325842696629,
+    "recall": 0.8231046931407943,
+    "f1-score": 0.8382352941176471,
+    "support": 277.0
+  },
+  "Bachelor of Science in Forestry": {
+    "precision": 0.9282700421940928,
+    "recall": 0.9243697478991597,
+    "f1-score": 0.9263157894736842,
+    "support": 238.0
+  },
+  "Bachelor of Science in Geomatics and Geospatial Information Systems": {
+    "precision": 0.8380281690140845,
+    "recall": 0.9407114624505929,
+    "f1-score": 0.8864059590316573,
+    "support": 253.0
+  },
+  "Bachelor of Science in Hospitality Management": {
+    "precision": 0.9187279151943463,
+    "recall": 0.935251798561151,
+    "f1-score": 0.9269162210338681,
+    "support": 278.0
+  },
+  "Bachelor of Science in Human Resource Management": {
+    "precision": 0.8869257950530035,
+    "recall": 0.9330855018587361,
+    "f1-score": 0.9094202898550725,
+    "support": 269.0
+  },
+  "Bachelor of Science in Industrial Chemistry": {
+    "precision": 0.8878504672897196,
+    "recall": 0.8260869565217391,
+    "f1-score": 0.8558558558558559,
+    "support": 230.0
+  },
+  "Bachelor of Science in Informatics and Computer Science": {
+    "precision": 0.8487179487179487,
+    "recall": 0.6782786885245902,
+    "f1-score": 0.7539863325740319,
+    "support": 488.0
+  },
+  "Bachelor of Science in International Business Management": {
+    "precision": 0.8735632183908046,
+    "recall": 0.9306122448979591,
+    "f1-score": 0.9011857707509882,
+    "support": 245.0
+  },
+  "Bachelor of Science in Mathematics": {
+    "precision": 0.8741573033707866,
+    "recall": 0.8172268907563025,
+    "f1-score": 0.8447339847991314,
+    "support": 476.0
+  },
+  "Bachelor of Science in Mechanical Engineering": {
+    "precision": 0.8561151079136691,
+    "recall": 0.9083969465648855,
+    "f1-score": 0.8814814814814815,
+    "support": 262.0
+  },
+  "Bachelor of Science in Medical Laboratory Sciences": {
+    "precision": 0.7950819672131147,
+    "recall": 0.8738738738738738,
+    "f1-score": 0.8326180257510729,
+    "support": 333.0
+  },
+  "Bachelor of Science in Microbiology": {
+    "precision": 0.852589641434263,
+    "recall": 0.852589641434263,
+    "f1-score": 0.852589641434263,
+    "support": 251.0
+  },
+  "Bachelor of Science in Nursing": {
+    "precision": 0.9,
+    "recall": 0.8617021276595744,
+    "f1-score": 0.8804347826086957,
+    "support": 282.0
+  },
+  "Bachelor of Science in Physics": {
+    "precision": 0.8509803921568627,
+    "recall": 0.8066914498141264,
+    "f1-score": 0.8282442748091603,
+    "support": 269.0
+  },
+  "Bachelor of Science in Physiotherapy": {
+    "precision": 0.8,
+    "recall": 0.9411764705882353,
+    "f1-score": 0.8648648648648649,
+    "support": 238.0
+  },
+  "Bachelor of Science in Public Health": {
+    "precision": 0.8506944444444444,
+    "recall": 0.9074074074074074,
+    "f1-score": 0.8781362007168458,
+    "support": 270.0
+  },
+  "Bachelor of Science in Real Estate Management": {
+    "precision": 0.8361204013377926,
+    "recall": 0.8992805755395683,
+    "f1-score": 0.8665511265164645,
+    "support": 278.0
+  },
+  "Bachelor of Science in Software Engineering": {
+    "precision": 0.8758620689655172,
+    "recall": 0.5772727272727273,
+    "f1-score": 0.6958904109589041,
+    "support": 220.0
+  },
+  "Bachelor of Science in Statistics": {
+    "precision": 0.9162995594713657,
+    "recall": 0.8,
+    "f1-score": 0.8542094455852156,
+    "support": 260.0
+  },
+  "Bachelor of Social Work": {
+    "precision": 0.926829268292683,
+    "recall": 0.957983193277311,
+    "f1-score": 0.9421487603305785,
+    "support": 238.0
+  },
+  "Bachelor of Tourism Management": {
+    "precision": 0.9094076655052264,
+    "recall": 0.9094076655052264,
+    "f1-score": 0.9094076655052264,
+    "support": 287.0
+  },
+  "Bachelor of Urban and Regional Planning": {
+    "precision": 0.8022388059701493,
+    "recall": 0.9684684684684685,
+    "f1-score": 0.8775510204081632,
+    "support": 222.0
+  },
+  "Bachelor of Veterinary Medicine (BVM)": {
+    "precision": 0.9105431309904153,
+    "recall": 0.8823529411764706,
+    "f1-score": 0.8962264150943396,
+    "support": 323.0
+  },
+  "accuracy": 0.8679496570553373,
+  "macro avg": {
+    "precision": 0.8687297275693046,
+    "recall": 0.8733011013455894,
+    "f1-score": 0.8688870073441074,
+    "support": 15017.0
+  },
+  "weighted avg": {
+    "precision": 0.8694097547727688,
+    "recall": 0.8679496570553373,
+    "f1-score": 0.8665314068877668,
+    "support": 15017.0
+  }
+}

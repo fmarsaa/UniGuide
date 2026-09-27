@@ -1,0 +1,33 @@
+{
+  "numeric_features_total": 53,
+  "numeric_feature_groups": {
+    "kcse_subject_grades": 9,
+    "mean_points": 1,
+    "interest_booleans": 23,
+    "skill_booleans": 13,
+    "strength_booleans": 7
+  },
+  "categorical_features": ["aspiration"],
+  "categorical_feature_encoding": "one-hot (OneHotEncoder, handle_unknown=ignore)",
+  "kcse_subject_grade_features": [
+    "Mathematics", "English", "Kiswahili", "Biology", "Chemistry",
+    "Physics", "History", "Business Studies", "Geography"
+  ],
+  "scoring_weights_in_label_assignment": {
+    "aspiration_match": 4.0,
+    "interest_match_per_item": 2.0,
+    "skill_token_match_per_item": 1.0,
+    "strength_match_per_item": 1.0,
+    "note": "This is the KNOWN issue flagged for Experiment 1: aspiration's +4.0 weight dominates scoring for any class with a 1:1 exclusive aspiration mapping (10 of the 21 classes added in the most recent catalog expansion), making the model's job closer to a lookup on that one feature for those classes rather than genuine multi-signal discrimination."
+  },
+  "classifier": "RandomForestClassifier (scikit-learn)",
+  "class_weight": "balanced_subsample",
+  "hyperparameter_search": {
+    "method": "GridSearchCV, 5-fold, scoring=f1_weighted, searched on 80% train split only",
+    "grid": {
+      "n_estimators": [200, 350],
+      "max_depth": [12, 18, null],
+      "min_samples_leaf": [1, 2]
+    }
+  }
+}

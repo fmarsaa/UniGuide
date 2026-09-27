@@ -1,0 +1,2888 @@
+[
+ {
+  "catalog_title": "Bachelor of Medicine and Bachelor of Surgery (MBChB)",
+  "catalog_id": "prog_mbchb",
+  "catalog_university": "University of Nairobi",
+  "canon_key": "UON",
+  "catalog_latest": 45.584,
+  "catalog_previous": 45.034,
+  "candidates_available": 58,
+  "matches": [
+   {
+    "programme": "BACHELOR OF MEDICINE AND BACHELOR OF SURGERY",
+    "cutoff_2023": "45.584",
+    "cutoff_2022": "45.034",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF DENTAL SURGERY",
+    "cutoff_2023": "44.75",
+    "cutoff_2022": "44.334",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Medicine and Bachelor of Surgery (MBChB)",
+  "catalog_id": "prog_mbchb",
+  "catalog_university": "Jomo Kenyatta University (JKUAT)",
+  "canon_key": "JKUAT",
+  "catalog_latest": 45.048,
+  "catalog_previous": 44.611,
+  "candidates_available": 99,
+  "matches": [
+   {
+    "programme": "BACHELOR OF MEDICINE AND BACHELOR OF SURGERY",
+    "cutoff_2023": "45.048",
+    "cutoff_2022": "44.611",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE CLINICAL MEDICINE",
+    "cutoff_2023": "42.847",
+    "cutoff_2022": "42.365",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Medicine and Bachelor of Surgery (MBChB)",
+  "catalog_id": "prog_mbchb",
+  "catalog_university": "Moi University",
+  "canon_key": "MOI UNIVERSITY",
+  "catalog_latest": 45.087,
+  "catalog_previous": 44.492,
+  "candidates_available": 65,
+  "matches": [
+   {
+    "programme": "BACHELOR OF MEDICINE AND BACHELOR OF SURGERY (MBCHB)",
+    "cutoff_2023": "45.087",
+    "cutoff_2022": "44.492",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF DENTAL SURGERY",
+    "cutoff_2023": "44.502",
+    "cutoff_2022": "44.07",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Pharmacy (BPharm)",
+  "catalog_id": "prog_pharm",
+  "catalog_university": "University of Nairobi",
+  "canon_key": "UON",
+  "catalog_latest": 43.885,
+  "catalog_previous": 43.68,
+  "candidates_available": 58,
+  "matches": [
+   {
+    "programme": "BACHELOR OF PHARMACY",
+    "cutoff_2023": "44.452",
+    "cutoff_2022": "43.885",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Pharmacy (BPharm)",
+  "catalog_id": "prog_pharm",
+  "catalog_university": "Kenyatta University",
+  "canon_key": "KENYATTA UNIVERSITY",
+  "catalog_latest": 43.541,
+  "catalog_previous": 43.604,
+  "candidates_available": 89,
+  "matches": [
+   {
+    "programme": "BACHELOR OF PHARMACY",
+    "cutoff_2023": "44.01",
+    "cutoff_2022": "43.541",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Nursing",
+  "catalog_id": "prog_nursing",
+  "catalog_university": "University of Nairobi",
+  "canon_key": "UON",
+  "catalog_latest": 43.676,
+  "catalog_previous": 43.297,
+  "candidates_available": 58,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (NURSING)",
+    "cutoff_2023": "43.676",
+    "cutoff_2022": "43.297",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (ACTUARIAL SCIENCE)",
+    "cutoff_2023": "39.531",
+    "cutoff_2022": "39.271",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Nursing",
+  "catalog_id": "prog_nursing",
+  "catalog_university": "Jomo Kenyatta University (JKUAT)",
+  "canon_key": "JKUAT",
+  "catalog_latest": 42.95,
+  "catalog_previous": 42.73,
+  "candidates_available": 99,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE IN NURSING",
+    "cutoff_2023": "42.95",
+    "cutoff_2022": "42.73",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE IN ACTUARIAL SCIENCE",
+    "cutoff_2023": "34.347",
+    "cutoff_2022": "31.441",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Informatics and Computer Science",
+  "catalog_id": "prog_ics",
+  "catalog_university": "Strathmore University",
+  "canon_key": "STRATHMORE UNIVERSITY",
+  "catalog_latest": 39.8,
+  "catalog_previous": 39.2,
+  "candidates_available": 0,
+  "matches": []
+ },
+ {
+  "catalog_title": "Bachelor of Science in Informatics and Computer Science",
+  "catalog_id": "prog_ics",
+  "catalog_university": "University of Nairobi",
+  "canon_key": "UON",
+  "catalog_latest": 44.122,
+  "catalog_previous": 44.178,
+  "candidates_available": 58,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (COMPUTER SCIENCE)",
+    "cutoff_2023": "44.825",
+    "cutoff_2022": "44.122",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (ACTUARIAL SCIENCE)",
+    "cutoff_2023": "39.531",
+    "cutoff_2022": "39.271",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Informatics and Computer Science",
+  "catalog_id": "prog_ics",
+  "catalog_university": "Jomo Kenyatta University (JKUAT)",
+  "canon_key": "JKUAT",
+  "catalog_latest": 43.809,
+  "catalog_previous": 42.489,
+  "candidates_available": 99,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE IN COMPUTER SCIENCE",
+    "cutoff_2023": "44.101",
+    "cutoff_2022": "43.809",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE IN COMPUTER TECHNOLOGY",
+    "cutoff_2023": "37.867",
+    "cutoff_2022": "37.625",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Software Engineering",
+  "catalog_id": "prog_se",
+  "catalog_university": "Strathmore University",
+  "canon_key": "STRATHMORE UNIVERSITY",
+  "catalog_latest": 38.8,
+  "catalog_previous": 38.2,
+  "candidates_available": 0,
+  "matches": []
+ },
+ {
+  "catalog_title": "Bachelor of Science in Software Engineering",
+  "catalog_id": "prog_se",
+  "catalog_university": "Kisii University",
+  "canon_key": "KISII UNIVERSITY",
+  "catalog_latest": 35.029,
+  "catalog_previous": 28.289,
+  "candidates_available": 80,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE IN SOFTWARE ENGINEERING",
+    "cutoff_2023": "36.957",
+    "cutoff_2022": "35.029",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF ACTUARIAL SCIENCE",
+    "cutoff_2023": "18.831",
+    "cutoff_2022": "19.914",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Business Information Technology (BBIT)",
+  "catalog_id": "prog_bbit",
+  "catalog_university": "Strathmore University",
+  "canon_key": "STRATHMORE UNIVERSITY",
+  "catalog_latest": 35.6,
+  "catalog_previous": 35.0,
+  "candidates_available": 0,
+  "matches": []
+ },
+ {
+  "catalog_title": "Bachelor of Science in Business Information Technology (BBIT)",
+  "catalog_id": "prog_bbit",
+  "catalog_university": "Kabarak University",
+  "canon_key": "KABARAK UNIVERSITY",
+  "catalog_latest": 21.444,
+  "catalog_previous": 22.544,
+  "candidates_available": 32,
+  "matches": [
+   {
+    "programme": "BACHELOR OF BUSINESS INFORMATION TECHNOLOGY",
+    "cutoff_2023": "21.375",
+    "cutoff_2022": "21.444",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE IN INFORMATION TECHNOLOGY",
+    "cutoff_2023": "18.814",
+    "cutoff_2022": "18.638",
+    "score": 3
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Electrical and Electronic Engineering",
+  "catalog_id": "prog_eee",
+  "catalog_university": "University of Nairobi",
+  "canon_key": "UON",
+  "catalog_latest": 42.1,
+  "catalog_previous": 41.6,
+  "candidates_available": 58,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (ELECTRICAL AND ELECTRONIC\nENGINEERING)",
+    "cutoff_2023": "43.003",
+    "cutoff_2022": "42.776",
+    "score": 4
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (CIVIL ENGINEERING)",
+    "cutoff_2023": "43.463",
+    "cutoff_2022": "43.091",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Electrical and Electronic Engineering",
+  "catalog_id": "prog_eee",
+  "catalog_university": "Jomo Kenyatta University (JKUAT)",
+  "canon_key": "JKUAT",
+  "catalog_latest": 42.125,
+  "catalog_previous": 40.965,
+  "candidates_available": 99,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE IN ELECTRICAL AND ELECTRONIC\nENGINEERING",
+    "cutoff_2023": "42.434",
+    "cutoff_2022": "42.291",
+    "score": 4
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (ELECTRONIC AND COMPUTER\nENGINEERING)",
+    "cutoff_2023": "40.823",
+    "cutoff_2022": "39.921",
+    "score": 3
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Civil Engineering",
+  "catalog_id": "prog_civil",
+  "catalog_university": "University of Nairobi",
+  "canon_key": "UON",
+  "catalog_latest": 41.4,
+  "catalog_previous": 40.9,
+  "candidates_available": 58,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (CIVIL ENGINEERING)",
+    "cutoff_2023": "43.463",
+    "cutoff_2022": "43.091",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (ELECTRICAL AND ELECTRONIC\nENGINEERING)",
+    "cutoff_2023": "43.003",
+    "cutoff_2022": "42.776",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Civil Engineering",
+  "catalog_id": "prog_civil",
+  "catalog_university": "Jomo Kenyatta University (JKUAT)",
+  "canon_key": "JKUAT",
+  "catalog_latest": 40.4,
+  "catalog_previous": 40.0,
+  "candidates_available": 99,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE IN CIVIL ENGINEERING",
+    "cutoff_2023": "42.618",
+    "cutoff_2022": "42.178",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE IN ELECTRICAL AND ELECTRONIC\nENGINEERING",
+    "cutoff_2023": "42.434",
+    "cutoff_2022": "42.291",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Laws (LLB)",
+  "catalog_id": "prog_law",
+  "catalog_university": "Strathmore University",
+  "canon_key": "STRATHMORE UNIVERSITY",
+  "catalog_latest": 40.5,
+  "catalog_previous": 39.8,
+  "candidates_available": 0,
+  "matches": []
+ },
+ {
+  "catalog_title": "Bachelor of Laws (LLB)",
+  "catalog_id": "prog_law",
+  "catalog_university": "University of Nairobi",
+  "canon_key": "UON",
+  "catalog_latest": 41.0,
+  "catalog_previous": 40.4,
+  "candidates_available": 58,
+  "matches": [
+   {
+    "programme": "BACHELOR OF LAWS (LLB)",
+    "cutoff_2023": "42.014",
+    "cutoff_2022": "41.758",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Actuarial Science",
+  "catalog_id": "prog_actuarial",
+  "catalog_university": "Strathmore University",
+  "canon_key": "STRATHMORE UNIVERSITY",
+  "catalog_latest": 41.0,
+  "catalog_previous": 40.5,
+  "candidates_available": 0,
+  "matches": []
+ },
+ {
+  "catalog_title": "Bachelor of Science in Actuarial Science",
+  "catalog_id": "prog_actuarial",
+  "catalog_university": "University of Nairobi",
+  "canon_key": "UON",
+  "catalog_latest": 41.4,
+  "catalog_previous": 41.0,
+  "candidates_available": 58,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (ACTUARIAL SCIENCE)",
+    "cutoff_2023": "39.531",
+    "cutoff_2022": "39.271",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (INDUSTRIAL CHEMISTRY)",
+    "cutoff_2023": "27.458",
+    "cutoff_2022": "31.98",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Commerce (BCom) - Finance & Accounting",
+  "catalog_id": "prog_bcom",
+  "catalog_university": "Strathmore University",
+  "canon_key": "STRATHMORE UNIVERSITY",
+  "catalog_latest": 35.2,
+  "catalog_previous": 34.5,
+  "candidates_available": 0,
+  "matches": []
+ },
+ {
+  "catalog_title": "Bachelor of Commerce (BCom) - Finance & Accounting",
+  "catalog_id": "prog_bcom",
+  "catalog_university": "University of Nairobi",
+  "canon_key": "UON",
+  "catalog_latest": 35.8,
+  "catalog_previous": 35.1,
+  "candidates_available": 58,
+  "matches": [
+   {
+    "programme": "BACHELOR OF COMMERCE (B.COM)",
+    "cutoff_2023": "34.426",
+    "cutoff_2022": "33.556",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Dental Surgery (BDS)",
+  "catalog_id": "prog_dental",
+  "catalog_university": "University of Nairobi",
+  "canon_key": "UON",
+  "catalog_latest": 44.75,
+  "catalog_previous": 44.334,
+  "candidates_available": 58,
+  "matches": [
+   {
+    "programme": "BACHELOR OF DENTAL SURGERY",
+    "cutoff_2023": "44.75",
+    "cutoff_2022": "44.334",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF MEDICINE AND BACHELOR OF SURGERY",
+    "cutoff_2023": "45.584",
+    "cutoff_2022": "45.034",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Dental Surgery (BDS)",
+  "catalog_id": "prog_dental",
+  "catalog_university": "Moi University",
+  "canon_key": "MOI UNIVERSITY",
+  "catalog_latest": 44.502,
+  "catalog_previous": 44.07,
+  "candidates_available": 65,
+  "matches": [
+   {
+    "programme": "BACHELOR OF DENTAL SURGERY",
+    "cutoff_2023": "44.502",
+    "cutoff_2022": "44.07",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF MEDICINE AND BACHELOR OF SURGERY (MBCHB)",
+    "cutoff_2023": "45.087",
+    "cutoff_2022": "44.492",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Veterinary Medicine (BVM)",
+  "catalog_id": "prog_vet",
+  "catalog_university": "University of Nairobi",
+  "canon_key": "UON",
+  "catalog_latest": 37.747,
+  "catalog_previous": 39.091,
+  "candidates_available": 58,
+  "matches": [
+   {
+    "programme": "BACHELOR OF VETERINARY MEDICINE",
+    "cutoff_2023": "37.747",
+    "cutoff_2022": "39.091",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF MEDICINE AND BACHELOR OF SURGERY",
+    "cutoff_2023": "45.584",
+    "cutoff_2022": "45.034",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Veterinary Medicine (BVM)",
+  "catalog_id": "prog_vet",
+  "catalog_university": "Egerton University",
+  "canon_key": "EGERTON UNIVERSITY",
+  "catalog_latest": 38.317,
+  "catalog_previous": 38.443,
+  "candidates_available": 57,
+  "matches": [
+   {
+    "programme": "BACHELOR OF VETERINARY MEDICINE AND SURGERY",
+    "cutoff_2023": "38.317",
+    "cutoff_2022": "38.443",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF MEDICINE & BACHELOR OF SURGERY",
+    "cutoff_2023": "44.563",
+    "cutoff_2022": "44.079",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Food, Nutrition and Dietetics",
+  "catalog_id": "prog_nutrition",
+  "catalog_university": "University of Nairobi",
+  "canon_key": "UON",
+  "catalog_latest": 31.104,
+  "catalog_previous": 33.75,
+  "candidates_available": 58,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (FOOD NUTRITION AND DIETETICS)",
+    "cutoff_2023": "31.104",
+    "cutoff_2022": "33.75",
+    "score": 4
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (FOOD SCIENCE AND TECHNOLOGY)",
+    "cutoff_2023": "23.85",
+    "cutoff_2022": "32.155",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Food, Nutrition and Dietetics",
+  "catalog_id": "prog_nutrition",
+  "catalog_university": "Kenyatta University",
+  "canon_key": "KENYATTA UNIVERSITY",
+  "catalog_latest": 30.185,
+  "catalog_previous": 33.006,
+  "candidates_available": 89,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (FOOD, NUTRITION & DIETETICS)",
+    "cutoff_2023": "30.185",
+    "cutoff_2022": "33.006",
+    "score": 4
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (ACTUARIAL SCIENCE)",
+    "cutoff_2023": "34.474",
+    "cutoff_2022": "31.842",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Food, Nutrition and Dietetics",
+  "catalog_id": "prog_nutrition",
+  "catalog_university": "Egerton University",
+  "canon_key": "EGERTON UNIVERSITY",
+  "catalog_latest": 25.471,
+  "catalog_previous": 29.18,
+  "candidates_available": 57,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (FOOD NUTRITION & DIETETICS)",
+    "cutoff_2023": "25.471",
+    "cutoff_2022": "29.18",
+    "score": 4
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (FOOD SCIENCE & TECHNOLOGY)",
+    "cutoff_2023": "24.645",
+    "cutoff_2022": "17.043",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Mechanical Engineering",
+  "catalog_id": "prog_mech",
+  "catalog_university": "University of Nairobi",
+  "canon_key": "UON",
+  "catalog_latest": 41.835,
+  "catalog_previous": 41.321,
+  "candidates_available": 58,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (MECHANICAL ENGINEERING)",
+    "cutoff_2023": "41.835",
+    "cutoff_2022": "41.321",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (CIVIL ENGINEERING)",
+    "cutoff_2023": "43.463",
+    "cutoff_2022": "43.091",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Mechanical Engineering",
+  "catalog_id": "prog_mech",
+  "catalog_university": "Jomo Kenyatta University (JKUAT)",
+  "canon_key": "JKUAT",
+  "catalog_latest": 41.45,
+  "catalog_previous": 41.449,
+  "candidates_available": 99,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE IN MECHANICAL ENGINEERING",
+    "cutoff_2023": "41.45",
+    "cutoff_2022": "41.449",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE IN CIVIL ENGINEERING",
+    "cutoff_2023": "42.618",
+    "cutoff_2022": "42.178",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Mechanical Engineering",
+  "catalog_id": "prog_mech",
+  "catalog_university": "Kenyatta University",
+  "canon_key": "KENYATTA UNIVERSITY",
+  "catalog_latest": 41.109,
+  "catalog_previous": 41.033,
+  "candidates_available": 89,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (MECHANICAL ENGINEERING)",
+    "cutoff_2023": "41.109",
+    "cutoff_2022": "41.033",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (CIVIL ENGINEERING)",
+    "cutoff_2023": "42.574",
+    "cutoff_2022": "42.148",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Architecture",
+  "catalog_id": "prog_arch",
+  "catalog_university": "University of Nairobi",
+  "canon_key": "UON",
+  "catalog_latest": 42.99,
+  "catalog_previous": 43.794,
+  "candidates_available": 58,
+  "matches": [
+   {
+    "programme": "BACHELOR OF ARCHITECTURAL STUDIES/BACHELOR OF\nARCHITECTURE",
+    "cutoff_2023": "42.99",
+    "cutoff_2022": "43.794",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Architecture",
+  "catalog_id": "prog_arch",
+  "catalog_university": "Kenyatta University",
+  "canon_key": "KENYATTA UNIVERSITY",
+  "catalog_latest": 41.494,
+  "catalog_previous": 42.407,
+  "candidates_available": 89,
+  "matches": [
+   {
+    "programme": "BACHELOR OF ARCHITECTURE",
+    "cutoff_2023": "41.494",
+    "cutoff_2022": "42.407",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Architecture",
+  "catalog_id": "prog_arch",
+  "catalog_university": "Technical University of Kenya",
+  "canon_key": "TUK",
+  "catalog_latest": 41.035,
+  "catalog_previous": 41.962,
+  "candidates_available": 55,
+  "matches": [
+   {
+    "programme": "BACHELOR OF ARCHITECTURAL STUDIES/BACHELOR OF\nARCHITECTURE",
+    "cutoff_2023": "41.035",
+    "cutoff_2022": "41.962",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Quantity Surveying",
+  "catalog_id": "prog_qs",
+  "catalog_university": "University of Nairobi",
+  "canon_key": "UON",
+  "catalog_latest": 40.232,
+  "catalog_previous": 40.993,
+  "candidates_available": 58,
+  "matches": [
+   {
+    "programme": "BACHELOR OF QUANTITY SURVEYING",
+    "cutoff_2023": "40.232",
+    "cutoff_2022": "40.993",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Quantity Surveying",
+  "catalog_id": "prog_qs",
+  "catalog_university": "Jomo Kenyatta University (JKUAT)",
+  "canon_key": "JKUAT",
+  "catalog_latest": 39.763,
+  "catalog_previous": 41.641,
+  "candidates_available": 99,
+  "matches": [
+   {
+    "programme": "BACHELOR OF QUANTITY SURVEYING",
+    "cutoff_2023": "39.763",
+    "cutoff_2022": "41.641",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Quantity Surveying",
+  "catalog_id": "prog_qs",
+  "catalog_university": "Technical University of Kenya",
+  "canon_key": "TUK",
+  "catalog_latest": 38.424,
+  "catalog_previous": 40.533,
+  "candidates_available": 55,
+  "matches": [
+   {
+    "programme": "BACHELOR OF QUANTITY SURVEYING",
+    "cutoff_2023": "38.424",
+    "cutoff_2022": "40.533",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF PHILOSOPHY IN TECHNOLOGY (SURVEYING\nTECHNOLOGY)",
+    "cutoff_2023": "18.392",
+    "cutoff_2022": "26.263",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Mathematics",
+  "catalog_id": "prog_math",
+  "catalog_university": "University of Nairobi",
+  "canon_key": "UON",
+  "catalog_latest": 32.945,
+  "catalog_previous": 32.487,
+  "candidates_available": 58,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (MATHEMATICS)",
+    "cutoff_2023": "32.945",
+    "cutoff_2022": "32.487",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (ACTUARIAL SCIENCE)",
+    "cutoff_2023": "39.531",
+    "cutoff_2022": "39.271",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Mathematics",
+  "catalog_id": "prog_math",
+  "catalog_university": "Technical University of Kenya",
+  "canon_key": "TUK",
+  "catalog_latest": 24.252,
+  "catalog_previous": 26.695,
+  "candidates_available": 55,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (MATHEMATICS)",
+    "cutoff_2023": "24.252",
+    "cutoff_2022": "26.695",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (BIOCHEMISTRY)",
+    "cutoff_2023": "31.23",
+    "cutoff_2022": "32.89",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Economics",
+  "catalog_id": "prog_econ",
+  "catalog_university": "University of Nairobi",
+  "canon_key": "UON",
+  "catalog_latest": 26.096,
+  "catalog_previous": 30.453,
+  "candidates_available": 58,
+  "matches": [
+   {
+    "programme": "BACHELOR OF ECONOMICS",
+    "cutoff_2023": "26.096",
+    "cutoff_2022": "30.453",
+    "score": 1
+   },
+   {
+    "programme": "BACHELOR OF ECONOMICS AND STATISTICS",
+    "cutoff_2023": "34.507",
+    "cutoff_2022": "33.223",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Economics",
+  "catalog_id": "prog_econ",
+  "catalog_university": "Kenyatta University",
+  "canon_key": "KENYATTA UNIVERSITY",
+  "catalog_latest": 26.413,
+  "catalog_previous": 24.1,
+  "candidates_available": 89,
+  "matches": [
+   {
+    "programme": "BACHELOR OF ECONOMICS",
+    "cutoff_2023": "26.413",
+    "cutoff_2022": "24.1",
+    "score": 1
+   },
+   {
+    "programme": "BACHELOR OF ECONOMICS & STATISTICS",
+    "cutoff_2023": "32.118",
+    "cutoff_2022": "28.213",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Economics",
+  "catalog_id": "prog_econ",
+  "catalog_university": "Jomo Kenyatta University (JKUAT)",
+  "canon_key": "JKUAT",
+  "catalog_latest": 27.073,
+  "catalog_previous": 22.977,
+  "candidates_available": 99,
+  "matches": [
+   {
+    "programme": "BACHELOR OF ECONOMICS",
+    "cutoff_2023": "27.073",
+    "cutoff_2022": "22.977",
+    "score": 1
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (AGRICULTURAL ECONOMICS AND\nRURAL DEVELOPMENT)",
+    "cutoff_2023": "15.864",
+    "cutoff_2022": "23.826",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Arts in Journalism and Mass Communication",
+  "catalog_id": "prog_jmc",
+  "catalog_university": "University of Nairobi",
+  "canon_key": "UON",
+  "catalog_latest": 29.254,
+  "catalog_previous": 34.056,
+  "candidates_available": 58,
+  "matches": [
+   {
+    "programme": "BACHELOR OF JOURNALISM AND MASS COMMUNICATION",
+    "cutoff_2023": "29.254",
+    "cutoff_2022": "34.056",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF ARTS",
+    "cutoff_2023": "23.248",
+    "cutoff_2022": "26.506",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Arts in Journalism and Mass Communication",
+  "catalog_id": "prog_jmc",
+  "catalog_university": "Technical University of Mombasa",
+  "canon_key": "TUM",
+  "catalog_latest": 29.885,
+  "catalog_previous": 32.201,
+  "candidates_available": 47,
+  "matches": [
+   {
+    "programme": "BACHELOR OF JOURNALISM & MASS COMMUNICATION",
+    "cutoff_2023": "29.885",
+    "cutoff_2022": "32.201",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF TECHNOLOGY IN INFORMATION &\nCOMMUNICATION TECHNOLOGY",
+    "cutoff_2023": "26.749",
+    "cutoff_2022": "25.451",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Arts in Journalism and Mass Communication",
+  "catalog_id": "prog_jmc",
+  "catalog_university": "Chuka University",
+  "canon_key": "CHUKA UNIVERSITY",
+  "catalog_latest": 29.127,
+  "catalog_previous": 32.408,
+  "candidates_available": 61,
+  "matches": [
+   {
+    "programme": "BACHELOR OF ARTS IN JOURNALISM AND MASS\nCOMMUNICATION",
+    "cutoff_2023": "29.127",
+    "cutoff_2022": "32.408",
+    "score": 4
+   },
+   {
+    "programme": "BACHELOR OF ARTS IN COMMUNICATION STUDIES",
+    "cutoff_2023": "22.449",
+    "cutoff_2022": "24.891",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Agriculture",
+  "catalog_id": "prog_agri",
+  "catalog_university": "Egerton University",
+  "canon_key": "EGERTON UNIVERSITY",
+  "catalog_latest": 15.864,
+  "catalog_previous": 23.701,
+  "candidates_available": 57,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (AGRICULTURE)",
+    "cutoff_2023": "15.864",
+    "cutoff_2022": "23.701",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (AGRICULTURE & HUMAN ECOLOGY\nEXTENSION)",
+    "cutoff_2023": "15.864",
+    "cutoff_2022": "25.432",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Agriculture",
+  "catalog_id": "prog_agri",
+  "catalog_university": "University of Nairobi",
+  "canon_key": "UON",
+  "catalog_latest": 15.864,
+  "catalog_previous": 22.782,
+  "candidates_available": 58,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (AGRICULTURE)",
+    "cutoff_2023": "15.864",
+    "cutoff_2022": "22.782",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (ACTUARIAL SCIENCE)",
+    "cutoff_2023": "39.531",
+    "cutoff_2022": "39.271",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Agriculture",
+  "catalog_id": "prog_agri",
+  "catalog_university": "Kenyatta University",
+  "canon_key": "KENYATTA UNIVERSITY",
+  "catalog_latest": 15.864,
+  "catalog_previous": 23.704,
+  "candidates_available": 89,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (AGRICULTURE)",
+    "cutoff_2023": "15.864",
+    "cutoff_2022": "23.704",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (DRY LAND, AGRICULTURE &\nENTERPRISE DEVELOPMENT)",
+    "cutoff_2023": "15.864",
+    "cutoff_2022": "17.043",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Industrial Chemistry",
+  "catalog_id": "prog_indchem",
+  "catalog_university": "University of Nairobi",
+  "canon_key": "UON",
+  "catalog_latest": 27.458,
+  "catalog_previous": 31.98,
+  "candidates_available": 58,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (INDUSTRIAL CHEMISTRY)",
+    "cutoff_2023": "27.458",
+    "cutoff_2022": "31.98",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (ANALYTICAL CHEMISTRY)",
+    "cutoff_2023": "27.085",
+    "cutoff_2022": "31.513",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Industrial Chemistry",
+  "catalog_id": "prog_indchem",
+  "catalog_university": "Maseno University",
+  "canon_key": "MASENO UNIVERSITY",
+  "catalog_latest": 25.535,
+  "catalog_previous": 23.851,
+  "candidates_available": 73,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (INDUSTRIAL CHEMISTRY, WITH IT)",
+    "cutoff_2023": "25.535",
+    "cutoff_2022": "23.851",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (ANALYTICAL CHEMISTRY, WITH IT)",
+    "cutoff_2023": "15.683",
+    "cutoff_2022": "15.982",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Industrial Chemistry",
+  "catalog_id": "prog_indchem",
+  "catalog_university": "Masinde Muliro University of Science and Technology",
+  "canon_key": "MMUST",
+  "catalog_latest": 25.036,
+  "catalog_previous": 15.982,
+  "candidates_available": 72,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (INDUSTRIAL CHEMISTRY)",
+    "cutoff_2023": "25.036",
+    "cutoff_2022": "15.982",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (MECHANICAL AND INDUSTRIAL\nENGINEERING)",
+    "cutoff_2023": "33.753",
+    "cutoff_2022": "35.66",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Microbiology",
+  "catalog_id": "prog_micro",
+  "catalog_university": "Moi University",
+  "canon_key": "MOI UNIVERSITY",
+  "catalog_latest": 26.794,
+  "catalog_previous": 16.974,
+  "candidates_available": 65,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (MICROBIOLOGY)",
+    "cutoff_2023": "26.794",
+    "cutoff_2022": "16.974",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (ACTUARIAL SCIENCE)",
+    "cutoff_2023": "24.905",
+    "cutoff_2022": "24.923",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Microbiology",
+  "catalog_id": "prog_micro",
+  "catalog_university": "Kenyatta University",
+  "canon_key": "KENYATTA UNIVERSITY",
+  "catalog_latest": 25.46,
+  "catalog_previous": 25.937,
+  "candidates_available": 89,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (MICROBIOLOGY)",
+    "cutoff_2023": "25.46",
+    "cutoff_2022": "25.937",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (ACTUARIAL SCIENCE)",
+    "cutoff_2023": "34.474",
+    "cutoff_2022": "31.842",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Microbiology",
+  "catalog_id": "prog_micro",
+  "catalog_university": "Jomo Kenyatta University (JKUAT)",
+  "canon_key": "JKUAT",
+  "catalog_latest": 25.28,
+  "catalog_previous": 26.199,
+  "candidates_available": 99,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (MICROBIOLOGY)",
+    "cutoff_2023": "25.28",
+    "cutoff_2022": "26.199",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (MEDICAL MICROBIOLOGY)",
+    "cutoff_2023": "24.6",
+    "cutoff_2022": "27.223",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Food Science and Technology",
+  "catalog_id": "prog_foodsci",
+  "catalog_university": "Jomo Kenyatta University (JKUAT)",
+  "canon_key": "JKUAT",
+  "catalog_latest": 30.855,
+  "catalog_previous": 33.076,
+  "candidates_available": 99,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE IN FOOD SCIENCE AND TECHNOLOGY",
+    "cutoff_2023": "30.855",
+    "cutoff_2022": "33.076",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (FOOD SCIENCE AND NUTRITION)",
+    "cutoff_2023": "15.864",
+    "cutoff_2022": "24.544",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Food Science and Technology",
+  "catalog_id": "prog_foodsci",
+  "catalog_university": "University of Nairobi",
+  "canon_key": "UON",
+  "catalog_latest": 23.85,
+  "catalog_previous": 32.155,
+  "candidates_available": 58,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (FOOD SCIENCE AND TECHNOLOGY)",
+    "cutoff_2023": "23.85",
+    "cutoff_2022": "32.155",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (MICROPROCESSOR TECHNOLOGY AND\nINSTRUMENTATION)",
+    "cutoff_2023": "15.683",
+    "cutoff_2022": "30.773",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Food Science and Technology",
+  "catalog_id": "prog_foodsci",
+  "catalog_university": "Egerton University",
+  "canon_key": "EGERTON UNIVERSITY",
+  "catalog_latest": 24.645,
+  "catalog_previous": 17.043,
+  "candidates_available": 57,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (FOOD SCIENCE & TECHNOLOGY)",
+    "cutoff_2023": "24.645",
+    "cutoff_2022": "17.043",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (FOOD NUTRITION & DIETETICS)",
+    "cutoff_2023": "25.471",
+    "cutoff_2022": "29.18",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Food Science and Technology",
+  "catalog_id": "prog_foodsci",
+  "catalog_university": "Dedan Kimathi University of Technology",
+  "canon_key": "DEKUT",
+  "catalog_latest": 15.864,
+  "catalog_previous": 17.043,
+  "candidates_available": 28,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE IN FOOD SCIENCE AND TECHNOLOGY",
+    "cutoff_2023": "15.864",
+    "cutoff_2022": "17.043",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE IN INFORMATION TECHNOLOGY",
+    "cutoff_2023": "33.591",
+    "cutoff_2022": "34.511",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Statistics",
+  "catalog_id": "prog_stats",
+  "catalog_university": "University of Nairobi",
+  "canon_key": "UON",
+  "catalog_latest": 35.192,
+  "catalog_previous": 33.673,
+  "candidates_available": 58,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (STATISTICS)",
+    "cutoff_2023": "35.192",
+    "cutoff_2022": "33.673",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (ACTUARIAL SCIENCE)",
+    "cutoff_2023": "39.531",
+    "cutoff_2022": "39.271",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Statistics",
+  "catalog_id": "prog_stats",
+  "catalog_university": "Jomo Kenyatta University (JKUAT)",
+  "canon_key": "JKUAT",
+  "catalog_latest": 30.147,
+  "catalog_previous": 27.899,
+  "candidates_available": 99,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE IN STATISTICS",
+    "cutoff_2023": "30.147",
+    "cutoff_2022": "27.899",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE IN ACTUARIAL SCIENCE",
+    "cutoff_2023": "34.347",
+    "cutoff_2022": "31.441",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Statistics",
+  "catalog_id": "prog_stats",
+  "catalog_university": "Egerton University",
+  "canon_key": "EGERTON UNIVERSITY",
+  "catalog_latest": 26.311,
+  "catalog_previous": 19.914,
+  "candidates_available": 57,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (STATISTICS)",
+    "cutoff_2023": "26.311",
+    "cutoff_2022": "19.914",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (ECONOMICS & STATISTICS)",
+    "cutoff_2023": "24.112",
+    "cutoff_2022": "19.914",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Education (Science)",
+  "catalog_id": "prog_edsci",
+  "catalog_university": "Kenyatta University",
+  "canon_key": "KENYATTA UNIVERSITY",
+  "catalog_latest": 37.208,
+  "catalog_previous": 37.778,
+  "candidates_available": 89,
+  "matches": [
+   {
+    "programme": "BACHELOR OF EDUCATION (SCIENCE)",
+    "cutoff_2023": "37.208",
+    "cutoff_2022": "37.778",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (AGRICULTURAL EDUCATION &\nEXTENSION)",
+    "cutoff_2023": "27.979",
+    "cutoff_2022": "30.714",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Education (Science)",
+  "catalog_id": "prog_edsci",
+  "catalog_university": "University of Nairobi",
+  "canon_key": "UON",
+  "catalog_latest": 36.127,
+  "catalog_previous": 37.073,
+  "candidates_available": 58,
+  "matches": [
+   {
+    "programme": "BACHELOR OF EDUCATION (SCIENCE)",
+    "cutoff_2023": "36.127",
+    "cutoff_2022": "37.073",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (AGRICULTURAL EDUCATION AND\nEXTENSION)",
+    "cutoff_2023": "26.761",
+    "cutoff_2022": "28.915",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Education (Science)",
+  "catalog_id": "prog_edsci",
+  "catalog_university": "Egerton University",
+  "canon_key": "EGERTON UNIVERSITY",
+  "catalog_latest": 35.289,
+  "catalog_previous": 35.282,
+  "candidates_available": 57,
+  "matches": [
+   {
+    "programme": "BACHELOR OF EDUCATION (SCIENCE)",
+    "cutoff_2023": "35.289",
+    "cutoff_2022": "35.282",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (AGRICULTURAL EDUCATION &\nEXTENSION)",
+    "cutoff_2023": "31.668",
+    "cutoff_2022": "32.271",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Education (Science)",
+  "catalog_id": "prog_edsci",
+  "catalog_university": "Moi University",
+  "canon_key": "MOI UNIVERSITY",
+  "catalog_latest": 34.603,
+  "catalog_previous": 35.434,
+  "candidates_available": 65,
+  "matches": [
+   {
+    "programme": "BACHELOR OF EDUCATION (SCIENCE)",
+    "cutoff_2023": "34.603",
+    "cutoff_2022": "35.434",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE WITH EDUCATION",
+    "cutoff_2023": "21.858",
+    "cutoff_2022": "22.358",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Education (Arts)",
+  "catalog_id": "prog_edarts",
+  "catalog_university": "Kenyatta University",
+  "canon_key": "KENYATTA UNIVERSITY",
+  "catalog_latest": 33.556,
+  "catalog_previous": 34.725,
+  "candidates_available": 89,
+  "matches": [
+   {
+    "programme": "BACHELOR OF EDUCATION (ARTS)",
+    "cutoff_2023": "33.556",
+    "cutoff_2022": "34.725",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF EDUCATION (ARTS) MUSIC",
+    "cutoff_2023": "27.617",
+    "cutoff_2022": "29.441",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Education (Arts)",
+  "catalog_id": "prog_edarts",
+  "catalog_university": "University of Nairobi",
+  "canon_key": "UON",
+  "catalog_latest": 32.421,
+  "catalog_previous": 33.663,
+  "candidates_available": 58,
+  "matches": [
+   {
+    "programme": "BACHELOR OF EDUCATION (ARTS)",
+    "cutoff_2023": "32.421",
+    "cutoff_2022": "33.663",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF ARTS",
+    "cutoff_2023": "23.248",
+    "cutoff_2022": "26.506",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Education (Arts)",
+  "catalog_id": "prog_edarts",
+  "catalog_university": "Egerton University",
+  "canon_key": "EGERTON UNIVERSITY",
+  "catalog_latest": 32.306,
+  "catalog_previous": 32.486,
+  "candidates_available": 57,
+  "matches": [
+   {
+    "programme": "BACHELOR OF EDUCATION (ARTS)",
+    "cutoff_2023": "32.306",
+    "cutoff_2022": "32.486",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF ARTS",
+    "cutoff_2023": "24.188",
+    "cutoff_2022": "26.783",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Education (Arts)",
+  "catalog_id": "prog_edarts",
+  "catalog_university": "Moi University",
+  "canon_key": "MOI UNIVERSITY",
+  "catalog_latest": 30.04,
+  "catalog_previous": 30.707,
+  "candidates_available": 65,
+  "matches": [
+   {
+    "programme": "BACHELOR OF EDUCATION (ARTS)",
+    "cutoff_2023": "30.04",
+    "cutoff_2022": "30.707",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF ARTS (WITH EDUCATION)",
+    "cutoff_2023": "25.129",
+    "cutoff_2022": "23.648",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Public Health",
+  "catalog_id": "prog_pubhealth",
+  "catalog_university": "Maseno University",
+  "canon_key": "MASENO UNIVERSITY",
+  "catalog_latest": 33.436,
+  "catalog_previous": 34.339,
+  "candidates_available": 73,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (PUBLIC HEALTH, WITH IT)",
+    "cutoff_2023": "33.436",
+    "cutoff_2022": "34.339",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (HEALTH RECORDS AND INFORMATION\nMANAGEMENT, WITH IT)",
+    "cutoff_2023": "26.384",
+    "cutoff_2022": "29.567",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Public Health",
+  "catalog_id": "prog_pubhealth",
+  "catalog_university": "Kisii University",
+  "canon_key": "KISII UNIVERSITY",
+  "catalog_latest": 31.45,
+  "catalog_previous": 32.151,
+  "candidates_available": 80,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE IN PUBLIC HEALTH",
+    "cutoff_2023": "31.45",
+    "cutoff_2022": "32.151",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE IN COMMUNITY HEALTH AND\nDEVELOPMENT",
+    "cutoff_2023": "24.064",
+    "cutoff_2022": "25.528",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Public Health",
+  "catalog_id": "prog_pubhealth",
+  "catalog_university": "University of Kabianga",
+  "canon_key": "UNIVERSITY OF KABIANGA",
+  "catalog_latest": 29.664,
+  "catalog_previous": 30.613,
+  "candidates_available": 30,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (PUBLIC HEALTH)",
+    "cutoff_2023": "29.664",
+    "cutoff_2022": "30.613",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (COMMUNICATION AND PUBLIC\nRELATIONS)",
+    "cutoff_2023": "22.449",
+    "cutoff_2022": "22.916",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Public Health",
+  "catalog_id": "prog_pubhealth",
+  "catalog_university": "South Eastern Kenya University",
+  "canon_key": "SEKU",
+  "catalog_latest": 29.179,
+  "catalog_previous": 27.342,
+  "candidates_available": 50,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (PUBLIC HEALTH)",
+    "cutoff_2023": "29.179",
+    "cutoff_2022": "27.342",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (POPULATION HEALTH)",
+    "cutoff_2023": "15.864",
+    "cutoff_2022": "26.929",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Arts in Sociology",
+  "catalog_id": "prog_socio",
+  "catalog_university": "Chuka University",
+  "canon_key": "CHUKA UNIVERSITY",
+  "catalog_latest": 22.449,
+  "catalog_previous": 24.374,
+  "candidates_available": 61,
+  "matches": [
+   {
+    "programme": "BACHELOR OF ARTS (ECONOMICS & SOCIOLOGY)",
+    "cutoff_2023": "18.831",
+    "cutoff_2022": "19.914",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF ARTS IN SOCIOLOGY",
+    "cutoff_2023": "22.449",
+    "cutoff_2022": "24.374",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Arts in Sociology",
+  "catalog_id": "prog_socio",
+  "catalog_university": "Rongo University",
+  "canon_key": "RONGO UNIVERSITY",
+  "catalog_latest": 22.449,
+  "catalog_previous": 22.916,
+  "candidates_available": 45,
+  "matches": [
+   {
+    "programme": "BACHELOR OF ARTS (SOCIOLOGY)",
+    "cutoff_2023": "22.449",
+    "cutoff_2022": "22.916",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF ARTS",
+    "cutoff_2023": "24.574",
+    "cutoff_2022": "27.808",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Arts in Sociology",
+  "catalog_id": "prog_socio",
+  "catalog_university": "Pwani University",
+  "canon_key": "PWANI UNIVERSITY",
+  "catalog_latest": 22.449,
+  "catalog_previous": 22.916,
+  "candidates_available": 53,
+  "matches": [
+   {
+    "programme": "BACHELOR OF ARTS (SOCIOLOGY)",
+    "cutoff_2023": "22.449",
+    "cutoff_2022": "22.916",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF ARTS",
+    "cutoff_2023": "-",
+    "cutoff_2022": "-",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Arts in Sociology",
+  "catalog_id": "prog_socio",
+  "catalog_university": "Maasai Mara University",
+  "canon_key": "MAASAI MARA UNIVERSITY",
+  "catalog_latest": 22.449,
+  "catalog_previous": 22.916,
+  "candidates_available": 51,
+  "matches": [
+   {
+    "programme": "BACHELOR OF ARTS (SOCIOLOGY)",
+    "cutoff_2023": "22.449",
+    "cutoff_2022": "22.916",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF EDUCATION (ARTS)",
+    "cutoff_2023": "29.507",
+    "cutoff_2022": "29.033",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Social Work",
+  "catalog_id": "prog_socialwork",
+  "catalog_university": "Moi University",
+  "canon_key": "MOI UNIVERSITY",
+  "catalog_latest": 22.449,
+  "catalog_previous": 28.081,
+  "candidates_available": 65,
+  "matches": [
+   {
+    "programme": "BACHELOR OF ARTS (SOCIAL WORK)",
+    "cutoff_2023": "22.449",
+    "cutoff_2022": "28.081",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Social Work",
+  "catalog_id": "prog_socialwork",
+  "catalog_university": "South Eastern Kenya University",
+  "canon_key": "SEKU",
+  "catalog_latest": 22.449,
+  "catalog_previous": 24.682,
+  "candidates_available": 50,
+  "matches": [
+   {
+    "programme": "BACHELOR OF ARTS (SOCIAL WORK)",
+    "cutoff_2023": "22.449",
+    "cutoff_2022": "24.682",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF ARTS (GENDER AND SOCIAL STUDIES)",
+    "cutoff_2023": "22.449",
+    "cutoff_2022": "22.916",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Social Work",
+  "catalog_id": "prog_socialwork",
+  "catalog_university": "Masinde Muliro University of Science and Technology",
+  "canon_key": "MMUST",
+  "catalog_latest": 22.449,
+  "catalog_previous": 25.199,
+  "candidates_available": 72,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SOCIAL WORK",
+    "cutoff_2023": "22.449",
+    "cutoff_2022": "25.199",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (MEDICAL SOCIAL WORK)",
+    "cutoff_2023": "28.742",
+    "cutoff_2022": "30.472",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Social Work",
+  "catalog_id": "prog_socialwork",
+  "catalog_university": "Catholic University of Eastern Africa",
+  "canon_key": "CATHOLIC UNIVERSITY OF EASTERN AFRICA",
+  "catalog_latest": 22.449,
+  "catalog_previous": 22.916,
+  "candidates_available": 29,
+  "matches": [
+   {
+    "programme": "BACHELOR OF ARTS (SOCIAL WORK)",
+    "cutoff_2023": "22.449",
+    "cutoff_2022": "22.916",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Arts in Counseling Psychology",
+  "catalog_id": "prog_counsel",
+  "catalog_university": "Machakos University",
+  "canon_key": "MACHAKOS UNIVERSITY",
+  "catalog_latest": 24.615,
+  "catalog_previous": 27.279,
+  "candidates_available": 36,
+  "matches": [
+   {
+    "programme": "BACHELOR OF ARTS (COUNSELLING PSYCHOLOGY)",
+    "cutoff_2023": "24.615",
+    "cutoff_2022": "27.279",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF ARTS",
+    "cutoff_2023": "24.666",
+    "cutoff_2022": "25.34",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Arts in Counseling Psychology",
+  "catalog_id": "prog_counsel",
+  "catalog_university": "Kisii University",
+  "canon_key": "KISII UNIVERSITY",
+  "catalog_latest": 22.449,
+  "catalog_previous": 22.916,
+  "candidates_available": 80,
+  "matches": [
+   {
+    "programme": "BACHELOR OF ARTS IN COUNSELING PSYCHOLOGY",
+    "cutoff_2023": "22.449",
+    "cutoff_2022": "22.916",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF ARTS (PSYCHOLOGY)",
+    "cutoff_2023": "22.449",
+    "cutoff_2022": "22.916",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Arts in Counseling Psychology",
+  "catalog_id": "prog_counsel",
+  "catalog_university": "Catholic University of Eastern Africa",
+  "canon_key": "CATHOLIC UNIVERSITY OF EASTERN AFRICA",
+  "catalog_latest": 22.449,
+  "catalog_previous": 22.916,
+  "candidates_available": 29,
+  "matches": [
+   {
+    "programme": "BACHELOR OF ARTS IN COUNSELING PSYCHOLOGY",
+    "cutoff_2023": "22.449",
+    "cutoff_2022": "22.916",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF ARTS IN ANTHROPOLOGY",
+    "cutoff_2023": "22.449",
+    "cutoff_2022": "22.916",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Arts in Counseling Psychology",
+  "catalog_id": "prog_counsel",
+  "catalog_university": "KCA University",
+  "canon_key": "KCA UNIVERSITY",
+  "catalog_latest": 22.449,
+  "catalog_previous": 22.916,
+  "candidates_available": 21,
+  "matches": [
+   {
+    "programme": "BACHELOR OF ARTS IN COUNSELING PSYCHOLOGY",
+    "cutoff_2023": "22.449",
+    "cutoff_2022": "22.916",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF EDUCATION (ARTS)",
+    "cutoff_2023": "24.216",
+    "cutoff_2022": "22.358",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Business Management",
+  "catalog_id": "prog_bizmgmt",
+  "catalog_university": "Moi University",
+  "canon_key": "MOI UNIVERSITY",
+  "catalog_latest": 21.375,
+  "catalog_previous": 21.444,
+  "candidates_available": 65,
+  "matches": [
+   {
+    "programme": "BACHELOR OF BUSINESS MANAGEMENT",
+    "cutoff_2023": "21.375",
+    "cutoff_2022": "21.444",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (AGRI BUSINESS MANAGEMENT)",
+    "cutoff_2023": "15.864",
+    "cutoff_2022": "16.974",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Business Management",
+  "catalog_id": "prog_bizmgmt",
+  "catalog_university": "University of Eldoret",
+  "canon_key": "UNIVERSITY OF ELDORET",
+  "catalog_latest": 21.375,
+  "catalog_previous": 21.444,
+  "candidates_available": 60,
+  "matches": [
+   {
+    "programme": "BACHELOR OF BUSINESS MANAGEMENT",
+    "cutoff_2023": "21.375",
+    "cutoff_2022": "21.444",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (WILDLIFE MANAGEMENT)",
+    "cutoff_2023": "15.864",
+    "cutoff_2022": "17.043",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Business Management",
+  "catalog_id": "prog_bizmgmt",
+  "catalog_university": "Co-operative University of Kenya",
+  "canon_key": "CO OPERATIVE UNIVERSITY OF KENYA",
+  "catalog_latest": 21.375,
+  "catalog_previous": 21.444,
+  "candidates_available": 33,
+  "matches": [
+   {
+    "programme": "BACHELOR OF BUSINESS MANAGEMENT",
+    "cutoff_2023": "21.375",
+    "cutoff_2022": "21.444",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (AGRIBUSINESS MANAGEMENT)",
+    "cutoff_2023": "15.864",
+    "cutoff_2022": "16.974",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Business Management",
+  "catalog_id": "prog_bizmgmt",
+  "catalog_university": "Kisii University",
+  "canon_key": "KISII UNIVERSITY",
+  "catalog_latest": 21.375,
+  "catalog_previous": 21.444,
+  "candidates_available": 80,
+  "matches": [
+   {
+    "programme": "BACHELOR OF BUSINESS AND MANAGEMENT",
+    "cutoff_2023": "21.375",
+    "cutoff_2022": "21.444",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF BUSINESS INFORMATION AND MANAGEMENT",
+    "cutoff_2023": "21.375",
+    "cutoff_2022": "21.444",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Tourism Management",
+  "catalog_id": "prog_tourism",
+  "catalog_university": "Maasai Mara University",
+  "canon_key": "MAASAI MARA UNIVERSITY",
+  "catalog_latest": 25.915,
+  "catalog_previous": 27.905,
+  "candidates_available": 51,
+  "matches": [
+   {
+    "programme": "BACHELOR OF TOURISM MANAGEMENT",
+    "cutoff_2023": "25.915",
+    "cutoff_2022": "27.905",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (WILDLIFE MANAGEMENT)",
+    "cutoff_2023": "15.864",
+    "cutoff_2022": "-",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Tourism Management",
+  "catalog_id": "prog_tourism",
+  "catalog_university": "Chuka University",
+  "canon_key": "CHUKA UNIVERSITY",
+  "catalog_latest": 24.284,
+  "catalog_previous": 26.854,
+  "candidates_available": 61,
+  "matches": [
+   {
+    "programme": "BACHELOR OF TOURISM MANAGEMENT",
+    "cutoff_2023": "24.284",
+    "cutoff_2022": "26.854",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (WILDLIFE ENTERPRISE MANAGEMENT)",
+    "cutoff_2023": "15.864",
+    "cutoff_2022": "17.043",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Tourism Management",
+  "catalog_id": "prog_tourism",
+  "catalog_university": "University of Eldoret",
+  "canon_key": "UNIVERSITY OF ELDORET",
+  "catalog_latest": 23.155,
+  "catalog_previous": 25.923,
+  "candidates_available": 60,
+  "matches": [
+   {
+    "programme": "BACHELOR OF TOURISM MANAGEMENT",
+    "cutoff_2023": "23.155",
+    "cutoff_2022": "25.923",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (WILDLIFE MANAGEMENT)",
+    "cutoff_2023": "15.864",
+    "cutoff_2022": "17.043",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Tourism Management",
+  "catalog_id": "prog_tourism",
+  "catalog_university": "Rongo University",
+  "canon_key": "RONGO UNIVERSITY",
+  "catalog_latest": 22.806,
+  "catalog_previous": 24.248,
+  "candidates_available": 45,
+  "matches": [
+   {
+    "programme": "BACHELOR OF TOURISM MANAGEMENT",
+    "cutoff_2023": "22.806",
+    "cutoff_2022": "24.248",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF TOURISM AND HOSPITALITY MANAGEMENT",
+    "cutoff_2023": "22.999",
+    "cutoff_2022": "22.353",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Hospitality Management",
+  "catalog_id": "prog_hospitality",
+  "catalog_university": "Murang'a University of Technology",
+  "canon_key": "MURANG A UNIVERSITY OF TECHNOLOGY",
+  "catalog_latest": 21.375,
+  "catalog_previous": 24.429,
+  "candidates_available": 43,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (HOSPITALITY MANAGEMENT)",
+    "cutoff_2023": "21.375",
+    "cutoff_2022": "24.429",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (TOURISM MANAGEMENT)",
+    "cutoff_2023": "21.375",
+    "cutoff_2022": "23.085",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Real Estate Management",
+  "catalog_id": "prog_realestate",
+  "catalog_university": "Mount Kenya University",
+  "canon_key": "MOUNT KENYA UNIVERSITY",
+  "catalog_latest": 18.392,
+  "catalog_previous": 18.692,
+  "candidates_available": 60,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE IN REAL ESTATE MANAGEMENT",
+    "cutoff_2023": "18.392",
+    "cutoff_2022": "18.692",
+    "score": 4
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE IN HOSPITALITY MANAGEMENT",
+    "cutoff_2023": "27.515",
+    "cutoff_2022": "27.433",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Engineering in Chemical Engineering",
+  "catalog_id": "prog_chemeng",
+  "catalog_university": "Technical University of Kenya",
+  "canon_key": "TUK",
+  "catalog_latest": 38.978,
+  "catalog_previous": 38.404,
+  "candidates_available": 55,
+  "matches": [
+   {
+    "programme": "BACHELOR OF ENGINEERING (CHEMICAL ENGINEERING)",
+    "cutoff_2023": "38.978",
+    "cutoff_2022": "38.404",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF TECHNOLOGY (CHEMICAL ENGINEERING)",
+    "cutoff_2023": "27.25",
+    "cutoff_2022": "25.214",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Engineering in Chemical Engineering",
+  "catalog_id": "prog_chemeng",
+  "catalog_university": "Moi University",
+  "canon_key": "MOI UNIVERSITY",
+  "catalog_latest": 34.111,
+  "catalog_previous": 31.769,
+  "candidates_available": 65,
+  "matches": [
+   {
+    "programme": "BACHELOR OF ENGINEERING (CHEMICAL AND PROCESS\nENGINEERING)",
+    "cutoff_2023": "34.111",
+    "cutoff_2022": "31.769",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF ENGINEERING (CIVIL AND STRUCTURAL\nENGINEERING)",
+    "cutoff_2023": "39.539",
+    "cutoff_2022": "39.792",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Engineering in Chemical Engineering",
+  "catalog_id": "prog_chemeng",
+  "catalog_university": "Dedan Kimathi University of Technology",
+  "canon_key": "DEKUT",
+  "catalog_latest": 33.421,
+  "catalog_previous": 31.644,
+  "candidates_available": 28,
+  "matches": [
+   {
+    "programme": "BACHELOR OF ENGINEERING (CHEMICAL ENGINEERING)",
+    "cutoff_2023": "33.421",
+    "cutoff_2022": "31.644",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE IN CIVIL ENGINEERING",
+    "cutoff_2023": "39.863",
+    "cutoff_2022": "39.769",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Human Resource Management",
+  "catalog_id": "prog_hrm",
+  "catalog_university": "Jomo Kenyatta University (JKUAT)",
+  "canon_key": "JKUAT",
+  "catalog_latest": 29.685,
+  "catalog_previous": 30.688,
+  "candidates_available": 99,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE IN HUMAN RESOURCE MANAGEMENT",
+    "cutoff_2023": "29.685",
+    "cutoff_2022": "30.688",
+    "score": 4
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (LAND RESOURCE PLANNING &\nMANAGEMENT)",
+    "cutoff_2023": "15.864",
+    "cutoff_2022": "17.043",
+    "score": 3
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Human Resource Management",
+  "catalog_id": "prog_hrm",
+  "catalog_university": "Maseno University",
+  "canon_key": "MASENO UNIVERSITY",
+  "catalog_latest": 27.266,
+  "catalog_previous": 28.744,
+  "candidates_available": 73,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE IN HUMAN RESOURCE MANAGEMENT,\nWITH IT",
+    "cutoff_2023": "27.266",
+    "cutoff_2022": "28.744",
+    "score": 4
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (GEOGRAPHY AND NATURAL RESOURCE\nMANAGEMENT, WITH IT)",
+    "cutoff_2023": "18.144",
+    "cutoff_2022": "26.024",
+    "score": 3
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Human Resource Management",
+  "catalog_id": "prog_hrm",
+  "catalog_university": "Meru University of Science and Technology",
+  "canon_key": "MERU UNIVERSITY OF SCIENCE AND TECHNOLOGY",
+  "catalog_latest": 23.523,
+  "catalog_previous": 26.819,
+  "candidates_available": 54,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE IN HUMAN RESOURCE MANAGEMENT",
+    "cutoff_2023": "23.523",
+    "cutoff_2022": "26.819",
+    "score": 4
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE ( ENVIRONMENTAL SCIENCE AND\nRESOURCE MANAGEMENT )",
+    "cutoff_2023": "15.864",
+    "cutoff_2022": "17.043",
+    "score": 3
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Human Resource Management",
+  "catalog_id": "prog_hrm",
+  "catalog_university": "Rongo University",
+  "canon_key": "RONGO UNIVERSITY",
+  "catalog_latest": 22.86,
+  "catalog_previous": 25.574,
+  "candidates_available": 45,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE IN HUMAN REOURCE MANAGEMENT",
+    "cutoff_2023": "22.86",
+    "cutoff_2022": "25.574",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (AGRICULTURAL ECONOMICS &\nRESOURCE MANAGEMENT)",
+    "cutoff_2023": "15.864",
+    "cutoff_2022": "16.974",
+    "score": 3
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in International Business Management",
+  "catalog_id": "prog_intlbiz",
+  "catalog_university": "Africa Nazarene University",
+  "canon_key": "AFRICA NAZARENE UNIVERSITY",
+  "catalog_latest": 21.375,
+  "catalog_previous": 21.444,
+  "candidates_available": 13,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE IN INTERNATIONAL BUSINESS\nMANAGEMENT",
+    "cutoff_2023": "21.375",
+    "cutoff_2022": "21.444",
+    "score": 4
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE IN ENVIRONMENTAL RESOURCE\nMANAGEMENT",
+    "cutoff_2023": "15.864",
+    "cutoff_2022": "17.043",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in International Business Management",
+  "catalog_id": "prog_intlbiz",
+  "catalog_university": "KCA University",
+  "canon_key": "KCA UNIVERSITY",
+  "catalog_latest": 21.375,
+  "catalog_previous": 21.444,
+  "candidates_available": 21,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE IN INTERNATIONAL BUSINESS\nMANAGEMENT",
+    "cutoff_2023": "21.375",
+    "cutoff_2022": "21.444",
+    "score": 4
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE IN PUBLIC MANAGEMENT",
+    "cutoff_2023": "22.449",
+    "cutoff_2022": "22.916",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Urban and Regional Planning",
+  "catalog_id": "prog_urbanplan",
+  "catalog_university": "Maasai Mara University",
+  "canon_key": "MAASAI MARA UNIVERSITY",
+  "catalog_latest": 18.392,
+  "catalog_previous": 18.692,
+  "candidates_available": 51,
+  "matches": [
+   {
+    "programme": "BACHELOR OF URBAN AND REGIONAL PLANNING",
+    "cutoff_2023": "18.392",
+    "cutoff_2022": "18.692",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (PROJECT PLANNING AND",
+    "cutoff_2023": "21.375",
+    "cutoff_2022": "23.222",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Urban and Regional Planning",
+  "catalog_id": "prog_urbanplan",
+  "catalog_university": "Maseno University",
+  "canon_key": "MASENO UNIVERSITY",
+  "catalog_latest": 18.392,
+  "catalog_previous": 18.692,
+  "candidates_available": 73,
+  "matches": [
+   {
+    "programme": "BACHELOR OF ARTS (URBAN AND REGIONAL PLANNING, WITH",
+    "cutoff_2023": "18.392",
+    "cutoff_2022": "18.692",
+    "score": 3
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Geomatics and Geospatial Information Systems",
+  "catalog_id": "prog_geomatics",
+  "catalog_university": "Jomo Kenyatta University (JKUAT)",
+  "canon_key": "JKUAT",
+  "catalog_latest": 33.464,
+  "catalog_previous": 29.483,
+  "candidates_available": 99,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (GEOSPATIAL INFORMATION SCIENCE)",
+    "cutoff_2023": "27.531",
+    "cutoff_2022": "29.784",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (TELECOMMUNICATION AND\nINFORMATION ENGINEERING)",
+    "cutoff_2023": "37.472",
+    "cutoff_2022": "39.652",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Geomatics and Geospatial Information Systems",
+  "catalog_id": "prog_geomatics",
+  "catalog_university": "Dedan Kimathi University of Technology",
+  "canon_key": "DEKUT",
+  "catalog_latest": 15.683,
+  "catalog_previous": 32.149,
+  "candidates_available": 28,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE IN GEOMATICS AND GEOSPATIAL\nINFORMATION SYSTEMS",
+    "cutoff_2023": "15.683",
+    "cutoff_2022": "32.149",
+    "score": 5
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE IN GEOSPATIAL INFORMATION SCIENCE\nAND REMOTE SENSING",
+    "cutoff_2023": "15.683",
+    "cutoff_2022": "25.854",
+    "score": 3
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Geomatics and Geospatial Information Systems",
+  "catalog_id": "prog_geomatics",
+  "catalog_university": "Taita Taveta University",
+  "canon_key": "TAITA TAVETA UNIVERSITY",
+  "catalog_latest": 15.683,
+  "catalog_previous": 17.363,
+  "candidates_available": 22,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (INFORMATION TECHNOLOGY)",
+    "cutoff_2023": "18.814",
+    "cutoff_2022": "18.638",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE IN INDUSTRIAL CHEMISTRY",
+    "cutoff_2023": "15.683",
+    "cutoff_2022": "15.982",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Medical Laboratory Sciences",
+  "catalog_id": "prog_medlabsci",
+  "catalog_university": "Kenyatta University",
+  "canon_key": "KENYATTA UNIVERSITY",
+  "catalog_latest": 41.0,
+  "catalog_previous": 40.632,
+  "candidates_available": 89,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (MEDICAL LABORATORY SCIENCE)",
+    "cutoff_2023": "41.175",
+    "cutoff_2022": "41",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (ACTUARIAL SCIENCE)",
+    "cutoff_2023": "34.474",
+    "cutoff_2022": "31.842",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Medical Laboratory Sciences",
+  "catalog_id": "prog_medlabsci",
+  "catalog_university": "Masinde Muliro University of Science and Technology",
+  "canon_key": "MMUST",
+  "catalog_latest": 38.739,
+  "catalog_previous": 37.83,
+  "candidates_available": 72,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (MEDICAL LABORATORY SCIENCES)",
+    "cutoff_2023": "38.872",
+    "cutoff_2022": "38.739",
+    "score": 4
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (INFORMATION SCIENCES AND\nKNOWLEDGE MANAGEMENT)",
+    "cutoff_2023": "21.375",
+    "cutoff_2022": "-",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Physiotherapy",
+  "catalog_id": "prog_physio",
+  "catalog_university": "Jomo Kenyatta University (JKUAT)",
+  "canon_key": "JKUAT",
+  "catalog_latest": 38.116,
+  "catalog_previous": 38.108,
+  "candidates_available": 99,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (PHYSIOTHERAPY)",
+    "cutoff_2023": "38.224",
+    "cutoff_2022": "38.116",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE IN ACTUARIAL SCIENCE",
+    "cutoff_2023": "34.347",
+    "cutoff_2022": "31.441",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Community Health and Development",
+  "catalog_id": "prog_commhealth",
+  "catalog_university": "Jomo Kenyatta University (JKUAT)",
+  "canon_key": "JKUAT",
+  "catalog_latest": 28.0,
+  "catalog_previous": 27.5,
+  "candidates_available": 99,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE IN COMMUNITY HEALTH AND\nDEVELOPMENT",
+    "cutoff_2023": "24.867",
+    "cutoff_2022": "25.776",
+    "score": 4
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (COMMUNITY DEVELOPMENT AND\nENVIRONMENT)",
+    "cutoff_2023": "25.35",
+    "cutoff_2022": "28.923",
+    "score": 3
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Community Health and Development",
+  "catalog_id": "prog_commhealth",
+  "catalog_university": "Jaramogi Oginga Odinga University of Science and Technology",
+  "canon_key": "JARAMOGI OGINGA ODINGA UNIVERSITY OF SCIENCE AND TECHNOLOGY",
+  "catalog_latest": 25.0,
+  "catalog_previous": 24.5,
+  "candidates_available": 26,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (COMMUNITY HEALTH AND\nDEVELOPMENT)",
+    "cutoff_2023": "15.864",
+    "cutoff_2022": "17.043",
+    "score": 4
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (PUBLIC HEALTH)",
+    "cutoff_2023": "25.558",
+    "cutoff_2022": "25.063",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Data Science and Analytics",
+  "catalog_id": "prog_datasci",
+  "catalog_university": "Jomo Kenyatta University (JKUAT)",
+  "canon_key": "JKUAT",
+  "catalog_latest": 28.948,
+  "catalog_previous": 25.611,
+  "candidates_available": 99,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE IN DATA SCIENCE AND ANALYTICS",
+    "cutoff_2023": "38.717",
+    "cutoff_2022": "36.902",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE IN ACTUARIAL SCIENCE",
+    "cutoff_2023": "34.347",
+    "cutoff_2022": "31.441",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Biochemistry",
+  "catalog_id": "prog_biochem",
+  "catalog_university": "Kenyatta University",
+  "canon_key": "KENYATTA UNIVERSITY",
+  "catalog_latest": 16.974,
+  "catalog_previous": 17.459,
+  "candidates_available": 89,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (BIOCHEMISTRY)",
+    "cutoff_2023": "32.976",
+    "cutoff_2022": "31.582",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (ACTUARIAL SCIENCE)",
+    "cutoff_2023": "34.474",
+    "cutoff_2022": "31.842",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Biochemistry",
+  "catalog_id": "prog_biochem",
+  "catalog_university": "Egerton University",
+  "canon_key": "EGERTON UNIVERSITY",
+  "catalog_latest": 25.756,
+  "catalog_previous": 26.362,
+  "candidates_available": 57,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (BIOCHEMISTRY)",
+    "cutoff_2023": "25.661",
+    "cutoff_2022": "25.756",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (ACTUARIAL SCIENCE)",
+    "cutoff_2023": "32.262",
+    "cutoff_2022": "28.868",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Physics",
+  "catalog_id": "prog_physics",
+  "catalog_university": "South Eastern Kenya University",
+  "canon_key": "SEKU",
+  "catalog_latest": 24.822,
+  "catalog_previous": 24.034,
+  "candidates_available": 50,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (PHYSICS)",
+    "cutoff_2023": "-",
+    "cutoff_2022": "-",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (ACTUARIAL SCIENCE)",
+    "cutoff_2023": "18.831",
+    "cutoff_2022": "19.914",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Physics",
+  "catalog_id": "prog_physics",
+  "catalog_university": "Catholic University of Eastern Africa",
+  "canon_key": "CATHOLIC UNIVERSITY OF EASTERN AFRICA",
+  "catalog_latest": 22.706,
+  "catalog_previous": 24.32,
+  "candidates_available": 29,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (PHYSICS)",
+    "cutoff_2023": "15.683",
+    "cutoff_2022": "16.974",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE IN ACTUARIAL SCIENCE",
+    "cutoff_2023": "18.831",
+    "cutoff_2022": "19.914",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Chemistry",
+  "catalog_id": "prog_chem",
+  "catalog_university": "South Eastern Kenya University",
+  "canon_key": "SEKU",
+  "catalog_latest": 16.974,
+  "catalog_previous": 17.459,
+  "candidates_available": 50,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (CHEMISTRY)",
+    "cutoff_2023": "-",
+    "cutoff_2022": "-",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (ACTUARIAL SCIENCE)",
+    "cutoff_2023": "18.831",
+    "cutoff_2022": "19.914",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Chemistry",
+  "catalog_id": "prog_chem",
+  "catalog_university": "Maasai Mara University",
+  "canon_key": "MAASAI MARA UNIVERSITY",
+  "catalog_latest": 17.459,
+  "catalog_previous": 24.33,
+  "candidates_available": 51,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (CHEMISTRY)",
+    "cutoff_2023": "15.683",
+    "cutoff_2022": "16.974",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (MATHEMATICS)",
+    "cutoff_2023": "18.831",
+    "cutoff_2022": "19.914",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Procurement and Logistics Management",
+  "catalog_id": "prog_procurement",
+  "catalog_university": "Chuka University",
+  "canon_key": "CHUKA UNIVERSITY",
+  "catalog_latest": 22.544,
+  "catalog_previous": 24.83,
+  "candidates_available": 61,
+  "matches": [
+   {
+    "programme": "BACHELOR OF PROCUREMENT AND LOGISTICS MANAGEMENT",
+    "cutoff_2023": "21.375",
+    "cutoff_2022": "21.444",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF PROCUREMENT AND LOGISTICS MANAGEMENT",
+    "cutoff_2023": "-",
+    "cutoff_2022": "-",
+    "score": 3
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Environmental Science",
+  "catalog_id": "prog_envsci",
+  "catalog_university": "Mount Kenya University",
+  "canon_key": "MOUNT KENYA UNIVERSITY",
+  "catalog_latest": 22.0,
+  "catalog_previous": 26.546,
+  "candidates_available": 60,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE IN ACTUARIAL SCIENCE",
+    "cutoff_2023": "18.831",
+    "cutoff_2022": "19.914",
+    "score": 1
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (INDUSTRIAL CHEMISTRY)",
+    "cutoff_2023": "15.683",
+    "cutoff_2022": "15.982",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Forestry",
+  "catalog_id": "prog_forestry",
+  "catalog_university": "University of Eldoret",
+  "canon_key": "UNIVERSITY OF ELDORET",
+  "catalog_latest": 17.043,
+  "catalog_previous": 17.459,
+  "candidates_available": 60,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (FORESTRY)",
+    "cutoff_2023": "15.864",
+    "cutoff_2022": "17.043",
+    "score": 2
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE IN ACTUARIAL SCIENCE",
+    "cutoff_2023": "23.568",
+    "cutoff_2022": "19.914",
+    "score": 1
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Science in Biomedical Engineering",
+  "catalog_id": "prog_biomedeng",
+  "catalog_university": "Kenyatta University",
+  "canon_key": "KENYATTA UNIVERSITY",
+  "catalog_latest": 35.0,
+  "catalog_previous": 34.5,
+  "candidates_available": 89,
+  "matches": [
+   {
+    "programme": "BACHELOR OF SCIENCE (BIOMEDICAL ENGINEERING)",
+    "cutoff_2023": "42.387",
+    "cutoff_2022": "41.807",
+    "score": 3
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (CIVIL ENGINEERING)",
+    "cutoff_2023": "42.574",
+    "cutoff_2022": "42.148",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Arts in Political Science and Public Administration",
+  "catalog_id": "prog_polsci",
+  "catalog_university": "Kisii University",
+  "canon_key": "KISII UNIVERSITY",
+  "catalog_latest": 22.916,
+  "catalog_previous": 22.926,
+  "candidates_available": 80,
+  "matches": [
+   {
+    "programme": "BACHELOR OF ARTS (PUBLIC ADMINISTRATION AND POLITICAL\nSCIENCE)",
+    "cutoff_2023": "22.449",
+    "cutoff_2022": "27.529",
+    "score": 5
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE IN PUBLIC HEALTH",
+    "cutoff_2023": "31.45",
+    "cutoff_2022": "32.151",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Arts in Political Science and Public Administration",
+  "catalog_id": "prog_polsci",
+  "catalog_university": "Rongo University",
+  "canon_key": "RONGO UNIVERSITY",
+  "catalog_latest": 22.926,
+  "catalog_previous": 26.095,
+  "candidates_available": 45,
+  "matches": [
+   {
+    "programme": "BACHELOR OF ARTS (POLITICAL SCIENCE AND PUBLIC\nADMINISTRATION)",
+    "cutoff_2023": "22.449",
+    "cutoff_2022": "25.712",
+    "score": 5
+   },
+   {
+    "programme": "BACHELOR OF SCIENCE (COMMUNICATION AND PUBLIC\nRELATIONS)",
+    "cutoff_2023": "22.449",
+    "cutoff_2022": "22.916",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Arts in Criminology and Security Studies",
+  "catalog_id": "prog_criminology",
+  "catalog_university": "Chuka University",
+  "canon_key": "CHUKA UNIVERSITY",
+  "catalog_latest": 28.482,
+  "catalog_previous": 28.35,
+  "candidates_available": 61,
+  "matches": [
+   {
+    "programme": "BACHELOR OF ARTS (CRIMINOLOGY & SECURITY STUDIES)",
+    "cutoff_2023": "26.631",
+    "cutoff_2022": "30.721",
+    "score": 4
+   },
+   {
+    "programme": "BACHELOR OF ARTS IN RELIGIOUS STUDIES",
+    "cutoff_2023": "20.93",
+    "cutoff_2022": "19.67",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "catalog_title": "Bachelor of Arts in Criminology and Security Studies",
+  "catalog_id": "prog_criminology",
+  "catalog_university": "Kisii University",
+  "canon_key": "KISII UNIVERSITY",
+  "catalog_latest": 26.573,
+  "catalog_previous": 28.793,
+  "candidates_available": 80,
+  "matches": [
+   {
+    "programme": "BACHELOR OF ARTS (CRIMINOLOGY AND SECURITY STUDIES)",
+    "cutoff_2023": "22.449",
+    "cutoff_2022": "27.342",
+    "score": 4
+   },
+   {
+    "programme": "BACHELOR OF ARTS (GENDER AND DEVELOPMENT STUDIES)",
+    "cutoff_2023": "22.449",
+    "cutoff_2022": "22.916",
+    "score": 2
+   }
+  ]
+ }
+]

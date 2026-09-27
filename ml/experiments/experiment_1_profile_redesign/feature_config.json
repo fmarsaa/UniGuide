@@ -1,0 +1,41 @@
+{
+  "numeric_features_total": 53,
+  "numeric_feature_groups": {
+    "kcse_subject_grades": 9,
+    "mean_points": 1,
+    "interest_booleans": 23,
+    "skill_booleans": 13,
+    "strength_booleans": 7
+  },
+  "categorical_features": ["aspiration"],
+  "categorical_feature_encoding": "one-hot (OneHotEncoder, handle_unknown=ignore)",
+  "aspiration_pool_size": 29,
+  "aspiration_pool_note": "21 original programme-specific options + 8 new cluster-level, deliberately non-exclusive options added for Experiment 1 (e.g. 'Healthcare Professional (General)' maps to 6 programmes). Every one of the 21 trained programmes now has at least 2 aspiration options that can plausibly lead to it, fixing the exclusive 1:1 mapping the baseline flagged.",
+  "kcse_subject_grade_features": [
+    "Mathematics", "English", "Kiswahili", "Biology", "Chemistry",
+    "Physics", "History", "Business Studies", "Geography"
+  ],
+  "scoring_weights_in_label_assignment": {
+    "aspiration_match": 4.0,
+    "interest_match_per_item": 2.0,
+    "skill_token_match_per_item": 1.0,
+    "strength_match_per_item": 1.0,
+    "note": "assign_programme_label() and its scoring weights are UNCHANGED from the baseline - this experiment did not touch the labelling rule at all. What changed is upstream of it: which profiles get generated in the first place."
+  },
+  "generation_change_summary": {
+    "what_changed": "Replaced the baseline's two-stage generator (a uniform-random draw for the bulk of the dataset, decoupled from any programme, plus a hand-picked 5-class-only biased top-up) with one mechanism applied to all 21 trained programmes: for every profile, a target programme is chosen first, then interests/skills/strengths are drawn with a weighted bias toward that programme's own associated tags (55-70% probability per pick) vs. a shared cross-cutting pool or the full pool otherwise, aspiration is drawn from that programme's now-non-exclusive aspiration list 75% of the time (else fully random), and KCSE grades are floor-enforced against the target's real KUCCPS minimums. The SAME assign_programme_label() rule then decides the actual label, which can and does differ from the target - nothing forces the outcome.",
+    "why_the_result_changed_this_much": "Under the baseline generator, only 5 of 21 classes ever received programme-biased interests/skills/strengths; the other 16 classes' non-aspiration signals were pure noise relative to the label, leaving aspiration as close to the only usable signal for many classes. Every class now has real, multi-attribute correlated signal in its training data (the same correlation _score_programme already used to assign labels), which is why accuracy rose substantially without any change to the labelling rule or its weights.",
+    "leakage_check_performed": "Per-class recall ranges 65%-97% (Software Engineering lowest, Journalism/Pharmacy highest) with no class at or near 100%, and Software Engineering's 71 misclassifications land 72% on Informatics & Computer Science (its documented confusable neighbour) and BBIT's land mostly on BCom/ICS (also documented neighbours) - see confusion_matrix.json. This is the expected signature of genuine, non-degenerate overlap between thematically similar programmes, not a new single-feature shortcut."
+  },
+  "classifier": "RandomForestClassifier (scikit-learn)",
+  "class_weight": "balanced_subsample",
+  "hyperparameter_search": {
+    "method": "GridSearchCV, 5-fold, scoring=f1_weighted, searched on 80% train split only",
+    "grid": {
+      "n_estimators": [200, 350],
+      "max_depth": [12, 18, null],
+      "min_samples_leaf": [1, 2]
+    },
+    "best_params": {"max_depth": null, "min_samples_leaf": 1, "n_estimators": 350}
+  }
+}
