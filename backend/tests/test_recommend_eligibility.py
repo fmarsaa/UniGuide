@@ -108,3 +108,70 @@ def test_newly_trained_programme_is_reachable():
 
     assert top_title == "Bachelor of Business Management"
     assert eligible_mask[top_idx[0]] is True
+
+
+def test_live_catalogue_edit_is_reflected_in_eligibility():
+    """Regression test for the live-catalogue bug: CATALOG_BY_TITLE used to
+    be a static, process-startup-time copy, so an admin's PUT
+    /api/admin/programmes/{id} edit updated Firestore (and the student
+    browse catalogue) but never reached get_recommendations()'s eligibility
+    gate. CATALOG_BY_ID/CATALOG_BY_TITLE are now live, mutable dicts kept in
+    sync by _load_live_catalog() - this directly exercises that an edit to
+    the in-memory dict (exactly what update_programme does after its
+    Firestore write) changes what meets_minimum_requirements() sees,
+    without needing a real Firestore round-trip or a server restart."""
+    title = "Bachelor of Science in Agriculture"
+    original_reqs = dict(main.CATALOG_BY_TITLE[title]["minimumSubjectRequirements"])
+    assert original_reqs == {"Biology": "C+", "Chemistry": "C", "Mathematics": "C"}
+    grades = {
+        "Mathematics": "C", "English": "C", "Kiswahili": "C", "Biology": "C+",
+        "Chemistry": "C",
+    }
+    try:
+        # Clears the real floor (Biology C+, Chemistry C, Mathematics C).
+        assert meets_minimum_requirements(grades, main.CATALOG_BY_TITLE[title]["minimumSubjectRequirements"]) is True
+
+        # Simulate an admin tightening the requirement (exactly what
+        # update_programme does to this same dict object after its
+        # Firestore write) - the SAME grades must now fail.
+        main.CATALOG_BY_TITLE[title]["minimumSubjectRequirements"] = {"Mathematics": "B", "Biology": "B"}
+        assert meets_minimum_requirements(grades, main.CATALOG_BY_TITLE[title]["minimumSubjectRequirements"]) is False
+
+        # And CATALOG_BY_ID must see the identical change - same object,
+        # not a stale separate copy.
+        programme_id = next(pid for pid, p in main.CATALOG_BY_ID.items() if p["title"] == title)
+        assert main.CATALOG_BY_ID[programme_id]["minimumSubjectRequirements"] == {"Mathematics": "B", "Biology": "B"}
+    finally:
+        main.CATALOG_BY_TITLE[title]["minimumSubjectRequirements"] = original_reqs
+
+
+def test_deactivated_programme_is_never_recommended():
+    """A deactivated programme must be excluded from both the eligible
+    ranking and the fallback list, even for a profile that would otherwise
+    strongly match it - exercises the exact filtering
+    select_recommended_indices applies for a programme an admin deactivated."""
+    title = "Bachelor of Business Management"
+    assert main.CATALOG_BY_TITLE[title].get("status") != "inactive"
+    try:
+        main.CATALOG_BY_TITLE[title]["status"] = "inactive"
+        grades = {
+            "Mathematics": "C", "English": "C+", "Kiswahili": "C+", "Biology": "C+",
+            "Chemistry": "C", "Physics": "C", "Business Studies": "B-", "Geography": "B-",
+        }
+        payload = main.StudentProfilePayload(
+            kcseMeanGrade="C+", grades=grades,
+            interests=["General Business Administration & Strategy"],
+            skills=["Financial Modeling & Accounting", "Team Collaboration & Leadership"],
+            strengths=["Leadership & Strategic Direction"],
+            aspirations=["Business Manager / Administrator"],
+        )
+        row_df, g, mean_grade = main.profile_to_feature_row(payload)
+        proba = main._pipeline.predict_proba(row_df)[0]
+        classes = main._pipeline.classes_
+
+        top_idx, eligible_mask = main.select_recommended_indices(proba, classes, g, mean_grade)
+        recommended_titles = {classes[i] for i in top_idx}
+
+        assert title not in recommended_titles
+    finally:
+        del main.CATALOG_BY_TITLE[title]["status"]

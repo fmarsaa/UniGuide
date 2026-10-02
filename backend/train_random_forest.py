@@ -94,6 +94,25 @@ PARAM_GRID = {
     "classifier__max_features": ["sqrt", "log2"],
 }
 
+# Defaults to using every CPU core for a normal `python train_random_forest.py`
+# run. The admin-triggered retrain (main.py's POST /api/admin/model/retrain)
+# launches this script as a genuinely separate OS process specifically so a
+# memory spike here can't take down the live FastAPI server sharing the same
+# machine - and sets TRAIN_N_JOBS to a conservative value for that case, since
+# this machine's available RAM is tight enough that a second full-parallelism
+# fit alongside the already-running server risked an out-of-memory failure
+# (observed directly while testing). Untouched for the normal CLI workflow.
+N_JOBS = int(os.environ.get("TRAIN_N_JOBS", "-1"))
+
+# All file I/O below is __file__-relative (not CWD-relative) so this script
+# behaves identically whether run directly (`python train_random_forest.py`
+# from backend/) or launched as a subprocess from a different working
+# directory, as the admin-triggered retrain above does.
+_DIR = os.path.dirname(os.path.abspath(__file__))
+_MODEL_PATH = os.path.join(_DIR, "rf_model_pipeline.pkl")
+_METRICS_PATH = os.path.join(_DIR, "model_metrics.json")
+_BACKUPS_DIR = os.path.join(_DIR, "model_backups")
+
 
 def train_and_evaluate_model():
     print(f"Step 1: Generating validated synthetic student dataset (N={DATASET_SIZE} balanced-target profiles + a floor of {THIN_CLASS_FLOOR} for every one of the 21 trained classes)...")
@@ -119,7 +138,7 @@ def train_and_evaluate_model():
 
     rf_clf = RandomForestClassifier(
         random_state=42,
-        n_jobs=-1,
+        n_jobs=N_JOBS,
         class_weight="balanced_subsample",
     )
 
@@ -129,7 +148,7 @@ def train_and_evaluate_model():
     ])
 
     print("Step 3: Grid-searching Random Forest hyperparameters (5-fold CV on the training split ONLY, weighted F1)...")
-    search = GridSearchCV(pipeline, PARAM_GRID, cv=5, scoring="f1_weighted", n_jobs=-1)
+    search = GridSearchCV(pipeline, PARAM_GRID, cv=5, scoring="f1_weighted", n_jobs=N_JOBS)
     search.fit(X_train, y_train)
     best_params = search.best_params_
     print(f"Best params: {best_params}")
@@ -148,7 +167,7 @@ def train_and_evaluate_model():
     print("(Every profile gets exactly one out-of-fold prediction, so even the previously-thin classes are judged on their full oversampled count, not a ~20% slice of it.)")
     cv_pipeline = clone(pipeline).set_params(**best_params)
     skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
-    y_pred_cv = cross_val_predict(cv_pipeline, X, y, cv=skf, n_jobs=-1)
+    y_pred_cv = cross_val_predict(cv_pipeline, X, y, cv=skf, n_jobs=N_JOBS)
     cv_acc = accuracy_score(y, y_pred_cv)
     cv_f1 = f1_score(y, y_pred_cv, average="weighted")
     cv_report = classification_report(y, y_pred_cv, output_dict=True, zero_division=0)
@@ -159,7 +178,7 @@ def train_and_evaluate_model():
     print("\nCross-validated Classification Report (this is the one cited in 5.4):\n", classification_report(y, y_pred_cv, zero_division=0))
 
     print("Step 6: Persisting evaluation metrics to model_metrics.json...")
-    with open("model_metrics.json", "w") as f:
+    with open(_METRICS_PATH, "w") as f:
         json.dump({
             # Primary headline numbers: cross-validated out-of-fold, across
             # the full dataset - the defensible per-class numbers, not a
@@ -194,15 +213,15 @@ def train_and_evaluate_model():
     # its metrics) under a timestamp. If a retrain ever regresses, the
     # previous model can be restored with a plain file copy instead of
     # re-running an old experiment by hand.
-    if os.path.exists("rf_model_pipeline.pkl"):
-        os.makedirs("model_backups", exist_ok=True)
+    if os.path.exists(_MODEL_PATH):
+        os.makedirs(_BACKUPS_DIR, exist_ok=True)
         stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        shutil.copy("rf_model_pipeline.pkl", f"model_backups/rf_model_pipeline_{stamp}.pkl")
-        if os.path.exists("model_metrics.json"):
-            shutil.copy("model_metrics.json", f"model_backups/model_metrics_{stamp}.json")
+        shutil.copy(_MODEL_PATH, os.path.join(_BACKUPS_DIR, f"rf_model_pipeline_{stamp}.pkl"))
+        if os.path.exists(_METRICS_PATH):
+            shutil.copy(_METRICS_PATH, os.path.join(_BACKUPS_DIR, f"model_metrics_{stamp}.json"))
         print(f"  (previous deployed model backed up to model_backups/*_{stamp}.*)")
 
-    with open("rf_model_pipeline.pkl", "wb") as f:
+    with open(_MODEL_PATH, "wb") as f:
         pickle.dump(final_pipeline, f)
 
     print("Training complete! Model artifacts saved to rf_model_pipeline.pkl and model_metrics.json.")
