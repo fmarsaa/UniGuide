@@ -4,13 +4,15 @@ Author: Fatuma Omar Marsa (159056)
 Supervised by: Deperias Webula Kerre
 Strathmore University - School of Computing and Engineering Sciences
 
-Admin-triggered check that re-fetches KUCCPS's own published degree
-programme cutoff document and cross-references it, structurally (not by
-guessing from text layout - see ml/experiments/catalogue_verification/
-for why that matters), against the current programme catalog. Flags any
-offering-university entry whose real KUCCPS listing shows no placements in
-either of the last two years on record - the strongest available signal
-that a university may have stopped offering that programme.
+Runs both on an admin's manual request and automatically on a weekly
+schedule (see main.py's _start_scheduler/_scheduled_freshness_check) -
+re-fetches KUCCPS's own published degree programme cutoff document and
+cross-references it, structurally (not by guessing from text layout - see
+ml/experiments/catalogue_verification/ for why that matters), against the
+current programme catalog. Flags any offering-university entry whose real
+KUCCPS listing shows no placements in either of the last two years on
+record - the strongest available signal that a university may have
+stopped offering that programme.
 
 This does NOT auto-edit the catalog. Every flag is surfaced to an admin for
 manual review and decision, consistent with how every other catalog write
