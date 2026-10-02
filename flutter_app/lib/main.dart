@@ -15,6 +15,7 @@ import 'models/student_profile.dart';
 import 'models/recommendation.dart';
 import 'models/programme.dart';
 import 'services/api_service.dart';
+import 'services/recommendation_cache.dart';
 import 'theme/app_colors.dart';
 import 'theme/theme_controller.dart';
 
@@ -269,6 +270,8 @@ class _StudentHomeState extends State<StudentHome> {
   bool _isLoadingRecommendations = false;
   String? _loadError;
   bool _hasRequestedRecommendations = false;
+  bool _isShowingCachedRecommendations = false;
+  DateTime? _cachedRecommendationsAt;
 
   @override
   void initState() {
@@ -287,6 +290,7 @@ class _StudentHomeState extends State<StudentHome> {
       _isLoadingRecommendations = true;
       _loadError = null;
       _hasRequestedRecommendations = true;
+      _isShowingCachedRecommendations = false;
     });
     try {
       final recs = await ApiService.getRecommendations(_currentProfile);
@@ -294,11 +298,29 @@ class _StudentHomeState extends State<StudentHome> {
         _recommendations = recs;
         _isLoadingRecommendations = false;
       });
+      RecommendationCache.save(recs);
     } on ApiException catch (e) {
-      setState(() {
-        _loadError = e.message;
-        _isLoadingRecommendations = false;
-      });
+      // A real server response (bad request, not qualified, etc.) should
+      // still surface as an error, not be silently swapped for a stale
+      // cached result - only fall back to the cache when ApiService has
+      // already exhausted its own retries for a connectivity-type failure
+      // (see ApiException.statusCode being null for those, same signal
+      // ApiService._errorFor vs its catch-all distinguishes).
+      final isConnectivityFailure = e.statusCode == null;
+      final cached = isConnectivityFailure ? await RecommendationCache.load() : null;
+      if (cached != null) {
+        setState(() {
+          _recommendations = cached.$1;
+          _cachedRecommendationsAt = cached.$2;
+          _isShowingCachedRecommendations = true;
+          _isLoadingRecommendations = false;
+        });
+      } else {
+        setState(() {
+          _loadError = e.message;
+          _isLoadingRecommendations = false;
+        });
+      }
     }
   }
 
@@ -460,6 +482,8 @@ class _StudentHomeState extends State<StudentHome> {
     return RecommendationsScreen(
       recommendations: _recommendations,
       studentPrimaryInterest: _currentProfile.interests.isNotEmpty ? _currentProfile.interests.first : null,
+      cachedAt: _isShowingCachedRecommendations ? _cachedRecommendationsAt : null,
+      onRefresh: _loadRecommendations,
       onSelectProgramme: (prog) {
         Navigator.push(
           context,
