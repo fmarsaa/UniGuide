@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import '../models/programme.dart';
 import '../theme/app_colors.dart';
@@ -156,7 +158,8 @@ class ProgrammeDetailScreen extends StatelessWidget {
                           '${uni.latestCutoff.toStringAsFixed(2)} pts',
                           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF0EA5A4)),
                         ),
-                        Text('Prev: ${uni.previousCutoff.toStringAsFixed(2)}', style: TextStyle(fontSize: 10, color: AppColors.textSecondary(context))),
+                        const SizedBox(height: 4),
+                        _buildCutoffTrend(context, uni.previousCutoff, uni.latestCutoff),
                       ],
                     ),
                   ],
@@ -225,6 +228,65 @@ class ProgrammeDetailScreen extends StatelessWidget {
         title,
         style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary(context)),
       ),
+    );
+  }
+
+  /// Honest about what this is: a two-point comparison (previous ->
+  /// latest KUCCPS intake), not a multi-year trend line - the catalogue
+  /// only records the last two cutoffs per university offering. Still
+  /// useful at a glance: is this programme getting harder (cutoff up) or
+  /// easier (cutoff down) to get into at this university.
+  Widget _buildCutoffTrend(BuildContext context, double previous, double latest) {
+    if (previous <= 0) {
+      // No real previous-year figure on record for this offering - showing
+      // a flat/fabricated line would misrepresent data we don't have.
+      return Text('No prior-year figure on record', style: TextStyle(fontSize: 10, color: AppColors.textSecondary(context)));
+    }
+
+    final diff = latest - previous;
+    final rising = diff > 0.001;
+    final falling = diff < -0.001;
+    final trendColor = rising ? Colors.redAccent : (falling ? Colors.green : Colors.grey);
+    final pad = math.max(0.15, diff.abs() * 0.6);
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text('Prev: ${previous.toStringAsFixed(2)}', style: TextStyle(fontSize: 10, color: AppColors.textSecondary(context))),
+        const SizedBox(width: 6),
+        SizedBox(
+          width: 46,
+          height: 22,
+          child: LineChart(
+            LineChartData(
+              gridData: const FlGridData(show: false),
+              titlesData: const FlTitlesData(show: false),
+              borderData: FlBorderData(show: false),
+              lineTouchData: const LineTouchData(enabled: false),
+              minY: math.min(previous, latest) - pad,
+              maxY: math.max(previous, latest) + pad,
+              minX: 0,
+              maxX: 1,
+              lineBarsData: [
+                LineChartBarData(
+                  spots: [FlSpot(0, previous), FlSpot(1, latest)],
+                  isCurved: false,
+                  color: trendColor,
+                  barWidth: 2,
+                  dotData: const FlDotData(show: true),
+                  belowBarData: BarAreaData(show: false),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(width: 4),
+        Icon(
+          rising ? Icons.arrow_upward : (falling ? Icons.arrow_downward : Icons.remove),
+          size: 12,
+          color: trendColor,
+        ),
+      ],
     );
   }
 }
