@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../models/recommendation.dart';
 import '../models/programme.dart';
 import '../theme/app_colors.dart';
@@ -9,6 +10,7 @@ class RecommendationsScreen extends StatelessWidget {
   final Function(Programme programme) onSelectProgramme;
   final Function(RecommendationItem recommendation) onOpenFeedback;
   final VoidCallback onAdjustProfile;
+  final String? studentPrimaryInterest;
 
   const RecommendationsScreen({
     Key? key,
@@ -16,6 +18,7 @@ class RecommendationsScreen extends StatelessWidget {
     required this.onSelectProgramme,
     required this.onOpenFeedback,
     required this.onAdjustProfile,
+    this.studentPrimaryInterest,
   }) : super(key: key);
 
   @override
@@ -96,6 +99,19 @@ class RecommendationsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
+
+            // TVET/diploma pathway notice - shown only when NONE of the 3
+            // results are genuine eligible matches (every real KUCCPS
+            // degree programme's minimum subject requirements were failed).
+            // Deliberately does not name a specific diploma/certificate
+            // institution or programme - we have no verified TVET catalogue
+            // (see the degree catalogue's own verification effort), so
+            // making up a specific suggestion here would repeat exactly the
+            // "guesswork data" problem already fixed for degrees. Instead
+            // this points the student to KUCCPS's own real placement
+            // portal and reflects their own stated interest back at them.
+            if (recommendations.isNotEmpty && recommendations.every((r) => !r.meetsMinimumRequirements))
+              _buildTvetPathwayNotice(context),
 
             // Top 3 Recommendation Cards
             ...recommendations.map((item) => _buildRecommendationCard(context, item)).toList(),
@@ -184,16 +200,30 @@ class RecommendationsScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF0EA5A4),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    '$confidencePercent% Match',
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11),
-                  ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0EA5A4),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        '$confidencePercent% Match',
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11),
+                      ),
+                    ),
+                    const SizedBox(width: 2),
+                    InkWell(
+                      borderRadius: BorderRadius.circular(20),
+                      onTap: () => _showConfidenceExplanation(context),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Icon(Icons.info_outline, size: 15, color: Colors.grey.shade500),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -329,6 +359,84 @@ class RecommendationsScreen extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTvetPathwayNotice(BuildContext context) {
+    final interestNote = studentPrimaryInterest != null && studentPrimaryInterest!.isNotEmpty
+        ? ' Since you told us you\'re interested in "$studentPrimaryInterest", that\'s a good starting point for what to search for.'
+        : '';
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.amber.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.amber.shade300),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.school_outlined, color: Colors.amber.shade800, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                "You don't currently qualify for any of our degree programmes",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.amber.shade900),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Based on the grades you entered, none of these 3 suggestions are '
+            'programmes you meet the real KUCCPS minimum subject requirements '
+            'for - they\'re shown only as the closest available options, not a '
+            'genuine match (look for the red warning on each card below).'
+            '$interestNote\n\n'
+            'Certificate and diploma-level courses have lower entry requirements '
+            'and are also placed through KUCCPS. We don\'t yet have a verified '
+            'catalogue of those to recommend specific ones honestly, so please '
+            'check KUCCPS\'s own portal directly.',
+            style: TextStyle(fontSize: 12, height: 1.4, color: Colors.amber.shade900),
+          ),
+          const SizedBox(height: 10),
+          OutlinedButton.icon(
+            onPressed: () => launchUrl(Uri.parse('https://www.kuccps.net'), mode: LaunchMode.externalApplication),
+            icon: const Icon(Icons.open_in_new, size: 15),
+            label: const Text('Visit KUCCPS', style: TextStyle(fontSize: 12)),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.amber.shade900,
+              side: BorderSide(color: Colors.amber.shade400),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showConfidenceExplanation(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('What does "Match %" mean?'),
+        content: const Text(
+          'This percentage shows how strongly your academic profile, interests, '
+          'skills and aspirations match patterns the model learned from thousands '
+          'of similar student profiles - it is a measure of fit, not a guarantee.\n\n'
+          'It does NOT predict your chance of being admitted. Real admission also '
+          'depends on that year\'s national cutoff competition, which changes every '
+          'intake based on how many students apply and qualify. Always check the '
+          "programme's KUCCPS cutoff points shown below alongside this score.",
+          style: TextStyle(fontSize: 13, height: 1.4),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Got it'),
           ),
         ],
       ),
