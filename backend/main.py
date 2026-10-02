@@ -19,11 +19,13 @@ endpoints return a clear 503 instead of silently pretending to succeed.
 import logging
 import os
 import pickle
+from contextlib import asynccontextmanager
 from typing import Dict, List, Optional
 
 import numpy as np
 import pandas as pd
 import shap
+from apscheduler.schedulers.background import BackgroundScheduler
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -51,10 +53,22 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("uniguide")
 
+
+@asynccontextmanager
+async def _lifespan(app: FastAPI):
+    # _start_scheduler/_stop_scheduler are defined further down this module
+    # (alongside the scheduler they manage) - resolved by name at call time,
+    # not here, so the definition order below is fine.
+    _start_scheduler()
+    yield
+    _stop_scheduler()
+
+
 app = FastAPI(
     title="UniGuide REST API",
     description="Machine Learning Decision Support Backend for Kenyan Form-Four Leavers",
     version="1.0.0",
+    lifespan=_lifespan,
 )
 
 app.add_middleware(
@@ -85,6 +99,50 @@ def _load_model() -> None:
         _pipeline = pickle.load(f)
     _explainer = shap.TreeExplainer(_pipeline.named_steps["classifier"])
     logger.info("Random Forest pipeline and SHAP explainer loaded (%d classes).", len(_pipeline.classes_))
+
+
+# ---------------------------------------------------------------------------
+# Background scheduler - weekly catalogue freshness check
+# ---------------------------------------------------------------------------
+# Previously this check only ran when an admin manually clicked "Run Check"
+# in the dashboard, so a university quietly dropping a programme could go
+# unnoticed for however long it took someone to remember to check. Running
+# it automatically, on a light weekly cadence, turns it into a genuinely
+# autonomous feature - it still only ever proposes flags for a human to
+# review (see _run_catalogue_freshness_check_and_flag's docstring), never
+# auto-edits the catalog, so the human-in-the-loop guarantee is unchanged.
+_scheduler = BackgroundScheduler(daemon=True)
+
+
+def _scheduled_freshness_check() -> None:
+    try:
+        result = _run_catalogue_freshness_check_and_flag(actor="Scheduled Weekly Check")
+        logger.info("Scheduled catalogue freshness check completed: %s", result)
+    except Exception:
+        # A transient KUCCPS/Firestore outage shouldn't crash the scheduler
+        # thread or stop future runs - just log it, same as any other
+        # best-effort background maintenance job.
+        logger.exception("Scheduled catalogue freshness check failed; will retry on the next schedule.")
+
+
+def _start_scheduler() -> None:
+    if get_db() is None:
+        logger.info("Firestore not configured - skipping scheduled catalogue freshness check.")
+        return
+    _scheduler.add_job(
+        _scheduled_freshness_check,
+        trigger="interval",
+        weeks=1,
+        id="catalogue_freshness_weekly",
+        replace_existing=True,
+    )
+    _scheduler.start()
+    logger.info("Scheduled catalogue freshness check registered (runs every 7 days).")
+
+
+def _stop_scheduler() -> None:
+    if _scheduler.running:
+        _scheduler.shutdown(wait=False)
 
 
 _load_model()
@@ -562,22 +620,20 @@ def list_feedback(decoded: dict = Depends(require_admin)):
     return entries[:50]
 
 
-@app.post("/api/admin/catalogue-freshness/check")
-def run_catalogue_freshness_check(decoded: dict = Depends(require_admin)):
-    """Admin-triggered only (see catalogue_freshness.py's module docstring
-    for why this isn't a silent automatic background job) - re-fetches
-    KUCCPS's own cutoff document and flags any offering-university entry
-    that may no longer be real. Never edits the catalog itself; only
-    proposes flags for a human to review via the dismiss endpoint below or
-    the existing PUT /api/admin/programmes/{id}."""
+def _run_catalogue_freshness_check_and_flag(actor: str) -> dict:
+    """Re-fetches KUCCPS's own cutoff document and flags any
+    offering-university entry that may no longer be real. Never edits the
+    catalog itself; only proposes flags for a human to review via the
+    dismiss endpoint below or the existing PUT /api/admin/programmes/{id}.
+    Shared by the admin-triggered endpoint and the weekly scheduled job
+    (see _start_scheduler below) so the two never disagree on behaviour -
+    the schedule only decides *when* this runs, never what it's allowed to
+    do; both paths only ever write proposal flags, same as before."""
     db = get_db()
     if db is None:
-        raise HTTPException(status_code=503, detail="Firestore is not configured on the server.")
+        raise RuntimeError("Firestore is not configured on the server.")
 
-    try:
-        flags = check_catalogue_freshness()
-    except Exception as e:
-        raise HTTPException(status_code=502, detail=f"Could not complete the freshness check: {e}")
+    flags = check_catalogue_freshness()
 
     existing_open = {
         (doc.get("programmeId"), doc.get("universityName"))
@@ -597,13 +653,26 @@ def run_catalogue_freshness_check(decoded: dict = Depends(require_admin)):
     db.collection("audit_logs").document().set(
         {
             "action": "Catalogue Freshness Check Run",
-            "actor": decoded.get("email") or decoded["uid"],
+            "actor": actor,
             "details": f"Checked {len(PROGRAMMES)} programmes against KUCCPS; {len(flags)} potential issues found, {new_count} newly flagged.",
             "timestamp": fb_firestore.SERVER_TIMESTAMP,
         }
     )
 
     return {"checked_programmes": len(PROGRAMMES), "total_flags_found": len(flags), "newly_flagged": new_count}
+
+
+@app.post("/api/admin/catalogue-freshness/check")
+def run_catalogue_freshness_check(decoded: dict = Depends(require_admin)):
+    """Admin-triggered, on-demand version of the same check the scheduler
+    runs weekly (see _start_scheduler) - kept for an admin who wants an
+    immediate result rather than waiting for the next scheduled run."""
+    try:
+        return _run_catalogue_freshness_check_and_flag(actor=decoded.get("email") or decoded["uid"])
+    except RuntimeError as e:
+        raise HTTPException(status_code=503, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Could not complete the freshness check: {e}")
 
 
 @app.get("/api/admin/catalogue-freshness/flags")
