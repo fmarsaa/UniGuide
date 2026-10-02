@@ -72,4 +72,19 @@ class RecommendationItem {
       primaryReason: json['primaryReason'] ?? '',
     );
   }
+
+  /// Round-trips through the same shape fromJson expects - used to cache
+  /// the last successful recommendation response locally (see
+  /// main.dart's offline fallback) so it survives a plain JSON encode/decode.
+  Map<String, dynamic> toJson() => {
+    'rank': rank,
+    'programme': programme.toJson(),
+    'confidenceScore': confidenceScore,
+    'studentClusterScore': studentClusterScore,
+    'cutoffDiff': cutoffDiff,
+    'eligibilityStatus': eligibilityStatus,
+    'meetsMinimumRequirements': meetsMinimumRequirements,
+    'shapExplanations': shapExplanations.map((s) => s.toJson()).toList(),
+    'primaryReason': primaryReason,
+  };
 }
