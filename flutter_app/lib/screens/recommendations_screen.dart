@@ -11,6 +11,12 @@ class RecommendationsScreen extends StatelessWidget {
   final Function(RecommendationItem recommendation) onOpenFeedback;
   final VoidCallback onAdjustProfile;
   final String? studentPrimaryInterest;
+  // Non-null when these recommendations are a locally-cached copy shown
+  // because a fresh request failed due to connectivity, not a server
+  // error - see main.dart's _loadRecommendations and
+  // services/recommendation_cache.dart.
+  final DateTime? cachedAt;
+  final VoidCallback? onRefresh;
 
   const RecommendationsScreen({
     Key? key,
@@ -19,6 +25,8 @@ class RecommendationsScreen extends StatelessWidget {
     required this.onOpenFeedback,
     required this.onAdjustProfile,
     this.studentPrimaryInterest,
+    this.cachedAt,
+    this.onRefresh,
   }) : super(key: key);
 
   @override
@@ -42,6 +50,8 @@ class RecommendationsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (cachedAt != null) _buildOfflineCacheNotice(context),
+
             // Top Summary Card
             Container(
               padding: const EdgeInsets.all(16),
@@ -360,6 +370,41 @@ class RecommendationsScreen extends StatelessWidget {
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  String _formatCachedTimestamp(DateTime dt) {
+    final local = dt.toLocal();
+    final two = (int n) => n.toString().padLeft(2, '0');
+    return '${local.year}-${two(local.month)}-${two(local.day)} ${two(local.hour)}:${two(local.minute)}';
+  }
+
+  Widget _buildOfflineCacheNotice(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.blueGrey.shade50,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.blueGrey.shade200),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.cloud_off, size: 18, color: Colors.blueGrey.shade600),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              "Couldn't reach the server - showing your last saved recommendations from ${_formatCachedTimestamp(cachedAt!)}.",
+              style: TextStyle(fontSize: 12, color: Colors.blueGrey.shade800),
+            ),
+          ),
+          if (onRefresh != null)
+            TextButton(
+              onPressed: onRefresh,
+              child: const Text('Retry', style: TextStyle(fontSize: 12)),
+            ),
         ],
       ),
     );
