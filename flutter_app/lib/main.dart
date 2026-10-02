@@ -459,6 +459,7 @@ class _StudentHomeState extends State<StudentHome> {
 
     return RecommendationsScreen(
       recommendations: _recommendations,
+      studentPrimaryInterest: _currentProfile.interests.isNotEmpty ? _currentProfile.interests.first : null,
       onSelectProgramme: (prog) {
         Navigator.push(
           context,
