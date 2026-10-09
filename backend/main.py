@@ -1079,16 +1079,18 @@ def list_catalogue_freshness_flags(decoded: dict = Depends(require_admin)):
     db = get_db()
     if db is None:
         raise HTTPException(status_code=503, detail="Firestore is not configured on the server.")
-    query = db.collection("catalogue_flags").where("status", "==", "open").order_by(
-        "detectedAt", direction=fb_firestore.Query.DESCENDING
-    )
+    # Filter by status only and sort in Python: combining where("status") with
+    # order_by("detectedAt") makes Firestore demand a composite index that has
+    # to be created by hand in the Firebase console, and the list failed with a
+    # 500 on any project that hadn't. Same approach list_feedback already uses.
     flags = []
-    for doc in query.stream():
+    for doc in db.collection("catalogue_flags").where("status", "==", "open").stream():
         entry = doc.to_dict()
         entry["id"] = doc.id
         detected_at = entry.get("detectedAt")
         entry["detectedAt"] = detected_at.isoformat() if hasattr(detected_at, "isoformat") else str(detected_at)
         flags.append(entry)
+    flags.sort(key=lambda f: f.get("detectedAt") or "", reverse=True)
     return flags
 
 
