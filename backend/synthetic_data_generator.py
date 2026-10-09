@@ -15,10 +15,11 @@ Implements the synthetic data generation pipeline described in Chapter 3:
   proposal: first gate on KUCCPS minimum subject requirements, then match the
   student's stated interests/skills/aspirations against each eligible
   programme, and finally break ties by closeness of the computed Cluster
-  Weighted Points (CWP) to the programme's average cutoff. The LLM/random
-  generator is only responsible for producing realistic profiles; this
-  deterministic rule assigns the ground-truth label used to train the Random
-  Forest classifier.
+  Weighted Points (CWP) to the programme's average cutoff. The seeded,
+  programme-biased random generator in this module (no LLM is involved in
+  generating the training data) is only responsible for producing profiles;
+  this deterministic rule assigns the ground-truth label used to train the
+  Random Forest classifier.
 """
 
 import random

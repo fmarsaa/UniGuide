@@ -448,8 +448,26 @@ def describe_feature(raw_name: str, row: dict):
         col_prefix = f"{col}_"
         if rest.startswith(col_prefix):
             value = rest[len(col_prefix):]
-            feature_name = f"{word}: {value}"
-            desc = f"Your stated {word.lower()} of '{value}' relates to this programme's profile."
+            # BUG (found during NFR-03 performance investigation, Section
+            # 5.7): one-hot encoding turns a single categorical column
+            # (e.g. "aspiration") into one dummy feature PER POSSIBLE
+            # VALUE, and SHAP attributes a value to every one of them, not
+            # just the one the student actually selected. This branch used
+            # to label ALL of them as "Aspiration: <value>" and claim "Your
+            # stated aspiration of <value>..." unconditionally - so an
+            # explanation could (and, confirmed by direct testing, did)
+            # name an aspiration the student never chose as the reason for
+            # a recommendation. Fixed to check the real stated value
+            # (row[col], the raw pre-one-hot-encoding string) and only
+            # claim it was selected when it actually was, mirroring the
+            # TRAIT_COLUMN_INFO branch above.
+            selected = row.get(col) == value
+            if selected:
+                feature_name = f"{word}: {value}"
+                desc = f"Your stated {word.lower()} of '{value}' relates to this programme's profile."
+            else:
+                feature_name = f"Not {word.lower()}: {value}"
+                desc = f"Your stated {word.lower()} is not '{value}'."
             return category, feature_name, desc
 
     return "Other", rest, ""
@@ -658,7 +676,20 @@ def get_recommendations(payload: StudentProfilePayload, decoded: dict = Depends(
 
     X_trans = _pipeline.named_steps["preprocessor"].transform(row_df)
     feature_names = _pipeline.named_steps["preprocessor"].get_feature_names_out()
-    raw_shap = _explainer.shap_values(X_trans, check_additivity=False)
+    # approximate=True uses SHAP's Saabas algorithm instead of exact Shapley
+    # values - a real performance defect was found during NFR-03 evaluation
+    # (Chapter 5.4.2/5.7): exact TreeSHAP over 350 trees x 53 output classes
+    # took ~37.6 seconds per request, which exceeds the Flutter client's own
+    # 15-second request timeout (ApiService.getRecommendations) and would
+    # fail every real request. The approximation is ~2000x faster (measured
+    # ~19ms). It trades the exact efficiency-axiom guarantee (contributions
+    # summing precisely to the prediction) for speed. CAVEAT: it is NOT
+    # known to rank features identically to exact SHAP - in a direct
+    # comparison on one profile the two methods' top-4 features differed
+    # (exact SHAP's top features were dominated by "off" one-hot aspiration
+    # dummies). Fidelity of the approximate explanations was only checked
+    # against exact SHAP on a small sample - see Chapter 5.7.
+    raw_shap = _explainer.shap_values(X_trans, check_additivity=False, approximate=True)
     row_values = row_df.iloc[0].to_dict()
 
     agg = aggregate_points(grades, mean_grade)
