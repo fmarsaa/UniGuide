@@ -66,6 +66,55 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
+  static final List<MapEntry<String, bool Function(String)>> _passwordRules = [
+    MapEntry('at least 8 characters', (p) => p.length >= 8),
+    MapEntry('an uppercase letter', (p) => RegExp(r'[A-Z]').hasMatch(p)),
+    MapEntry('a lowercase letter', (p) => RegExp(r'[a-z]').hasMatch(p)),
+    MapEntry('a number', (p) => RegExp(r'[0-9]').hasMatch(p)),
+    MapEntry('a special character (e.g. ! @ # \$ %)', (p) => RegExp(r'[^A-Za-z0-9\s]').hasMatch(p)),
+  ];
+
+  List<String> _unmetPasswordRules(String password) =>
+      [for (final rule in _passwordRules) if (!rule.value(password)) rule.key];
+
+  Widget _buildPasswordChecklist() {
+    return ListenableBuilder(
+      listenable: _passwordController,
+      builder: (context, _) {
+        final password = _passwordController.text;
+        return Padding(
+          padding: const EdgeInsets.only(top: 8, left: 4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (final rule in _passwordRules)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 1.5),
+                  child: Row(
+                    children: [
+                      Icon(
+                        rule.value(password) ? Icons.check_circle : Icons.radio_button_unchecked,
+                        size: 14,
+                        color: rule.value(password) ? const Color(0xFF2DD4BF) : const Color(0xFF94A3B8),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        rule.key[0].toUpperCase() + rule.key.substring(1),
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: rule.value(password) ? const Color(0xFF2DD4BF) : const Color(0xFF94A3B8),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   String _messageForAuthError(FirebaseAuthException e) {
     switch (e.code) {
       case 'invalid-email':
@@ -79,7 +128,7 @@ class _AuthScreenState extends State<AuthScreen> {
       case 'email-already-in-use':
         return 'An account already exists for that email. Try signing in instead.';
       case 'weak-password':
-        return 'Please choose a stronger password (at least 6 characters).';
+        return 'Please choose a stronger password (8+ characters with upper and lower case letters, a number and a special character).';
       case 'network-request-failed':
         return 'Network error - check your connection and try again.';
       default:
@@ -371,12 +420,19 @@ class _AuthScreenState extends State<AuthScreen> {
                             if (val == null || val.isEmpty) {
                               return 'Please enter your password';
                             }
-                            if (val.length < 6) {
-                              return 'Password must be at least 6 characters';
+                            // Strength rules only apply when creating a password -
+                            // signing in must still accept whatever an existing
+                            // account already has.
+                            if (!_isLoginMode) {
+                              final unmet = _unmetPasswordRules(val);
+                              if (unmet.isNotEmpty) {
+                                return 'Password needs: ${unmet.join(', ')}';
+                              }
                             }
                             return null;
                           },
                         ),
+                        if (!_isLoginMode) _buildPasswordChecklist(),
                         if (_isLoginMode) ...[
                           Align(
                             alignment: Alignment.centerRight,
