@@ -1,0 +1,12 @@
+official rows read from the KUCCPS PDF: 1833
+
+catalogue university entries: 126
+  found in the official list by KUCCPS code: 123
+    exact match on both years:      123
+    within 0.5 points:              0
+    differs by more than 0.5:       0
+  NOT found by code in the official list: 3
+
+NOT FOUND:
+  Bachelor of Science in Physics | South Eastern Kenya Universi | 1093366
+  Bachelor of Science in Chemistry | South Eastern Kenya Universi | 1093513

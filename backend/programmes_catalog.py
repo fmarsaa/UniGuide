@@ -65,9 +65,9 @@ PROGRAMMES: List[Programme] = [
         # implausibly low due to a table-wrap misread - replaced with
         # JKUAT, which is cleanly confirmed. See catalogue_verification/README.md.
         "offeringUniversities": [
-            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 45.584, "previousCutoff": 45.034, "kuccpsCode": "1070101"},
-            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 45.048, "previousCutoff": 44.611, "kuccpsCode": "1249132"},
-            {"universityName": "Moi University", "universityType": "Public", "location": "Eldoret", "latestCutoff": 45.087, "previousCutoff": 44.492, "kuccpsCode": "1020101"},
+            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 45.584, "previousCutoff": 45.034, "kuccpsCode": "1263131"},
+            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 45.048, "previousCutoff": 44.611, "kuccpsCode": "1249131"},
+            {"universityName": "Moi University", "universityType": "Public", "location": "Eldoret", "latestCutoff": 45.087, "previousCutoff": 44.492, "kuccpsCode": "1253131"},
         ],
         "durationYears": 6,
     },
@@ -86,8 +86,8 @@ PROGRAMMES: List[Programme] = [
         "requiredSkills": ["Chemical Analysis", "Pharmaceutical Formulation", "Attention to Detail", "Scientific Research"],
         "professionalCertifications": ["Pharmacy and Poisons Board (PPB) Licensure", "Good Clinical Practice (GCP) Certification"],
         "offeringUniversities": [
-            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 44.452, "previousCutoff": 43.885, "kuccpsCode": "1070103"},
-            {"universityName": "Kenyatta University", "universityType": "Public", "location": "Nairobi", "latestCutoff": 43.541, "previousCutoff": 43.604, "kuccpsCode": "1110103"},
+            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 44.452, "previousCutoff": 43.885, "kuccpsCode": "1263129"},
+            {"universityName": "Kenyatta University", "universityType": "Public", "location": "Nairobi", "latestCutoff": 44.01, "previousCutoff": 43.541, "kuccpsCode": "1111129"},
         ],
         "durationYears": 5,
     },
@@ -110,7 +110,7 @@ PROGRAMMES: List[Programme] = [
         # has no recent placement data (blank) - replaced with JKUAT, which
         # is cleanly confirmed. See catalogue_verification/README.md.
         "offeringUniversities": [
-            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 43.676, "previousCutoff": 43.297, "kuccpsCode": "1070105"},
+            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 43.676, "previousCutoff": 43.297, "kuccpsCode": "1263132"},
             {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 42.95, "previousCutoff": 42.73, "kuccpsCode": "1249132"},
         ],
         "durationYears": 4,
@@ -138,9 +138,8 @@ PROGRAMMES: List[Programme] = [
         # Computer Science" - their real 2022 cutoffs are used here as the
         # closest equivalent. See catalogue_verification/README.md.
         "offeringUniversities": [
-            {"universityName": "Strathmore University", "universityType": "Private", "location": "Nairobi", "latestCutoff": 39.8, "previousCutoff": 39.2, "kuccpsCode": ""},
-            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 44.825, "previousCutoff": 44.122, "kuccpsCode": "1070201"},
-            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 43.809, "previousCutoff": 42.489, "kuccpsCode": "1080201"},
+            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 44.825, "previousCutoff": 44.122, "kuccpsCode": "1263115"},
+            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 44.101, "previousCutoff": 43.809, "kuccpsCode": "1249115"},
         ],
         "durationYears": 4,
     },
@@ -164,8 +163,7 @@ PROGRAMMES: List[Programme] = [
         # with Kisii University, which is confirmed there. See
         # catalogue_verification/README.md.
         "offeringUniversities": [
-            {"universityName": "Strathmore University", "universityType": "Private", "location": "Nairobi", "latestCutoff": 38.8, "previousCutoff": 38.2, "kuccpsCode": ""},
-            {"universityName": "Kisii University", "universityType": "Public", "location": "Kisii", "latestCutoff": 36.957, "previousCutoff": 35.029, "kuccpsCode": ""},
+            {"universityName": "Kisii University", "universityType": "Public", "location": "Kisii", "latestCutoff": 36.957, "previousCutoff": 35.029, "kuccpsCode": "1087542"},
         ],
         "durationYears": 4,
     },
@@ -188,8 +186,7 @@ PROGRAMMES: List[Programme] = [
         # document (blank 2018-2022) - replaced with Kabarak University,
         # which has real recent figures. See catalogue_verification/README.md.
         "offeringUniversities": [
-            {"universityName": "Strathmore University", "universityType": "Private", "location": "Nairobi", "latestCutoff": 35.6, "previousCutoff": 35.0, "kuccpsCode": ""},
-            {"universityName": "Kabarak University", "universityType": "Private", "location": "Nakuru", "latestCutoff": 21.444, "previousCutoff": 22.544, "kuccpsCode": ""},
+            {"universityName": "Kabarak University", "universityType": "Private", "location": "Nakuru", "latestCutoff": 21.375, "previousCutoff": 21.444, "kuccpsCode": "1061206"},
         ],
         "durationYears": 4,
     },
@@ -208,8 +205,8 @@ PROGRAMMES: List[Programme] = [
         "requiredSkills": ["Mathematical Analysis", "Circuit Simulation", "CAD Modeling", "Critical Thinking"],
         "professionalCertifications": ["Engineers Board of Kenya (EBK) Registration", "Certified Energy Manager (CEM)"],
         "offeringUniversities": [
-            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 43.003, "previousCutoff": 42.776, "kuccpsCode": "1070501"},
-            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 42.125, "previousCutoff": 40.965, "kuccpsCode": "1080501"},
+            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 43.003, "previousCutoff": 42.776, "kuccpsCode": "1263117"},
+            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 42.434, "previousCutoff": 42.291, "kuccpsCode": "1249117"},
         ],
         "durationYears": 5,
     },
@@ -228,8 +225,8 @@ PROGRAMMES: List[Programme] = [
         "requiredSkills": ["CAD Modeling", "Structural Analysis", "Mathematical Analysis", "Project Management"],
         "professionalCertifications": ["Engineers Board of Kenya (EBK) Graduate Engineer", "Autodesk AutoCAD / Civil 3D Certified Professional"],
         "offeringUniversities": [
-            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 43.463, "previousCutoff": 43.091, "kuccpsCode": "1070502"},
-            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 42.618, "previousCutoff": 42.178, "kuccpsCode": "1080502"},
+            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 43.463, "previousCutoff": 43.091, "kuccpsCode": "1263116"},
+            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 42.618, "previousCutoff": 42.178, "kuccpsCode": "1249116"},
         ],
         "durationYears": 5,
     },
@@ -248,8 +245,7 @@ PROGRAMMES: List[Programme] = [
         "requiredSkills": ["Legal Research & Writing", "Debate & Persuasive Advocacy", "Critical Thinking", "Attention to Detail"],
         "professionalCertifications": ["Kenya School of Law (ATP Post-Graduate Diploma)", "Law Society of Kenya (LSK) Membership"],
         "offeringUniversities": [
-            {"universityName": "Strathmore University", "universityType": "Private", "location": "Nairobi", "latestCutoff": 40.5, "previousCutoff": 39.8, "kuccpsCode": "1240401"},
-            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 42.014, "previousCutoff": 41.758, "kuccpsCode": "1070401"},
+            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 42.014, "previousCutoff": 41.758, "kuccpsCode": "1263134"},
         ],
         "durationYears": 4,
     },
@@ -268,8 +264,7 @@ PROGRAMMES: List[Programme] = [
         "requiredSkills": ["Mathematical Analysis", "Statistical Modeling", "Problem Solving", "Critical Thinking"],
         "professionalCertifications": ["Institute and Faculty of Actuaries (IFoA) Exams (CM1, CB1, CS1)", "Society of Actuaries (SOA) Professional Series"],
         "offeringUniversities": [
-            {"universityName": "Strathmore University", "universityType": "Private", "location": "Nairobi", "latestCutoff": 41.0, "previousCutoff": 40.5, "kuccpsCode": "1240501"},
-            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 39.531, "previousCutoff": 39.271, "kuccpsCode": "1070505"},
+            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 39.531, "previousCutoff": 39.271, "kuccpsCode": "1263107"},
         ],
         "durationYears": 4,
     },
@@ -288,8 +283,7 @@ PROGRAMMES: List[Programme] = [
         "requiredSkills": ["Financial Modeling", "Attention to Detail", "Communication", "Leadership"],
         "professionalCertifications": ["Certified Public Accountants of Kenya (CPA-K)", "Chartered Financial Analyst (CFA) Level 1"],
         "offeringUniversities": [
-            {"universityName": "Strathmore University", "universityType": "Private", "location": "Nairobi", "latestCutoff": 35.2, "previousCutoff": 34.5, "kuccpsCode": "1240502"},
-            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 34.426, "previousCutoff": 33.556, "kuccpsCode": "1070508"},
+            {"universityName": "University of Nairobi", "universityType": "Public", "location": "Nairobi", "latestCutoff": 34.426, "previousCutoff": 33.556, "kuccpsCode": "1263133"},
         ],
         "durationYears": 4,
     },
@@ -919,7 +913,7 @@ PROGRAMMES: List[Programme] = [
         "requiredSkills": ["GIS Software (ArcGIS/QGIS)", "Land Surveying", "Remote Sensing", "Spatial Data Analysis"],
         "professionalCertifications": ["Institution of Surveyors of Kenya (ISK) Membership", "Survey Board of Kenya Licensure"],
         "offeringUniversities": [
-            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 27.531, "previousCutoff": 29.784, "kuccpsCode": "1249619"},
+            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 27.531, "previousCutoff": 29.784, "kuccpsCode": "1249719"},
             {"universityName": "Dedan Kimathi University of Technology", "universityType": "Public", "location": "Nyeri", "latestCutoff": 15.683, "previousCutoff": 32.149, "kuccpsCode": "1173619"},
             {"universityName": "Taita Taveta University", "universityType": "Public", "location": "Voi", "latestCutoff": 15.683, "previousCutoff": 17.363, "kuccpsCode": "1091619"},
         ],
@@ -960,8 +954,8 @@ PROGRAMMES: List[Programme] = [
         "requiredSkills": ["Clinical Diagnostics", "Laboratory Technique", "Attention to Detail", "Scientific Research"],
         "professionalCertifications": ["Kenya Medical Laboratory Technicians and Technologists Board (KMLTTB) Licensure"],
         "offeringUniversities": [
-            {"universityName": "Kenyatta University", "universityType": "Public", "location": "Nairobi", "latestCutoff": 41.0, "previousCutoff": 40.632, "kuccpsCode": "1246194"},
-            {"universityName": "Masinde Muliro University of Science and Technology", "universityType": "Public", "location": "Kakamega", "latestCutoff": 38.739, "previousCutoff": 37.83, "kuccpsCode": "1279194"},
+            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 40.675, "previousCutoff": 40.68, "kuccpsCode": "1249194"},
+            {"universityName": "Masinde Muliro University of Science and Technology", "universityType": "Public", "location": "Kakamega", "latestCutoff": 38.872, "previousCutoff": 38.739, "kuccpsCode": "1082194"},
         ],
         "durationYears": 4,
     },
@@ -980,7 +974,7 @@ PROGRAMMES: List[Programme] = [
         "requiredSkills": ["Patient Assessment", "Rehabilitation Technique", "Anatomy & Physiology Knowledge", "Communication"],
         "professionalCertifications": ["Kenya Society of Physiotherapists (KSP) Registration", "Physiotherapy Council of Kenya Licensure"],
         "offeringUniversities": [
-            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 38.116, "previousCutoff": 38.108, "kuccpsCode": "1249562"},
+            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 38.224, "previousCutoff": 38.116, "kuccpsCode": "1249465"},
         ],
         "durationYears": 4,
     },
@@ -1005,8 +999,8 @@ PROGRAMMES: List[Programme] = [
         "requiredSkills": ["Community Engagement", "Health Promotion", "Programme Management", "Communication"],
         "professionalCertifications": ["Community Health Practitioners Association Membership"],
         "offeringUniversities": [
-            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 24.867, "previousCutoff": 25.776, "kuccpsCode": ""},
-            {"universityName": "Jaramogi Oginga Odinga University of Science and Technology", "universityType": "Public", "location": "Bondo", "latestCutoff": 15.864, "previousCutoff": 17.043, "kuccpsCode": ""},
+            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 24.867, "previousCutoff": 25.776, "kuccpsCode": "1249423"},
+            {"universityName": "Jaramogi Oginga Odinga University of Science and Technology", "universityType": "Public", "location": "Bondo", "latestCutoff": 15.864, "previousCutoff": 17.043, "kuccpsCode": "1053423"},
         ],
         "durationYears": 4,
     },
@@ -1030,7 +1024,7 @@ PROGRAMMES: List[Programme] = [
         # cutoff document, so they're omitted here rather than given an
         # invented cutoff. JKUAT is the confirmed KUCCPS-placed offering.
         "offeringUniversities": [
-            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 38.717, "previousCutoff": 36.902, "kuccpsCode": "1080409"},
+            {"universityName": "Jomo Kenyatta University (JKUAT)", "universityType": "Public", "location": "Juja", "latestCutoff": 38.717, "previousCutoff": 36.902, "kuccpsCode": "1249409"},
         ],
         "durationYears": 4,
     },
@@ -1053,8 +1047,8 @@ PROGRAMMES: List[Programme] = [
         # programmes show nationally in this document, reflecting real
         # undersubscription rather than a data error.
         "offeringUniversities": [
-            {"universityName": "Kenyatta University", "universityType": "Public", "location": "Nairobi", "latestCutoff": 32.976, "previousCutoff": 31.582, "kuccpsCode": "1263112"},
-            {"universityName": "Egerton University", "universityType": "Public", "location": "Njoro", "latestCutoff": 25.661, "previousCutoff": 25.756, "kuccpsCode": "1105112"},
+            {"universityName": "Kenyatta University", "universityType": "Public", "location": "Nairobi", "latestCutoff": 32.976, "previousCutoff": 31.582, "kuccpsCode": "1111112"},
+            {"universityName": "Egerton University", "universityType": "Public", "location": "Njoro", "latestCutoff": 25.661, "previousCutoff": 25.756, "kuccpsCode": "1057112"},
         ],
         "durationYears": 4,
     },
@@ -1074,7 +1068,7 @@ PROGRAMMES: List[Programme] = [
         "professionalCertifications": ["Kenya National Academy of Sciences Membership"],
         "offeringUniversities": [
             {"universityName": "South Eastern Kenya University", "universityType": "Public", "location": "Kitui", "latestCutoff": 24.822, "previousCutoff": 24.034, "kuccpsCode": "1093366"},
-            {"universityName": "Catholic University of Eastern Africa", "universityType": "Private", "location": "Nairobi", "latestCutoff": 15.683, "previousCutoff": 16.974, "kuccpsCode": "1229170"},
+            {"universityName": "Catholic University of Eastern Africa", "universityType": "Private", "location": "Nairobi", "latestCutoff": 15.683, "previousCutoff": 16.974, "kuccpsCode": "1480366"},
         ],
         "durationYears": 4,
     },
@@ -1094,7 +1088,7 @@ PROGRAMMES: List[Programme] = [
         "professionalCertifications": ["Kenya Chemical Society Membership"],
         "offeringUniversities": [
             {"universityName": "South Eastern Kenya University", "universityType": "Public", "location": "Kitui", "latestCutoff": 16.974, "previousCutoff": 17.459, "kuccpsCode": "1093513"},
-            {"universityName": "Maasai Mara University", "universityType": "Public", "location": "Narok", "latestCutoff": 15.683, "previousCutoff": 16.974, "kuccpsCode": "1087520"},
+            {"universityName": "Maasai Mara University", "universityType": "Public", "location": "Narok", "latestCutoff": 15.683, "previousCutoff": 16.974, "kuccpsCode": "1165513"},
         ],
         "durationYears": 4,
     },
@@ -1160,7 +1154,7 @@ PROGRAMMES: List[Programme] = [
         # in the official document - see catalogue_verification notes) to
         # University of Eldoret, which has an actual cited figure.
         "offeringUniversities": [
-            {"universityName": "University of Eldoret", "universityType": "Public", "location": "Eldoret", "latestCutoff": 15.864, "previousCutoff": 17.043, "kuccpsCode": "1165330"},
+            {"universityName": "University of Eldoret", "universityType": "Public", "location": "Eldoret", "latestCutoff": 15.864, "previousCutoff": 17.043, "kuccpsCode": "1114175"},
         ],
         "durationYears": 4,
     },
@@ -1185,7 +1179,7 @@ PROGRAMMES: List[Programme] = [
         "requiredSkills": ["Medical Device Design", "Signal Processing", "Mathematical Modeling", "Problem Solving"],
         "professionalCertifications": ["Engineers Board of Kenya (EBK) Registration"],
         "offeringUniversities": [
-            {"universityName": "Kenyatta University", "universityType": "Public", "location": "Nairobi", "latestCutoff": 42.387, "previousCutoff": 41.807, "kuccpsCode": ""},
+            {"universityName": "Kenyatta University", "universityType": "Public", "location": "Nairobi", "latestCutoff": 42.387, "previousCutoff": 41.807, "kuccpsCode": "1111696"},
         ],
         "durationYears": 5,
     },
@@ -1209,8 +1203,8 @@ PROGRAMMES: List[Programme] = [
         "requiredSkills": ["Political Analysis", "Research", "Communication", "Critical Thinking"],
         "professionalCertifications": ["Kenya Institute of Public Policy Research and Analysis (KIPPRA) affiliation"],
         "offeringUniversities": [
-            {"universityName": "Kisii University", "universityType": "Public", "location": "Kisii", "latestCutoff": 22.916, "previousCutoff": 22.926, "kuccpsCode": "1425550"},
-            {"universityName": "Rongo University", "universityType": "Public", "location": "Rongo", "latestCutoff": 22.926, "previousCutoff": 26.095, "kuccpsCode": "1087159"},
+            {"universityName": "Kisii University", "universityType": "Public", "location": "Kisii", "latestCutoff": 22.449, "previousCutoff": 27.529, "kuccpsCode": "1087159"},
+            {"universityName": "Rongo University", "universityType": "Public", "location": "Rongo", "latestCutoff": 22.449, "previousCutoff": 25.712, "kuccpsCode": "1073550"},
         ],
         "durationYears": 4,
     },

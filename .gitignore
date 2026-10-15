@@ -49,3 +49,6 @@ flutter_app/build_output.txt
 # OS
 .DS_Store
 Thumbs.db
+
+# Official KUCCPS source PDFs used for catalogue verification (public, large - download them again from kuccps.net)
+catalogue_verification/*.pdf
