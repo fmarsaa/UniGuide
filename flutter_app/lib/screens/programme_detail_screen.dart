@@ -57,12 +57,12 @@ class ProgrammeDetailScreen extends StatelessWidget {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary(context)),
                   ),
                   const SizedBox(height: 12),
-                  Row(
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 8,
                     children: [
                       _buildMetricChip(context, Icons.calendar_today, '${programme.durationYears} Years Full-Time'),
-                      const SizedBox(width: 10),
                       _buildMetricChip(context, Icons.grade, 'Min Grade: ${programme.minMeanGrade}'),
-                      const SizedBox(width: 10),
                       _buildMetricChip(context, Icons.analytics, 'Avg: ${programme.averageCutoff} pts'),
                     ],
                   ),

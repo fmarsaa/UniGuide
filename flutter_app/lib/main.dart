@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'screens/splash_screen.dart';
 import 'screens/auth_screen.dart';
@@ -45,21 +46,29 @@ ThemeData _buildLightTheme() {
   );
 }
 
-/// Dark counterpart of [_buildLightTheme]: same teal seed, dark surfaces,
-/// so the shared NavigationBar and cards stay legible in dark mode.
+/// Dark counterpart of [_buildLightTheme]: navy surfaces, blue-grey secondary
+/// text and a warm tan accent, set in Inter. Colours were matched by eye from
+/// a small reference crop, so tweak [_darkAccent] / the font here if needed.
+const Color _darkAccent = Color(0xFFD9A066);
+
 ThemeData _buildDarkTheme() {
+  final scheme = ColorScheme.fromSeed(
+    seedColor: const Color(0xFF0EA5A4),
+    brightness: Brightness.dark,
+  ).copyWith(
+    primary: _darkAccent,
+    onPrimary: const Color(0xFF1B1204),
+  );
   return ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
     primaryColor: const Color(0xFF14213D),
     scaffoldBackgroundColor: const Color(0xFF0F172A),
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: const Color(0xFF0EA5A4),
-      brightness: Brightness.dark,
-    ),
+    colorScheme: scheme,
+    textTheme: GoogleFonts.interTextTheme(ThemeData(brightness: Brightness.dark).textTheme),
     navigationBarTheme: NavigationBarThemeData(
       backgroundColor: const Color(0xFF1E293B),
-      indicatorColor: const Color(0xFF0EA5A4).withValues(alpha: 0.28),
+      indicatorColor: _darkAccent.withValues(alpha: 0.28),
       surfaceTintColor: Colors.transparent,
     ),
   );
