@@ -44,6 +44,7 @@ class RecommendationItem {
   final bool meetsMinimumRequirements;
   final List<ShapFeatureImpact> shapExplanations;
   final String primaryReason;
+  final List<String> plainReasons;
 
   RecommendationItem({
     required this.rank,
@@ -55,6 +56,7 @@ class RecommendationItem {
     required this.meetsMinimumRequirements,
     required this.shapExplanations,
     required this.primaryReason,
+    this.plainReasons = const [],
   });
 
   factory RecommendationItem.fromJson(Map<String, dynamic> json) {
@@ -70,6 +72,7 @@ class RecommendationItem {
           .map((s) => ShapFeatureImpact.fromJson(s))
           .toList(),
       primaryReason: json['primaryReason'] ?? '',
+      plainReasons: (json['plainReasons'] as List? ?? []).map((r) => r.toString()).toList(),
     );
   }
 
@@ -86,5 +89,6 @@ class RecommendationItem {
     'meetsMinimumRequirements': meetsMinimumRequirements,
     'shapExplanations': shapExplanations.map((s) => s.toJson()).toList(),
     'primaryReason': primaryReason,
+    'plainReasons': plainReasons,
   };
 }
