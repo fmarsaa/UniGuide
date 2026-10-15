@@ -167,7 +167,6 @@ class _AuthScreenState extends State<AuthScreen> {
                   decoration: _inputDecoration(
                     label: 'Email Address',
                     icon: Icons.email_outlined,
-                    hint: 'student@uniguide.ac.ke',
                   ),
                   validator: (val) {
                     if (val == null || val.trim().isEmpty) return 'Please enter your email';
@@ -382,7 +381,8 @@ class _AuthScreenState extends State<AuthScreen> {
                           decoration: _inputDecoration(
                             label: 'Email Address',
                             icon: Icons.email_outlined,
-                            hint: 'student@uniguide.ac.ke',
+                            // Placeholders only on sign-up, never on sign-in.
+                            hint: _isLoginMode ? null : 'Enter email',
                           ),
                           validator: (val) {
                             if (val == null || val.trim().isEmpty) {
@@ -404,7 +404,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           decoration: _inputDecoration(
                             label: 'Password',
                             icon: Icons.lock_outline,
-                            hint: '••••••••',
+                            hint: _isLoginMode ? null : '••••••••',
                             suffixIcon: IconButton(
                               icon: Icon(
                                 _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
@@ -523,7 +523,7 @@ class _AuthScreenState extends State<AuthScreen> {
   InputDecoration _inputDecoration({
     required String label,
     required IconData icon,
-    required String hint,
+    String? hint,
     Widget? suffixIcon,
   }) {
     return InputDecoration(

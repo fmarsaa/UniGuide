@@ -30,7 +30,9 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
         children: const [
           Icon(Icons.rate_review, color: Color(0xFF0EA5A4), size: 22),
           SizedBox(width: 8),
-          Text('Recommendation Feedback', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Flexible(
+            child: Text('Recommendation Feedback', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          ),
         ],
       ),
       content: SingleChildScrollView(
@@ -41,11 +43,6 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
             Text(
               widget.recommendation.programme.title,
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary(context)),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Model Confidence: ${(widget.recommendation.confidenceScore * 100).toStringAsFixed(1)}%',
-              style: TextStyle(fontSize: 11, color: AppColors.textSecondary(context)),
             ),
             const Divider(height: 20),
             const Text(
@@ -125,7 +122,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                 },
           child: _isSubmitting
               ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-              : const Text('Submit to Firestore', style: TextStyle(color: Colors.white)),
+              : const Text('Submit', style: TextStyle(color: Colors.white)),
         ),
       ],
     );

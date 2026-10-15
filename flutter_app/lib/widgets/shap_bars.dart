@@ -37,7 +37,10 @@ class ShapExplanationCard extends StatelessWidget {
     // happens to produce.
     final double maxAbsShap = shapFeatures.isEmpty
         ? 1.0
-        : shapFeatures.map((f) => f.shapValue.abs()).reduce((a, b) => a > b ? a : b).clamp(0.0001, double.infinity);
+        : shapFeatures
+            .map((f) => f.shapValue.abs())
+            .reduce((a, b) => a > b ? a : b)
+            .clamp(0.0001, double.infinity);
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -54,7 +57,7 @@ class ShapExplanationCard extends StatelessWidget {
               Icon(Icons.auto_graph, size: 18, color: Colors.indigo.shade700),
               const SizedBox(width: 8),
               Text(
-                'SHAP Feature Importance (Explainability)',
+                'Why this was recommended',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 13,
@@ -66,17 +69,24 @@ class ShapExplanationCard extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             primaryReason,
-            style: TextStyle(fontSize: 12, color: AppColors.textSecondary(context), height: 1.4),
+            style: TextStyle(
+                fontSize: 12,
+                color: AppColors.textSecondary(context),
+                height: 1.4),
           ),
           const Divider(height: 20),
           Text(
-            'Attribution to Random Forest Classification Decision:',
-            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textSecondary(context)),
+            'What influenced this result:',
+            style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textSecondary(context)),
           ),
           const SizedBox(height: 10),
           ...shapFeatures.map((feat) {
             final isPositive = feat.shapValue >= 0;
-            final double normalizedWidth = (feat.shapValue.abs() / maxAbsShap).clamp(0.05, 1.0);
+            final double normalizedWidth =
+                (feat.shapValue.abs() / maxAbsShap).clamp(0.05, 1.0);
             final color = _getCategoryColor(feat.category);
 
             return Padding(
@@ -87,34 +97,42 @@ class ShapExplanationCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: color.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              feat.category,
-                              style: TextStyle(
-                                fontSize: 9,
-                                fontWeight: FontWeight.bold,
-                                color: color,
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: color.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                feat.category,
+                                style: TextStyle(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.bold,
+                                  color: color,
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            feat.featureName,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textPrimary(context),
+                            const SizedBox(width: 6),
+                            Flexible(
+                              child: Text(
+                                feat.featureName,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textPrimary(context),
+                                ),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
+                      const SizedBox(width: 8),
                       Text(
                         '${isPositive ? '+' : ''}${feat.shapValue.toStringAsFixed(2)}',
                         style: TextStyle(
@@ -133,14 +151,18 @@ class ShapExplanationCard extends StatelessWidget {
                       minHeight: 6,
                       backgroundColor: AppColors.cardBorder(context),
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        isPositive ? const Color(0xFF0EA5A4) : Colors.red.shade400,
+                        isPositive
+                            ? const Color(0xFF0EA5A4)
+                            : Colors.red.shade400,
                       ),
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     feat.description,
-                    style: TextStyle(fontSize: 10.5, color: AppColors.textSecondary(context)),
+                    style: TextStyle(
+                        fontSize: 10.5,
+                        color: AppColors.textSecondary(context)),
                   ),
                 ],
               ),

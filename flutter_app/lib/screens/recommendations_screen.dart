@@ -76,16 +76,22 @@ class RecommendationsScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: const [
-                          Icon(Icons.auto_awesome, color: Color(0xFF0EA5A4), size: 20),
-                          SizedBox(width: 8),
-                          Text(
-                            'Random Forest Classifier',
-                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
-                          ),
-                        ],
+                      Expanded(
+                        child: Row(
+                          children: const [
+                            Icon(Icons.auto_awesome, color: Color(0xFF0EA5A4), size: 20),
+                            SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                'Your Top Matches',
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
+                      const SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
@@ -94,7 +100,7 @@ class RecommendationsScreen extends StatelessWidget {
                           border: Border.all(color: const Color(0xFF0EA5A4)),
                         ),
                         child: const Text(
-                          'SHAP Grounded',
+                          'Explained',
                           style: TextStyle(color: Color(0xFF2DD4BF), fontSize: 11, fontWeight: FontWeight.w600),
                         ),
                       ),
@@ -102,7 +108,7 @@ class RecommendationsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'Here are your 3 highest-probability degree programmes ranked by decision forest confidence and explained by SHAP value attributions.',
+                    'Here are your 3 best-matching degree programmes, with the reasons behind each result.',
                     style: TextStyle(color: Color(0xFFCBD5E1), fontSize: 12, height: 1.4),
                   ),
                 ],
@@ -155,8 +161,6 @@ class RecommendationsScreen extends StatelessWidget {
             ? const Color(0xFF475569) // Silver
             : const Color(0xFF92400E); // Bronze
 
-    final confidencePercent = (item.confidenceScore * 100).toStringAsFixed(1);
-
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
@@ -177,7 +181,7 @@ class RecommendationsScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header: Rank + Confidence
+          // Header: Rank
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
@@ -207,31 +211,6 @@ class RecommendationsScreen extends StatelessWidget {
                     Text(
                       item.programme.code,
                       style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.grey),
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF0EA5A4),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        '$confidencePercent% Match',
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11),
-                      ),
-                    ),
-                    const SizedBox(width: 2),
-                    InkWell(
-                      borderRadius: BorderRadius.circular(20),
-                      onTap: () => _showConfidenceExplanation(context),
-                      child: Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Icon(Icons.info_outline, size: 15, color: Colors.grey.shade500),
-                      ),
                     ),
                   ],
                 ),
@@ -300,24 +279,29 @@ class RecommendationsScreen extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          Icon(
-                            item.meetsMinimumRequirements ? Icons.verified : Icons.block,
-                            size: 16,
-                            color: item.meetsMinimumRequirements ? Colors.blue.shade700 : Colors.grey.shade700,
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            item.eligibilityStatus,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: item.meetsMinimumRequirements ? Colors.blue.shade900 : Colors.grey.shade800,
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Icon(
+                              item.meetsMinimumRequirements ? Icons.verified : Icons.block,
+                              size: 16,
+                              color: item.meetsMinimumRequirements ? Colors.blue.shade700 : Colors.grey.shade700,
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 6),
+                            Flexible(
+                              child: Text(
+                                item.eligibilityStatus,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: item.meetsMinimumRequirements ? Colors.blue.shade900 : Colors.grey.shade800,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
+                      const SizedBox(width: 8),
                       Text(
                         'Cutoff: ${item.programme.averageCutoff} pts',
                         style: TextStyle(
@@ -429,9 +413,11 @@ class RecommendationsScreen extends StatelessWidget {
             children: [
               Icon(Icons.school_outlined, color: Colors.amber.shade800, size: 20),
               const SizedBox(width: 8),
-              Text(
-                "You don't currently qualify for any of our degree programmes",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.amber.shade900),
+              Expanded(
+                child: Text(
+                  "You don't currently qualify for any of our degree programmes",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.amber.shade900),
+                ),
               ),
             ],
           ),
@@ -457,31 +443,6 @@ class RecommendationsScreen extends StatelessWidget {
               foregroundColor: Colors.amber.shade900,
               side: BorderSide(color: Colors.amber.shade400),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showConfidenceExplanation(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('What does "Match %" mean?'),
-        content: const Text(
-          'This percentage shows how strongly your academic profile, interests, '
-          'skills and aspirations match patterns the model learned from thousands '
-          'of similar student profiles - it is a measure of fit, not a guarantee.\n\n'
-          'It does NOT predict your chance of being admitted. Real admission also '
-          'depends on that year\'s national cutoff competition, which changes every '
-          'intake based on how many students apply and qualify. Always check the '
-          "programme's KUCCPS cutoff points shown below alongside this score.",
-          style: TextStyle(fontSize: 13, height: 1.4),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Got it'),
           ),
         ],
       ),
