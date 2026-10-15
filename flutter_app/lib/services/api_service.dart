@@ -151,6 +151,39 @@ class ApiService {
     });
   }
 
+  /// The signed-in student's saved programmes (oldest save first).
+  static Future<List<Programme>> fetchShortlist() {
+    return _withRetry('Could not load your saved programmes', () async {
+      final headers = await _authHeaders();
+      final response = await http
+          .get(Uri.parse('$baseUrl/api/shortlist'), headers: headers)
+          .timeout(const Duration(seconds: 10));
+      if (response.statusCode != 200) throw _errorFor(response);
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.map((json) => Programme.fromJson(json)).toList();
+    });
+  }
+
+  static Future<void> addToShortlist(String programmeId) {
+    return _withRetry('Could not save this programme', () async {
+      final headers = await _authHeaders();
+      final response = await http
+          .post(Uri.parse('$baseUrl/api/shortlist/$programmeId'), headers: headers)
+          .timeout(const Duration(seconds: 10));
+      if (response.statusCode != 200) throw _errorFor(response);
+    });
+  }
+
+  static Future<void> removeFromShortlist(String programmeId) {
+    return _withRetry('Could not remove this programme', () async {
+      final headers = await _authHeaders();
+      final response = await http
+          .delete(Uri.parse('$baseUrl/api/shortlist/$programmeId'), headers: headers)
+          .timeout(const Duration(seconds: 10));
+      if (response.statusCode != 200) throw _errorFor(response);
+    });
+  }
+
   /// Admin-only: fetches the real system audit trail (cutoff edits, etc.).
   static Future<List<Map<String, dynamic>>> fetchAuditLogs() {
     return _withRetry('Could not load audit logs', () async {

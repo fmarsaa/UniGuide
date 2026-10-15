@@ -11,12 +11,14 @@ import 'screens/profile_setup_screen.dart';
 import 'screens/admin_dashboard_screen.dart';
 import 'screens/programme_detail_screen.dart';
 import 'screens/programme_catalog_screen.dart';
+import 'screens/shortlist_screen.dart';
 import 'screens/feedback_dialog.dart';
 import 'models/student_profile.dart';
 import 'models/recommendation.dart';
 import 'models/programme.dart';
 import 'services/api_service.dart';
 import 'services/recommendation_cache.dart';
+import 'services/shortlist_controller.dart';
 import 'theme/app_colors.dart';
 import 'theme/theme_controller.dart';
 
@@ -79,8 +81,11 @@ class UniGuideApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<ThemeController>(
-      create: (_) => ThemeController()..load(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ThemeController>(create: (_) => ThemeController()..load()),
+        ChangeNotifierProvider<ShortlistController>(create: (_) => ShortlistController()),
+      ],
       child: Consumer<ThemeController>(
         builder: (context, themeController, _) {
           return MaterialApp(
@@ -292,6 +297,9 @@ class _StudentHomeState extends State<StudentHome> {
     if (_currentTabIndex == 0) {
       _loadRecommendations();
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) context.read<ShortlistController>().load();
+    });
   }
 
   Future<void> _loadRecommendations() async {
@@ -353,6 +361,7 @@ class _StudentHomeState extends State<StudentHome> {
         },
       ),
       const ProgrammeCatalogScreen(),
+      const ShortlistScreen(),
     ];
 
     return Scaffold(
@@ -401,6 +410,11 @@ class _StudentHomeState extends State<StudentHome> {
             icon: Icon(Icons.menu_book_outlined),
             selectedIcon: Icon(Icons.menu_book, color: Color(0xFF0EA5A4)),
             label: 'Programmes',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.bookmark_border),
+            selectedIcon: Icon(Icons.bookmark, color: Color(0xFF0EA5A4)),
+            label: 'Saved',
           ),
         ],
       ),

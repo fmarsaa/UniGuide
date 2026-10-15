@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../models/recommendation.dart';
 import '../models/programme.dart';
 import '../theme/app_colors.dart';
+import '../widgets/save_programme_button.dart';
 import '../widgets/shap_bars.dart';
 
 class RecommendationsScreen extends StatelessWidget {
@@ -303,7 +304,7 @@ class RecommendationsScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'Cutoff: ${item.programme.averageCutoff} pts',
+                        'Cutoff: ${item.programme.cutoffRangeLabel}',
                         style: TextStyle(
                           fontSize: 11,
                           color: item.meetsMinimumRequirements ? Colors.blue.shade800 : Colors.grey.shade700,
@@ -318,6 +319,7 @@ class RecommendationsScreen extends StatelessWidget {
                 ShapExplanationCard(
                   shapFeatures: item.shapExplanations,
                   primaryReason: item.primaryReason,
+                  plainReasons: item.plainReasons,
                 ),
                 const SizedBox(height: 16),
 
@@ -337,6 +339,7 @@ class RecommendationsScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 8),
+                    SaveProgrammeButton(programme: item.programme),
                     IconButton(
                       icon: const Icon(Icons.star_border, color: Color(0xFFD97706)),
                       tooltip: 'Rate Recommendation Relevance',

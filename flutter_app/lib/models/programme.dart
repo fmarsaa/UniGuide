@@ -59,6 +59,17 @@ class Programme {
 
   bool get isActive => status != 'inactive';
 
+  /// The real spread of this course's latest cutoffs across the universities
+  /// that offer it (cutoffs differ by university), e.g. "45.0 - 45.6 pts".
+  /// Falls back to the programme-level figure when no university data exists.
+  String get cutoffRangeLabel {
+    final values = offeringUniversities.map((u) => u.latestCutoff).where((c) => c > 0).toList()..sort();
+    if (values.isEmpty) return '${averageCutoff.toStringAsFixed(1)} pts';
+    final low = values.first.toStringAsFixed(1);
+    final high = values.last.toStringAsFixed(1);
+    return low == high ? '$low pts' : '$low - $high pts';
+  }
+
   Programme({
     required this.id,
     required this.code,

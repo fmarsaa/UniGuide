@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import '../models/programme.dart';
 import '../theme/app_colors.dart';
+import '../widgets/save_programme_button.dart';
 
 class ProgrammeDetailScreen extends StatelessWidget {
   final Programme programme;
@@ -17,6 +18,7 @@ class ProgrammeDetailScreen extends StatelessWidget {
         title: Text(programme.code, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         backgroundColor: const Color(0xFF14213D),
         foregroundColor: Colors.white,
+        actions: [SaveProgrammeButton(programme: programme, unsavedColor: Colors.white)],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -63,7 +65,7 @@ class ProgrammeDetailScreen extends StatelessWidget {
                     children: [
                       _buildMetricChip(context, Icons.calendar_today, '${programme.durationYears} Years Full-Time'),
                       _buildMetricChip(context, Icons.grade, 'Min Grade: ${programme.minMeanGrade}'),
-                      _buildMetricChip(context, Icons.analytics, 'Avg: ${programme.averageCutoff} pts'),
+                      _buildMetricChip(context, Icons.analytics, 'Cutoff: ${programme.cutoffRangeLabel}'),
                     ],
                   ),
                 ],

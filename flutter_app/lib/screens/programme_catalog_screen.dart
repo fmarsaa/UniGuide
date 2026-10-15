@@ -3,6 +3,7 @@ import '../models/programme.dart';
 import '../data/programme_repository.dart';
 import '../services/api_service.dart';
 import '../theme/app_colors.dart';
+import '../widgets/save_programme_button.dart';
 import 'programme_detail_screen.dart';
 
 class ProgrammeCatalogScreen extends StatefulWidget {
@@ -217,7 +218,7 @@ class _ProgrammeCatalogScreenState extends State<ProgrammeCatalogScreen> {
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
-                                'Cutoff: ${prog.averageCutoff} pts',
+                                'Cutoff: ${prog.cutoffRangeLabel}',
                                 style: const TextStyle(color: Color(0xFF0EA5A4), fontSize: 11, fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -230,7 +231,13 @@ class _ProgrammeCatalogScreenState extends State<ProgrammeCatalogScreen> {
                         ),
                       ],
                     ),
-                    trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SaveProgrammeButton(programme: prog),
+                        const Icon(Icons.chevron_right, color: Colors.grey),
+                      ],
+                    ),
                     onTap: () {
                       Navigator.push(
                         context,
