@@ -491,11 +491,14 @@ def top_shap_explanations(class_shap_row: np.ndarray, feature_names, row: dict, 
 
 
 def build_primary_reason(shap_list, title: str, confidence: float) -> str:
-    pct = f"{confidence * 100:.1f}%"
+    # Deliberately no percentage in the text: students are not shown the
+    # model's confidence figure (it is a probability spread over 53 programmes,
+    # easy to misread as a "fit score"). `title`/`confidence` stay in the
+    # signature so existing callers are unchanged.
     if shap_list:
         lead = shap_list[0]["featureName"]
-        return f"Primarily driven by {lead}, yielding a {pct} Random Forest confidence for {title}."
-    return f"Random Forest model confidence of {pct} for {title} based on the submitted profile."
+        return f"Primarily driven by {lead}."
+    return "Recommended based on your submitted profile."
 
 
 def _persist_recommendation(uid: str, email: Optional[str], payload: StudentProfilePayload, results: list) -> None:
@@ -662,7 +665,7 @@ def get_recommendations(payload: StudentProfilePayload, decoded: dict = Depends(
     if _pipeline is None or _explainer is None:
         raise HTTPException(
             status_code=503,
-            detail="Model not trained yet. Run `python train_random_forest.py` in backend/ first.",
+            detail="Recommendations are temporarily unavailable. Please try again later.",
         )
 
     uid = decoded["uid"]
@@ -732,7 +735,7 @@ def get_recommendations(payload: StudentProfilePayload, decoded: dict = Depends(
 def submit_feedback(feedback: FeedbackPayload, decoded: dict = Depends(require_auth)):
     db = get_db()
     if db is None:
-        raise HTTPException(status_code=503, detail="Firestore is not configured on the server.")
+        raise HTTPException(status_code=503, detail="This service is temporarily unavailable. Please try again later.")
     uid = decoded["uid"]
     doc_ref = db.collection("students").document(uid).collection("feedback").document()
     doc_ref.set({
@@ -748,7 +751,7 @@ def submit_feedback(feedback: FeedbackPayload, decoded: dict = Depends(require_a
 def update_programme(programme_id: str, body: ProgrammeUpdatePayload, decoded: dict = Depends(require_admin)):
     db = get_db()
     if db is None:
-        raise HTTPException(status_code=503, detail="Firestore is not configured on the server.")
+        raise HTTPException(status_code=503, detail="This service is temporarily unavailable. Please try again later.")
     if programme_id not in CATALOG_BY_ID:
         raise HTTPException(status_code=404, detail="Unknown programme id.")
 
@@ -781,7 +784,7 @@ def _set_programme_status(programme_id: str, status: Optional[str], decoded: dic
     historical recommendation record that already references this id."""
     db = get_db()
     if db is None:
-        raise HTTPException(status_code=503, detail="Firestore is not configured on the server.")
+        raise HTTPException(status_code=503, detail="This service is temporarily unavailable. Please try again later.")
     if programme_id not in CATALOG_BY_ID:
         raise HTTPException(status_code=404, detail="Unknown programme id.")
 
@@ -817,7 +820,7 @@ def reactivate_programme(programme_id: str, decoded: dict = Depends(require_admi
 def list_audit_logs(decoded: dict = Depends(require_admin)):
     db = get_db()
     if db is None:
-        raise HTTPException(status_code=503, detail="Firestore is not configured on the server.")
+        raise HTTPException(status_code=503, detail="This service is temporarily unavailable. Please try again later.")
     query = db.collection("audit_logs").order_by("timestamp", direction=fb_firestore.Query.DESCENDING).limit(25)
     logs = []
     for doc in query.stream():
@@ -838,7 +841,7 @@ def list_admins(decoded: dict = Depends(require_admin)):
     can never be locked out via this UI."""
     db = get_db()
     if db is None:
-        raise HTTPException(status_code=503, detail="Firestore is not configured on the server.")
+        raise HTTPException(status_code=503, detail="This service is temporarily unavailable. Please try again later.")
     admins = []
     for doc in db.collection("admins").stream():
         entry = doc.to_dict()
@@ -853,7 +856,7 @@ def list_admins(decoded: dict = Depends(require_admin)):
 def add_admin(body: AdminInvitePayload, decoded: dict = Depends(require_admin)):
     db = get_db()
     if db is None:
-        raise HTTPException(status_code=503, detail="Firestore is not configured on the server.")
+        raise HTTPException(status_code=503, detail="This service is temporarily unavailable. Please try again later.")
 
     from firebase_admin import auth as fb_auth
 
@@ -883,7 +886,7 @@ def add_admin(body: AdminInvitePayload, decoded: dict = Depends(require_admin)):
 def remove_admin(uid: str, decoded: dict = Depends(require_admin)):
     db = get_db()
     if db is None:
-        raise HTTPException(status_code=503, detail="Firestore is not configured on the server.")
+        raise HTTPException(status_code=503, detail="This service is temporarily unavailable. Please try again later.")
     doc_ref = db.collection("admins").document(uid)
     doc = doc_ref.get()
     if not doc.exists:
@@ -988,7 +991,7 @@ def restore_model_backup(body: ModelRestorePayload, decoded: dict = Depends(requ
 def list_feedback(decoded: dict = Depends(require_admin)):
     db = get_db()
     if db is None:
-        raise HTTPException(status_code=503, detail="Firestore is not configured on the server.")
+        raise HTTPException(status_code=503, detail="This service is temporarily unavailable. Please try again later.")
 
     # collection_group() over every students/{uid}/feedback subcollection.
     # Sorted in Python rather than via Firestore order_by() so this doesn't
@@ -1023,7 +1026,7 @@ def programme_popularity(decoded: dict = Depends(require_admin)):
     recommended" is itself a meaningful signal for an admin to see)."""
     db = get_db()
     if db is None:
-        raise HTTPException(status_code=503, detail="Firestore is not configured on the server.")
+        raise HTTPException(status_code=503, detail="This service is temporarily unavailable. Please try again later.")
 
     counts: Dict[str, int] = {title: 0 for title in CATALOG_BY_TITLE}
     for doc in db.collection_group("recommendations").stream():
@@ -1109,7 +1112,7 @@ def run_catalogue_freshness_check(decoded: dict = Depends(require_admin)):
 def list_catalogue_freshness_flags(decoded: dict = Depends(require_admin)):
     db = get_db()
     if db is None:
-        raise HTTPException(status_code=503, detail="Firestore is not configured on the server.")
+        raise HTTPException(status_code=503, detail="This service is temporarily unavailable. Please try again later.")
     # Filter by status only and sort in Python: combining where("status") with
     # order_by("detectedAt") makes Firestore demand a composite index that has
     # to be created by hand in the Firebase console, and the list failed with a
@@ -1129,7 +1132,7 @@ def list_catalogue_freshness_flags(decoded: dict = Depends(require_admin)):
 def list_catalogue_freshness_history(decoded: dict = Depends(require_admin)):
     db = get_db()
     if db is None:
-        raise HTTPException(status_code=503, detail="Firestore is not configured on the server.")
+        raise HTTPException(status_code=503, detail="This service is temporarily unavailable. Please try again later.")
     query = db.collection("catalogue_freshness_runs").order_by(
         "runAt", direction=fb_firestore.Query.DESCENDING
     ).limit(10)
@@ -1147,7 +1150,7 @@ def list_catalogue_freshness_history(decoded: dict = Depends(require_admin)):
 def dismiss_catalogue_freshness_flag(flag_id: str, decoded: dict = Depends(require_admin)):
     db = get_db()
     if db is None:
-        raise HTTPException(status_code=503, detail="Firestore is not configured on the server.")
+        raise HTTPException(status_code=503, detail="This service is temporarily unavailable. Please try again later.")
     doc_ref = db.collection("catalogue_flags").document(flag_id)
     if not doc_ref.get().exists:
         raise HTTPException(status_code=404, detail="Unknown flag id.")
