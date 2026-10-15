@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/programme.dart';
 import '../data/programme_repository.dart';
@@ -51,16 +52,69 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   String? _freshnessError;
   String? _freshnessCheckMessage;
 
+  List<Map<String, dynamic>> _freshnessHistory = [];
+  bool _isLoadingFreshnessHistory = true;
+
+  final TextEditingController _catalogSearchController = TextEditingController();
+  String _catalogSearchQuery = '';
+
+  final TextEditingController _auditSearchController = TextEditingController();
+  String _auditSearchQuery = '';
+
+  List<Map<String, dynamic>> _admins = [];
+  bool _isLoadingAdmins = true;
+  String? _adminsError;
+  final TextEditingController _addAdminController = TextEditingController();
+  bool _isAddingAdmin = false;
+
+  Map<String, dynamic> _trainingStatus = {'running': false};
+  bool _isTriggeringRetrain = false;
+  String? _retrainMessage;
+  List<Map<String, dynamic>> _modelBackups = [];
+  bool _isLoadingBackups = true;
+  Timer? _trainingPollTimer;
+
+  Map<String, dynamic>? _popularity;
+  bool _isLoadingPopularity = true;
+
   @override
   void initState() {
     super.initState();
     _displayedProgrammes = widget.programmes != null && widget.programmes!.isNotEmpty
         ? List.from(widget.programmes!)
         : List.from(ProgrammeRepository.allProgrammes);
+    _loadAdminProgrammes();
     _loadAuditLogs();
     _loadStudentFeedback();
     _loadModelMetrics();
     _loadFreshnessFlags();
+    _loadFreshnessHistory();
+    _loadAdmins();
+    _loadTrainingStatus();
+    _loadModelBackups();
+    _loadPopularity();
+  }
+
+  @override
+  void dispose() {
+    _trainingPollTimer?.cancel();
+    _catalogSearchController.dispose();
+    _auditSearchController.dispose();
+    _addAdminController.dispose();
+    super.dispose();
+  }
+
+  /// Admin Catalog tab needs ALL programmes including deactivated ones
+  /// (unlike the student-facing list passed in via widget.programmes,
+  /// which already excludes inactive ones) - falls back to whatever was
+  /// passed in if this fails, so the tab still shows something.
+  Future<void> _loadAdminProgrammes() async {
+    try {
+      final all = await ApiService.fetchAllProgrammesForAdmin();
+      if (mounted) setState(() => _displayedProgrammes = all);
+    } on ApiException {
+      // Keep the fallback list already set in initState.
+    }
   }
 
   Future<void> _loadFreshnessFlags() async {
@@ -95,6 +149,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         _isRunningFreshnessCheck = false;
       });
       await _loadFreshnessFlags();
+      await _loadFreshnessHistory();
     } on ApiException catch (e) {
       setState(() {
         _freshnessCheckMessage = 'Check failed: ${e.message}';
@@ -111,6 +166,251 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Could not dismiss: ${e.message}'), backgroundColor: Colors.redAccent),
       );
+    }
+  }
+
+  Future<void> _loadFreshnessHistory() async {
+    setState(() => _isLoadingFreshnessHistory = true);
+    try {
+      final history = await ApiService.fetchCatalogueFreshnessHistory();
+      if (mounted) setState(() {
+        _freshnessHistory = history;
+        _isLoadingFreshnessHistory = false;
+      });
+    } on ApiException {
+      if (mounted) setState(() => _isLoadingFreshnessHistory = false);
+    }
+  }
+
+  Future<void> _deactivateProgramme(Programme prog) async {
+    try {
+      await ApiService.deactivateProgramme(prog.id);
+      await _loadAdminProgrammes();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Deactivated ${prog.code}')));
+      }
+    } on ApiException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not deactivate: ${e.message}'), backgroundColor: Colors.redAccent),
+        );
+      }
+    }
+  }
+
+  Future<void> _reactivateProgramme(Programme prog) async {
+    try {
+      await ApiService.reactivateProgramme(prog.id);
+      await _loadAdminProgrammes();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Reactivated ${prog.code}')));
+      }
+    } on ApiException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not reactivate: ${e.message}'), backgroundColor: Colors.redAccent),
+        );
+      }
+    }
+  }
+
+  void _confirmDeactivate(Programme prog) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Deactivate programme?'),
+        content: Text(
+          '${prog.code} will be hidden from students and recommendations until you reactivate it. This is reversible.',
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent, foregroundColor: Colors.white),
+            onPressed: () {
+              Navigator.pop(ctx);
+              _deactivateProgramme(prog);
+            },
+            child: const Text('Deactivate'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _loadAdmins() async {
+    setState(() {
+      _isLoadingAdmins = true;
+      _adminsError = null;
+    });
+    try {
+      final admins = await ApiService.fetchAdmins();
+      if (mounted) setState(() {
+        _admins = admins;
+        _isLoadingAdmins = false;
+      });
+    } on ApiException catch (e) {
+      if (mounted) setState(() {
+        _adminsError = e.message;
+        _isLoadingAdmins = false;
+      });
+    }
+  }
+
+  Future<void> _addAdmin() async {
+    final email = _addAdminController.text.trim();
+    if (email.isEmpty) return;
+    setState(() => _isAddingAdmin = true);
+    try {
+      await ApiService.addAdmin(email);
+      _addAdminController.clear();
+      await _loadAdmins();
+    } on ApiException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message), backgroundColor: Colors.redAccent),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isAddingAdmin = false);
+    }
+  }
+
+  Future<void> _removeAdmin(String uid, String email) async {
+    try {
+      await ApiService.removeAdmin(uid);
+      await _loadAdmins();
+    } on ApiException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not remove: ${e.message}'), backgroundColor: Colors.redAccent),
+        );
+      }
+    }
+  }
+
+  Future<void> _loadTrainingStatus() async {
+    try {
+      final status = await ApiService.fetchModelTrainingStatus();
+      if (!mounted) return;
+      final wasRunning = _trainingStatus['running'] == true;
+      setState(() => _trainingStatus = status);
+      if (status['running'] == true) {
+        _trainingPollTimer ??= Timer.periodic(const Duration(seconds: 5), (_) => _loadTrainingStatus());
+      } else {
+        _trainingPollTimer?.cancel();
+        _trainingPollTimer = null;
+        if (wasRunning) {
+          // A poll just caught the transition from running -> finished -
+          // refresh everything a completed retrain could have changed.
+          _loadModelMetrics();
+          _loadModelBackups();
+          _loadAuditLogs();
+        }
+      }
+    } on ApiException {
+      // Non-critical - the status banner just won't update this cycle.
+    }
+  }
+
+  Future<void> _triggerRetrain() async {
+    setState(() {
+      _isTriggeringRetrain = true;
+      _retrainMessage = null;
+    });
+    try {
+      await ApiService.triggerModelRetrain();
+      setState(() => _retrainMessage = 'Retrain started - this takes a few minutes.');
+      await _loadTrainingStatus();
+    } on ApiException catch (e) {
+      setState(() => _retrainMessage = 'Could not start retrain: ${e.message}');
+    } finally {
+      if (mounted) setState(() => _isTriggeringRetrain = false);
+    }
+  }
+
+  void _confirmRetrain() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Retrain the model?'),
+        content: const Text(
+          'This regenerates the training data and refits the model from scratch - it typically takes a '
+          'few minutes and runs as a separate process so the app keeps working normally while it runs. The new '
+          'model is hot-loaded automatically when it finishes.',
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              _triggerRetrain();
+            },
+            child: const Text('Start Retrain'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _loadModelBackups() async {
+    setState(() => _isLoadingBackups = true);
+    try {
+      final backups = await ApiService.fetchModelBackups();
+      if (mounted) setState(() {
+        _modelBackups = backups;
+        _isLoadingBackups = false;
+      });
+    } on ApiException {
+      if (mounted) setState(() => _isLoadingBackups = false);
+    }
+  }
+
+  void _confirmRestore(Map<String, dynamic> backup) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Restore this model version?'),
+        content: Text(
+          'The current model will be backed up first, then replaced with the version from ${backup['timestamp']}. '
+          'This is reversible - restoring again later can bring today\'s model back.',
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(ctx);
+              try {
+                await ApiService.restoreModelBackup(backup['timestamp'] as String);
+                await _loadModelMetrics();
+                await _loadModelBackups();
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Model restored')));
+                }
+              } on ApiException catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Could not restore: ${e.message}'), backgroundColor: Colors.redAccent),
+                  );
+                }
+              }
+            },
+            child: const Text('Restore'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _loadPopularity() async {
+    setState(() => _isLoadingPopularity = true);
+    try {
+      final popularity = await ApiService.fetchProgrammePopularity();
+      if (mounted) setState(() {
+        _popularity = popularity;
+        _isLoadingPopularity = false;
+      });
+    } on ApiException {
+      if (mounted) setState(() => _isLoadingPopularity = false);
     }
   }
 
@@ -178,6 +478,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       _buildConsoleTab(),
       _buildCatalogTab(),
       _buildFeedbackTab(),
+      _buildAdminsTab(),
     ];
 
     return Scaffold(
@@ -225,6 +526,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             selectedIcon: Icon(Icons.reviews, color: Color(0xFF0EA5A4)),
             label: 'Feedback',
           ),
+          NavigationDestination(
+            icon: Icon(Icons.manage_accounts_outlined),
+            selectedIcon: Icon(Icons.manage_accounts, color: Color(0xFF0EA5A4)),
+            label: 'Admins',
+          ),
         ],
       ),
     );
@@ -256,16 +562,22 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: const [
-                        Icon(Icons.admin_panel_settings, color: Color(0xFF38BDF8), size: 20),
-                        SizedBox(width: 8),
-                        Text(
-                          'Administrative Governance & Audit',
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
-                        ),
-                      ],
+                    Expanded(
+                      child: Row(
+                        children: const [
+                          Icon(Icons.admin_panel_settings, color: Color(0xFF38BDF8), size: 20),
+                          SizedBox(width: 8),
+                          Flexible(
+                            child: Text(
+                              'Administrative Governance & Audit',
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
+                    const SizedBox(width: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
@@ -294,7 +606,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           Row(
             children: [
               _buildMetricCard(
-                'Random Forest Accuracy',
+                'Model Accuracy',
                 _modelAccuracy != null ? '${(_modelAccuracy! * 100).toStringAsFixed(1)}%' : '—',
                 Icons.analytics,
                 const Color(0xFF0EA5A4),
@@ -367,6 +679,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             ),
             child: _buildFreshnessFlagsBody(),
           ),
+          const SizedBox(height: 8),
+          _buildFreshnessHistorySummary(context),
           const SizedBox(height: 22),
 
           // Audit Trails & Activity Logs
@@ -379,7 +693,20 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             'Tracks decision support inferences and administrative requirement adjustments.',
             style: TextStyle(fontSize: 12, color: AppColors.textSecondary(context)),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
+          TextField(
+            controller: _auditSearchController,
+            decoration: InputDecoration(
+              hintText: 'Search by actor, action, or details...',
+              prefixIcon: const Icon(Icons.search, size: 18),
+              isDense: true,
+              contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            style: const TextStyle(fontSize: 13),
+            onChanged: (v) => setState(() => _auditSearchQuery = v.trim().toLowerCase()),
+          ),
+          const SizedBox(height: 10),
 
           Container(
             padding: const EdgeInsets.all(14),
@@ -411,61 +738,114 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             'Tap the edit icon to update a programme\'s cutoff, minimum grade, or description. Changes are saved immediately and logged in the audit trail.',
             style: TextStyle(fontSize: 12, color: AppColors.textSecondary(context)),
           ),
+          const SizedBox(height: 10),
+          TextField(
+            controller: _catalogSearchController,
+            decoration: InputDecoration(
+              hintText: 'Search by title, code, or faculty...',
+              prefixIcon: const Icon(Icons.search, size: 18),
+              isDense: true,
+              contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            style: const TextStyle(fontSize: 13),
+            onChanged: (v) => setState(() => _catalogSearchQuery = v.trim().toLowerCase()),
+          ),
           const SizedBox(height: 12),
 
-          ..._displayedProgrammes.map((prog) {
-            return Container(
-              margin: const EdgeInsets.only(bottom: 10),
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: AppColors.cardBackground(context),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.cardBorder(context)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+          ..._filteredCatalogProgrammes.map((prog) {
+            final isFlagged = _freshnessFlags.any((f) => f['programmeId'] == prog.id);
+            final isInactive = !prog.isActive;
+            return Opacity(
+              opacity: isInactive ? 0.55 : 1.0,
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: AppColors.cardBackground(context),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: isInactive ? Colors.grey.shade400 : AppColors.cardBorder(context)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  prog.title,
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary(context)),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              if (isFlagged) ...[
+                                const SizedBox(width: 4),
+                                Tooltip(
+                                  message: 'Flagged by catalogue freshness check - see Console tab',
+                                  child: Icon(Icons.warning_amber_rounded, size: 14, color: Colors.amber.shade700),
+                                ),
+                              ],
+                              if (isInactive) ...[
+                                const SizedBox(width: 4),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade300,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: const Text('INACTIVE', style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold)),
+                                ),
+                              ],
+                            ],
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            '${prog.code} • ${prog.faculty}',
+                            style: TextStyle(fontSize: 11, color: AppColors.textSecondary(context)),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Row(
                       children: [
-                        Text(
-                          prog.title,
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary(context)),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: AppColors.chipBackground(context),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            '${prog.averageCutoff.toStringAsFixed(1)} pts',
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary(context)),
+                          ),
                         ),
-                        const SizedBox(height: 2),
-                        Text(
-                          '${prog.code} • ${prog.faculty}',
-                          style: TextStyle(fontSize: 11, color: AppColors.textSecondary(context)),
-                        ),
+                        if (!isInactive) ...[
+                          const SizedBox(width: 6),
+                          IconButton(
+                            icon: const Icon(Icons.edit, size: 18, color: Color(0xFF0EA5A4)),
+                            tooltip: 'Edit Programme',
+                            onPressed: () => _showEditProgrammeDialog(context, prog),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.visibility_off_outlined, size: 18, color: Colors.redAccent),
+                            tooltip: 'Deactivate Programme',
+                            onPressed: () => _confirmDeactivate(prog),
+                          ),
+                        ] else
+                          TextButton(
+                            onPressed: () => _reactivateProgramme(prog),
+                            child: const Text('Reactivate', style: TextStyle(fontSize: 12)),
+                          ),
                       ],
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: AppColors.chipBackground(context),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          '${prog.averageCutoff.toStringAsFixed(1)} pts',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary(context)),
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      IconButton(
-                        icon: const Icon(Icons.edit, size: 18, color: Color(0xFF0EA5A4)),
-                        tooltip: 'Edit Programme',
-                        onPressed: () => _showEditProgrammeDialog(context, prog),
-                      ),
-                    ],
-                  ),
-                ],
+                  ],
+                ),
               ),
             );
           }).toList(),
@@ -473,6 +853,14 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         ],
       ),
     );
+  }
+
+  List<Programme> get _filteredCatalogProgrammes {
+    if (_catalogSearchQuery.isEmpty) return _displayedProgrammes;
+    return _displayedProgrammes.where((p) {
+      final haystack = '${p.title} ${p.code} ${p.faculty}'.toLowerCase();
+      return haystack.contains(_catalogSearchQuery);
+    }).toList();
   }
 
   Widget _buildFeedbackTab() {
@@ -491,6 +879,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             style: TextStyle(fontSize: 12, color: AppColors.textSecondary(context)),
           ),
           const SizedBox(height: 12),
+          _buildRatingSummary(context),
+          const SizedBox(height: 16),
 
           Container(
             padding: const EdgeInsets.all(14),
@@ -501,7 +891,321 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             ),
             child: _buildFeedbackBody(),
           ),
+          const SizedBox(height: 22),
+
+          Text(
+            'Programme Popularity',
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary(context)),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Across every recommendation ever generated, among the 53 trained programmes.',
+            style: TextStyle(fontSize: 12, color: AppColors.textSecondary(context)),
+          ),
+          const SizedBox(height: 12),
+          _buildPopularitySection(context),
           const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRatingSummary(BuildContext context) {
+    if (_studentFeedback.isEmpty) return const SizedBox.shrink();
+    final ratings = _studentFeedback.map((f) => (f['rating'] as num?)?.toInt() ?? 0).where((r) => r > 0).toList();
+    if (ratings.isEmpty) return const SizedBox.shrink();
+    final average = ratings.reduce((a, b) => a + b) / ratings.length;
+    final distribution = {for (var star = 1; star <= 5; star++) star: ratings.where((r) => r == star).length};
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.cardBackground(context),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.cardBorder(context)),
+      ),
+      child: Row(
+        children: [
+          Column(
+            children: [
+              Text(average.toStringAsFixed(1), style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Color(0xFFF59E0B))),
+              Text('of ${ratings.length}', style: TextStyle(fontSize: 10, color: AppColors.textSecondary(context))),
+            ],
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              children: [5, 4, 3, 2, 1].map((star) {
+                final count = distribution[star] ?? 0;
+                final fraction = ratings.isEmpty ? 0.0 : count / ratings.length;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 1.5),
+                  child: Row(
+                    children: [
+                      Text('$star★', style: TextStyle(fontSize: 10, color: AppColors.textSecondary(context))),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: LinearProgressIndicator(
+                            value: fraction,
+                            minHeight: 6,
+                            backgroundColor: AppColors.chipBackground(context),
+                            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFF59E0B)),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      SizedBox(width: 18, child: Text('$count', style: TextStyle(fontSize: 10, color: AppColors.textSecondary(context)))),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPopularitySection(BuildContext context) {
+    if (_isLoadingPopularity) {
+      return const Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0EA5A4))));
+    }
+    if (_popularity == null) {
+      return Text('Could not load popularity data.', style: TextStyle(fontSize: 12, color: AppColors.textSecondary(context)));
+    }
+    final most = (_popularity!['mostRecommended'] as List? ?? []).cast<Map<String, dynamic>>();
+    final least = (_popularity!['leastRecommended'] as List? ?? []).cast<Map<String, dynamic>>();
+
+    Widget buildList(String title, List<Map<String, dynamic>> items, Color color) {
+      return Expanded(
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppColors.cardBackground(context),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.cardBorder(context)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: color)),
+              const SizedBox(height: 8),
+              ...items.map((item) => Padding(
+                    padding: const EdgeInsets.only(bottom: 6.0),
+                    child: Text(
+                      '${item['title']} (${item['count']})',
+                      style: TextStyle(fontSize: 11, color: AppColors.textSecondary(context)),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  )),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        buildList('Most Recommended', most, const Color(0xFF0EA5A4)),
+        const SizedBox(width: 10),
+        buildList('Least Recommended', least, Colors.redAccent),
+      ],
+    );
+  }
+
+  Widget _buildAdminsTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Model Management',
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary(context)),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Retrain the model from scratch, or roll back to a previous version.',
+            style: TextStyle(fontSize: 12, color: AppColors.textSecondary(context)),
+          ),
+          const SizedBox(height: 12),
+          _buildModelManagementSection(context),
+          const SizedBox(height: 22),
+
+          Text(
+            'Administrators',
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary(context)),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Grant or revoke admin access for an existing account by email.',
+            style: TextStyle(fontSize: 12, color: AppColors.textSecondary(context)),
+          ),
+          const SizedBox(height: 12),
+          _buildAdminsSection(context),
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildModelManagementSection(BuildContext context) {
+    final isRunning = _trainingStatus['running'] == true;
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.cardBackground(context),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.cardBorder(context)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  _modelAccuracy != null
+                      ? 'Current model: ${(_modelAccuracy! * 100).toStringAsFixed(1)}% accuracy'
+                      : 'Current model: —',
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary(context)),
+                ),
+              ),
+              ElevatedButton.icon(
+                onPressed: (isRunning || _isTriggeringRetrain) ? null : _confirmRetrain,
+                icon: isRunning
+                    ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                    : const Icon(Icons.model_training, size: 16),
+                label: Text(isRunning ? 'Training...' : 'Retrain Model'),
+                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0EA5A4), foregroundColor: Colors.white),
+              ),
+            ],
+          ),
+          if (isRunning) ...[
+            const SizedBox(height: 8),
+            Text(
+              'Retraining is running as a separate process - this app keeps working normally and will hot-load the new model automatically when it finishes (usually a few minutes).',
+              style: TextStyle(fontSize: 11, color: AppColors.textSecondary(context)),
+            ),
+          ],
+          if (_retrainMessage != null) ...[
+            const SizedBox(height: 8),
+            Text(_retrainMessage!, style: const TextStyle(fontSize: 11, color: Color(0xFF0EA5A4))),
+          ],
+          if (_trainingStatus['lastError'] != null) ...[
+            const SizedBox(height: 8),
+            Text('Last retrain failed: ${_trainingStatus['lastError']}', style: const TextStyle(fontSize: 11, color: Colors.redAccent)),
+          ],
+          const SizedBox(height: 14),
+          Text('Previous Versions', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textPrimary(context))),
+          const SizedBox(height: 6),
+          if (_isLoadingBackups)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+            )
+          else if (_modelBackups.isEmpty)
+            Text('No previous versions yet - they appear here after your first retrain.',
+                style: TextStyle(fontSize: 11, color: AppColors.textSecondary(context)))
+          else
+            ..._modelBackups.map((backup) {
+              final acc = (backup['accuracy'] as num?)?.toDouble();
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 6.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        '${backup['timestamp']}${acc != null ? ' - ${(acc * 100).toStringAsFixed(1)}%' : ''}',
+                        style: TextStyle(fontSize: 11, color: AppColors.textSecondary(context)),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: isRunning ? null : () => _confirmRestore(backup),
+                      child: const Text('Restore', style: TextStyle(fontSize: 11)),
+                    ),
+                  ],
+                ),
+              );
+            }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAdminsSection(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.cardBackground(context),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.cardBorder(context)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _addAdminController,
+                  decoration: const InputDecoration(
+                    hintText: 'Email of an existing account to grant admin access',
+                    isDense: true,
+                    border: OutlineInputBorder(),
+                  ),
+                  style: const TextStyle(fontSize: 13),
+                ),
+              ),
+              const SizedBox(width: 8),
+              ElevatedButton(
+                onPressed: _isAddingAdmin ? null : _addAdmin,
+                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0EA5A4), foregroundColor: Colors.white),
+                child: _isAddingAdmin
+                    ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                    : const Text('Add'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          if (_isLoadingAdmins)
+            const Center(child: CircularProgressIndicator(strokeWidth: 2))
+          else if (_adminsError != null)
+            Row(
+              children: [
+                Expanded(child: Text('Could not load admins: $_adminsError', style: TextStyle(fontSize: 12, color: AppColors.textSecondary(context)))),
+                TextButton(onPressed: _loadAdmins, child: const Text('Retry')),
+              ],
+            )
+          else if (_admins.isEmpty)
+            Text(
+              'No additional admins yet - access via ADMIN_EMAILS (server config) always works and isn\'t shown here.',
+              style: TextStyle(fontSize: 12, color: AppColors.textSecondary(context)),
+            )
+          else
+            ..._admins.map((admin) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Row(
+                  children: [
+                    const Icon(Icons.person_outline, size: 16, color: Color(0xFF64748B)),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text((admin['email'] ?? 'Unknown').toString(), style: TextStyle(fontSize: 12, color: AppColors.textPrimary(context))),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete_outline, size: 18, color: Colors.redAccent),
+                      tooltip: 'Revoke admin access',
+                      onPressed: () => _removeAdmin(admin['uid'] as String, (admin['email'] ?? '').toString()),
+                    ),
+                  ],
+                ),
+              );
+            }),
         ],
       ),
     );
@@ -580,6 +1284,45 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     );
   }
 
+  /// Shows when the freshness check last actually ran (manual or the
+  /// weekly scheduled job) and lets the admin expand a short history -
+  /// without this, there's no way to tell the automation is really running
+  /// over time versus having only ever registered once at server startup.
+  Widget _buildFreshnessHistorySummary(BuildContext context) {
+    if (_isLoadingFreshnessHistory) {
+      return const SizedBox.shrink();
+    }
+    if (_freshnessHistory.isEmpty) {
+      return Text(
+        'No freshness checks have run yet.',
+        style: TextStyle(fontSize: 11, color: AppColors.textSecondary(context)),
+      );
+    }
+    final latest = _freshnessHistory.first;
+    return Theme(
+      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: ExpansionTile(
+        tilePadding: EdgeInsets.zero,
+        title: Text(
+          'Last checked: ${latest['runAt'] ?? '—'} by ${latest['actor'] ?? 'unknown'} - '
+          '${latest['totalFlagsFound'] ?? 0} issue(s) found',
+          style: TextStyle(fontSize: 11, color: AppColors.textSecondary(context)),
+        ),
+        children: _freshnessHistory.skip(1).map((run) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 6.0),
+            child: Text(
+              '${run['runAt'] ?? '—'} by ${run['actor'] ?? 'unknown'} - '
+              'checked ${run['checkedProgrammes'] ?? 0}, ${run['totalFlagsFound'] ?? 0} issue(s), '
+              '${run['newlyFlagged'] ?? 0} new',
+              style: TextStyle(fontSize: 11, color: AppColors.textSecondary(context)),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
   Widget _buildAuditLogBody() {
     if (_isLoadingLogs) {
       return const Padding(
@@ -606,8 +1349,20 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         style: TextStyle(fontSize: 12, color: AppColors.textSecondary(context)),
       );
     }
+    final filtered = _auditSearchQuery.isEmpty
+        ? _auditLogs
+        : _auditLogs.where((log) {
+            final haystack = '${log['action'] ?? ''} ${log['actor'] ?? ''} ${log['details'] ?? ''}'.toLowerCase();
+            return haystack.contains(_auditSearchQuery);
+          }).toList();
+    if (filtered.isEmpty) {
+      return Text(
+        'No audit log entries match "$_auditSearchQuery".',
+        style: TextStyle(fontSize: 12, color: AppColors.textSecondary(context)),
+      );
+    }
     return Column(
-      children: _auditLogs.map((log) {
+      children: filtered.map((log) {
         return Padding(
           padding: const EdgeInsets.only(bottom: 12.0),
           child: Row(
@@ -846,12 +1601,44 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                             professionalCertifications: prog.professionalCertifications,
                             offeringUniversities: prog.offeringUniversities,
                             durationYears: prog.durationYears,
+                            status: prog.status,
                           );
                         }
                       });
                       Navigator.pop(ctx);
+                      // No separate blocking "are you sure" dialog for this -
+                      // the edit dialog itself (with its own visible Cancel)
+                      // already requires an explicit confirm tap. Undo here
+                      // is the more useful safety net: it re-submits exactly
+                      // the pre-edit values via the same update path.
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Updated ${prog.code}')),
+                        SnackBar(
+                          content: Text('Updated ${prog.code}'),
+                          action: SnackBarAction(
+                            label: 'Undo',
+                            onPressed: () async {
+                              try {
+                                await widget.onUpdateProgramme(
+                                  prog.id,
+                                  averageCutoff: prog.averageCutoff,
+                                  minMeanGrade: prog.minMeanGrade,
+                                  description: prog.description,
+                                );
+                                if (!mounted) return;
+                                setState(() {
+                                  final idx = _displayedProgrammes.indexWhere((p) => p.id == prog.id);
+                                  if (idx != -1) _displayedProgrammes[idx] = prog;
+                                });
+                                _loadAuditLogs();
+                              } on ApiException catch (e) {
+                                if (!mounted) return;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Could not undo: ${e.message}'), backgroundColor: Colors.redAccent),
+                                );
+                              }
+                            },
+                          ),
+                        ),
                       );
                       _loadAuditLogs();
                     } on ApiException catch (e) {
