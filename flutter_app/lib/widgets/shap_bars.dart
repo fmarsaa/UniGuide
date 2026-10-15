@@ -104,116 +104,122 @@ class ShapExplanationCard extends StatelessWidget {
                   color: AppColors.textSecondary(context),
                   height: 1.4),
             ),
-          Theme(
-            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-            child: ExpansionTile(
-              tilePadding: EdgeInsets.zero,
-              childrenPadding: EdgeInsets.zero,
-              dense: true,
-              title: Text(
-                'See the detailed breakdown',
-                style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.indigo.shade400),
-              ),
-              children: [
-                Text(
-                  'What influenced this result:',
+          // ExpansionTile paints on the nearest Material, so give it its own transparent
+          // one - otherwise the card's coloured background hides it and Flutter flags it.
+          Material(
+            color: Colors.transparent,
+            child: Theme(
+              data:
+                  Theme.of(context).copyWith(dividerColor: Colors.transparent),
+              child: ExpansionTile(
+                tilePadding: EdgeInsets.zero,
+                childrenPadding: EdgeInsets.zero,
+                dense: true,
+                title: Text(
+                  'See the detailed breakdown',
                   style: TextStyle(
-                      fontSize: 11,
+                      fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textSecondary(context)),
+                      color: Colors.indigo.shade400),
                 ),
-                const SizedBox(height: 10),
-                ...shapFeatures.map((feat) {
-                  final isPositive = feat.shapValue >= 0;
-                  final double normalizedWidth =
-                      (feat.shapValue.abs() / maxAbsShap).clamp(0.05, 1.0);
-                  final color = _getCategoryColor(feat.category);
+                children: [
+                  Text(
+                    'What influenced this result:',
+                    style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textSecondary(context)),
+                  ),
+                  const SizedBox(height: 10),
+                  ...shapFeatures.map((feat) {
+                    final isPositive = feat.shapValue >= 0;
+                    final double normalizedWidth =
+                        (feat.shapValue.abs() / maxAbsShap).clamp(0.05, 1.0);
+                    final color = _getCategoryColor(feat.category);
 
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 6, vertical: 2),
-                                    decoration: BoxDecoration(
-                                      color: color.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    child: Text(
-                                      feat.category,
-                                      style: TextStyle(
-                                        fontSize: 9,
-                                        fontWeight: FontWeight.bold,
-                                        color: color,
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 6, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color: color.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Text(
+                                        feat.category,
+                                        style: TextStyle(
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.bold,
+                                          color: color,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Flexible(
-                                    child: Text(
-                                      feat.featureName,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.textPrimary(context),
+                                    const SizedBox(width: 6),
+                                    Flexible(
+                                      child: Text(
+                                        feat.featureName,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.textPrimary(context),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              '${isPositive ? '+' : ''}${feat.shapValue.toStringAsFixed(2)}',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: isPositive
-                                    ? Colors.blue
-                                    : Colors.red.shade700,
+                              const SizedBox(width: 8),
+                              Text(
+                                '${isPositive ? '+' : ''}${feat.shapValue.toStringAsFixed(2)}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: isPositive
+                                      ? Colors.blue
+                                      : Colors.red.shade700,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
-                          child: LinearProgressIndicator(
-                            value: normalizedWidth,
-                            minHeight: 6,
-                            backgroundColor: AppColors.cardBorder(context),
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              isPositive
-                                  ? const Color(0xFF0EA5A4)
-                                  : Colors.red.shade400,
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(4),
+                            child: LinearProgressIndicator(
+                              value: normalizedWidth,
+                              minHeight: 6,
+                              backgroundColor: AppColors.cardBorder(context),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                isPositive
+                                    ? const Color(0xFF0EA5A4)
+                                    : Colors.red.shade400,
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          feat.description,
-                          style: TextStyle(
-                              fontSize: 10.5,
-                              color: AppColors.textSecondary(context)),
-                        ),
-                      ],
-                    ),
-                  );
-                }).toList(),
-              ],
+                          const SizedBox(height: 2),
+                          Text(
+                            feat.description,
+                            style: TextStyle(
+                                fontSize: 10.5,
+                                color: AppColors.textSecondary(context)),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ],
+              ),
             ),
           ),
         ],
