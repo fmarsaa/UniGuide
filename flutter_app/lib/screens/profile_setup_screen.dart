@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/kcse_grade.dart';
 import '../models/student_profile.dart';
+import '../models/profile_option_groups.dart';
 import '../theme/app_colors.dart';
+import '../widgets/grouped_option_picker.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
   final StudentProfile initialProfile;
@@ -18,14 +20,16 @@ class ProfileSetupScreen extends StatefulWidget {
 }
 
 class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
-  // The 5 subjects every KCSE candidate sits - kept in sync with
-  // backend/kuccps.py COMPULSORY_SUBJECTS.
-  static const List<String> _compulsorySubjects = ['Mathematics', 'English', 'Kiswahili', 'Biology', 'Chemistry'];
+  // The subjects every candidate must give a grade for - kept in sync with
+  // backend/kuccps.py COMPULSORY_SUBJECTS. Biology is optional (a student
+  // may not have sat it), so it is in the optional list below.
+  static const List<String> _compulsorySubjects = ['Mathematics', 'English', 'Kiswahili', 'Chemistry'];
 
   // Full KNEC optional subject list - kept in sync with backend/kuccps.py
-  // FULL_OPTIONAL_SUBJECTS. Real candidates sit 7-9 subjects total: these 5
-  // compulsory plus 2-4 chosen from this list, which varies school to school.
+  // FULL_OPTIONAL_SUBJECTS. Real candidates sit 7-9 subjects total: these 4
+  // compulsory plus 3-5 chosen from this list, which varies school to school.
   static const List<String> _fullOptionalSubjects = [
+    'Biology',
     'Physics',
     'History & Government',
     'Geography',
@@ -59,6 +63,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   late List<String> _selectedStrengths;
   late List<String> _selectedAspirations;
 
+  int _step = 0;
   bool _showValidationErrors = false;
 
   // Kept in exact sync with backend/synthetic_data_generator.py's
@@ -249,8 +254,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     final existingOptional = widget.initialProfile.grades.keys
         .where((k) => !_compulsorySubjects.contains(k))
         .toList();
-    _totalSubjectCount = (5 + existingOptional.length).clamp(7, 9);
-    final optionalSlots = _totalSubjectCount - 5;
+    _totalSubjectCount = (_compulsorySubjects.length + existingOptional.length).clamp(7, 9);
+    final optionalSlots = _totalSubjectCount - _compulsorySubjects.length;
     _optionalSubjectChoice = List<String?>.generate(
       optionalSlots,
       (i) => i < existingOptional.length ? existingOptional[i] : null,
@@ -268,7 +273,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
 
   void _setTotalSubjectCount(int count) {
     setState(() {
-      final newOptionalSlots = count - 5;
+      final newOptionalSlots = count - _compulsorySubjects.length;
       if (newOptionalSlots > _optionalSubjectChoice.length) {
         final extra = newOptionalSlots - _optionalSubjectChoice.length;
         _optionalSubjectChoice.addAll(List<String?>.filled(extra, null));
@@ -335,7 +340,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     if (!_isComplete) {
       setState(() => _showValidationErrors = true);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please complete your subjects, interests, skills, strengths, and aspirations first.')),
+        const SnackBar(content: Text('Please complete every step first.')),
       );
       return;
     }
@@ -362,356 +367,412 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     widget.onGenerateRecommendations(updated);
   }
 
+  // --- Step flow ----------------------------------------------------------
+  // One job per screen instead of one 150-chip scroll. Progress and the
+  // per-step requirement mirror exactly what _isComplete checks at the end.
+  static const List<String> _stepTitles = ['Grades', 'Interests', 'Skills', 'Aspirations'];
+
+  bool _stepComplete(int step) {
+    switch (step) {
+      case 0:
+        return _subjectsComplete;
+      case 1:
+        return _selectedInterests.isNotEmpty;
+      case 2:
+        return _selectedSkills.isNotEmpty && _selectedStrengths.isNotEmpty;
+      default:
+        return _selectedAspirations.isNotEmpty;
+    }
+  }
+
+  String _stepHint(int step) {
+    switch (step) {
+      case 0:
+        return 'Choose a grade for every subject to continue.';
+      case 1:
+        return 'Pick at least one interest to continue.';
+      case 2:
+        return _selectedSkills.isEmpty && _selectedStrengths.isEmpty
+            ? 'Pick at least one skill and one strength to continue.'
+            : _selectedSkills.isEmpty
+                ? 'Pick at least one skill to continue.'
+                : 'Pick at least one strength to continue.';
+      default:
+        return 'Pick at least one career aspiration to generate.';
+    }
+  }
+
+  // A step can be jumped to only if every step before it is already done.
+  bool _canGoTo(int target) {
+    for (int i = 0; i < target; i++) {
+      if (!_stepComplete(i)) return false;
+    }
+    return true;
+  }
+
+  void _goTo(int step) => setState(() => _step = step);
+
   @override
   Widget build(BuildContext context) {
-    final meanGrade = _computedMeanGrade;
+    final isLast = _step == _stepTitles.length - 1;
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground(context),
       appBar: AppBar(
         title: const Text(
-          'Candidate Academic & Career Profile',
+          'Your Profile',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFF14213D),
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Student Info Banner Card
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.cardBackground(context),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: AppColors.cardBorder(context)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.03),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 22,
-                    backgroundColor: const Color(0xFF0EA5A4).withOpacity(0.15),
-                    child: const Icon(Icons.school, color: Color(0xFF0EA5A4), size: 24),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.initialProfile.fullName.isNotEmpty
-                              ? widget.initialProfile.fullName
-                              : 'Candidate Profile',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textPrimary(context)),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          widget.initialProfile.indexNumber.isNotEmpty
-                              ? 'Index No: ${widget.initialProfile.indexNumber}'
-                              : 'Form-Four Leaver',
-                          style: TextStyle(color: AppColors.textSecondary(context), fontSize: 12),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      const Text('Mean Grade', style: TextStyle(fontSize: 10, color: Color(0xFF64748B))),
-                      const SizedBox(height: 2),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF14213D),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          meanGrade ?? '—',
-                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
-                        ),
+      body: Column(
+        children: [
+          _buildStepHeader(context),
+          Expanded(
+            child: SingleChildScrollView(
+              key: ValueKey(_step),
+              padding: const EdgeInsets.all(16.0),
+              child: _buildStepBody(context),
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: _buildBottomBar(context, isLast),
+    );
+  }
+
+  Widget _buildStepHeader(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
+      decoration: BoxDecoration(
+        color: AppColors.cardBackground(context),
+        border: Border(bottom: BorderSide(color: AppColors.cardBorder(context))),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Step ${_step + 1} of ${_stepTitles.length}',
+            style: TextStyle(fontSize: 11, color: AppColors.textSecondary(context), fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              for (int i = 0; i < _stepTitles.length; i++)
+                Expanded(
+                  child: InkWell(
+                    onTap: _canGoTo(i) ? () => _goTo(i) : null,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 6),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(3),
+                            child: LinearProgressIndicator(
+                              value: i < _step || (i == _step && _stepComplete(i)) ? 1.0 : (i == _step ? 0.35 : 0.0),
+                              minHeight: 5,
+                              backgroundColor: AppColors.cardBorder(context),
+                              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.accentTeal),
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            _stepTitles[i],
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: i == _step ? FontWeight.w700 : FontWeight.w500,
+                              color: i == _step ? AppColors.textPrimary(context) : AppColors.textSecondary(context),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              'Mean Grade is calculated automatically from the subject grades you enter below.',
-              style: TextStyle(fontSize: 11, color: AppColors.textSecondary(context)),
-            ),
-            const SizedBox(height: 20),
-
-            // Section 0: How many subjects
-            _buildSectionHeader(
-              title: '1. How many subjects did you sit?',
-              subtitle: 'KCSE candidates typically sit 7-9 subjects: 5 compulsory plus 2-4 optional, depending on your school.',
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [7, 8, 9].map((count) {
-                final isSelected = _totalSubjectCount == count;
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: ChoiceChip(
-                    label: Text('$count subjects', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
-                    selected: isSelected,
-                    selectedColor: const Color(0xFF0EA5A4),
-                    labelStyle: TextStyle(color: isSelected ? Colors.white : AppColors.textPrimary(context)),
-                    backgroundColor: AppColors.cardBackground(context),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      side: BorderSide(color: isSelected ? const Color(0xFF0EA5A4) : Colors.grey.shade300),
                     ),
-                    onSelected: (_) => _setTotalSubjectCount(count),
                   ),
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 20),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
-            // Section 1: Compulsory subjects
-            _buildSectionHeader(
-              title: '2. Compulsory Subjects',
-              subtitle: 'Every KCSE candidate sits these 5. Enter your actual grades - these determine your KUCCPS Cluster Weighted Points (CWP).',
-            ),
-            const SizedBox(height: 10),
-            Card(
-              elevation: 0,
-              color: AppColors.cardBackground(context),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
-                side: BorderSide(color: AppColors.cardBorder(context)),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-                child: Column(
-                  children: [
-                    for (int i = 0; i < _compulsorySubjects.length; i++) ...[
-                      if (i > 0) const Divider(height: 16),
-                      _buildCompulsorySubjectRow(_compulsorySubjects[i]),
-                    ],
-                  ],
+  Widget _buildBottomBar(BuildContext context, bool isLast) {
+    final complete = _stepComplete(_step);
+    return SafeArea(
+      top: false,
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+        decoration: BoxDecoration(
+          color: AppColors.cardBackground(context),
+          border: Border(top: BorderSide(color: AppColors.cardBorder(context))),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (!complete)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Text(
+                  _stepHint(_step),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 12, color: AppColors.textSecondary(context)),
                 ),
               ),
-            ),
-            const SizedBox(height: 24),
-
-            // Section 2: Optional subjects
-            _buildSectionHeader(
-              title: '3. Optional Subjects (${_optionalSubjectChoice.length})',
-              subtitle: 'Select the subjects you actually took and their grades.',
-            ),
-            const SizedBox(height: 10),
-            Card(
-              elevation: 0,
-              color: AppColors.cardBackground(context),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
-                side: BorderSide(color: AppColors.cardBorder(context)),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-                child: Column(
-                  children: [
-                    for (int i = 0; i < _optionalSubjectChoice.length; i++) ...[
-                      if (i > 0) const Divider(height: 16),
-                      _buildOptionalSubjectRow(i),
-                    ],
-                  ],
+            Row(
+              children: [
+                if (_step > 0) ...[
+                  OutlinedButton(
+                    onPressed: () => _goTo(_step - 1),
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size(88, 48),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: const Text('Back'),
+                  ),
+                  const SizedBox(width: 12),
+                ],
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: complete ? (isLast ? _saveAndGenerate : () => _goTo(_step + 1)) : null,
+                    icon: Icon(isLast ? Icons.auto_awesome : Icons.arrow_forward, size: 18),
+                    iconAlignment: IconAlignment.end,
+                    label: Text(
+                      isLast ? 'Generate Recommendations' : 'Next',
+                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size.fromHeight(48),
+                      backgroundColor: AppColors.accentTeal,
+                      foregroundColor: Colors.white,
+                      disabledBackgroundColor: AppColors.chipBackground(context),
+                      disabledForegroundColor: AppColors.textSecondary(context),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
-            if (_showValidationErrors && !_subjectsComplete) ...[
-              const SizedBox(height: 8),
-              Text(
-                'Please select a grade for every compulsory subject and a subject + grade for every optional slot.',
-                style: TextStyle(fontSize: 11, color: Colors.red.shade700),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStepBody(BuildContext context) {
+    switch (_step) {
+      case 0:
+        return _buildGradesStep(context);
+      case 1:
+        return _buildPickerStep(
+          title: 'What are you interested in?',
+          subtitle: 'Pick the areas you enjoy most. Open a heading, or search for a topic. Choose from any heading - you are not limited to one.',
+          child: GroupedOptionPicker(
+            groups: withOtherGroup(kInterestGroups, _availableInterests),
+            selected: _selectedInterests,
+            onToggle: (o) => _toggleItem(_selectedInterests, o),
+            searchHint: 'Search interests',
+          ),
+        );
+      case 2:
+        return _buildPickerStep(
+          title: 'What are you good at?',
+          subtitle: 'Choose the practical and thinking skills you have shown, then your strengths as a person.',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              GroupedOptionPicker(
+                groups: withOtherGroup(kSkillGroups, _availableSkills),
+                selected: _selectedSkills,
+                onToggle: (o) => _toggleItem(_selectedSkills, o),
+                searchHint: 'Search skills',
+              ),
+              const SizedBox(height: 20),
+              _buildSectionHeader(
+                title: 'Personal strengths',
+                subtitle: 'Soft skills and attributes that describe you.',
+              ),
+              const SizedBox(height: 10),
+              FlatOptionChips(
+                options: _availableStrengths,
+                selected: _selectedStrengths,
+                onToggle: (o) => _toggleItem(_selectedStrengths, o),
               ),
             ],
-            const SizedBox(height: 24),
+          ),
+        );
+      default:
+        return _buildPickerStep(
+          title: 'Where do you see yourself?',
+          subtitle: 'Not sure yet? Pick the ones that sound closest - you can change them any time. You can also search for a job title.',
+          child: GroupedOptionPicker(
+            groups: {'': _availableAspirations},
+            selected: _selectedAspirations,
+            onToggle: (o) => _toggleItem(_selectedAspirations, o),
+            searchHint: 'Search careers',
+          ),
+        );
+    }
+  }
 
-            // Section: Personal & Academic Interests
-            _buildSectionHeader(
-              title: '4. Personal & Academic Interests',
-              subtitle: 'Select your preferred knowledge areas to guide Random Forest domain classification.',
-            ),
-            const SizedBox(height: 10),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: _availableInterests.map((interest) {
-                final isSelected = _selectedInterests.contains(interest);
-                return FilterChip(
-                  label: Text(
-                    interest,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                      color: isSelected ? Colors.white : AppColors.textPrimary(context),
-                    ),
-                  ),
-                  selected: isSelected,
-                  selectedColor: const Color(0xFF0EA5A4),
-                  backgroundColor: AppColors.cardBackground(context),
-                  checkmarkColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(
-                      color: isSelected ? const Color(0xFF0EA5A4) : Colors.grey.shade300,
-                    ),
-                  ),
-                  onSelected: (_) => _toggleItem(_selectedInterests, interest),
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 24),
+  Widget _buildPickerStep({required String title, required String subtitle, required Widget child}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionHeader(title: title, subtitle: subtitle),
+        const SizedBox(height: 14),
+        child,
+      ],
+    );
+  }
 
-            // Section: Demonstrated Skills
-            _buildSectionHeader(
-              title: '5. Demonstrated Skills',
-              subtitle: 'Identify your practical and cognitive strengths.',
-            ),
-            const SizedBox(height: 10),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: _availableSkills.map((skill) {
-                final isSelected = _selectedSkills.contains(skill);
-                return FilterChip(
-                  label: Text(
-                    skill,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                      color: isSelected ? Colors.white : AppColors.textPrimary(context),
-                    ),
-                  ),
-                  selected: isSelected,
-                  selectedColor: const Color(0xFF4F46E5),
-                  backgroundColor: AppColors.cardBackground(context),
-                  checkmarkColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(
-                      color: isSelected ? const Color(0xFF4F46E5) : Colors.grey.shade300,
-                    ),
-                  ),
-                  onSelected: (_) => _toggleItem(_selectedSkills, skill),
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 24),
+  Widget _buildGradesStep(BuildContext context) {
+    final meanGrade = _computedMeanGrade;
 
-            // Section: Personal Strengths
-            _buildSectionHeader(
-              title: '6. Personal Strengths',
-              subtitle: 'Core soft skills and behavioral attributes.',
-            ),
-            const SizedBox(height: 10),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: _availableStrengths.map((str) {
-                final isSelected = _selectedStrengths.contains(str);
-                return FilterChip(
-                  label: Text(
-                    str,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                      color: isSelected ? Colors.white : AppColors.textPrimary(context),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Student Info Banner Card
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.cardBackground(context),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: AppColors.cardBorder(context)),
+          ),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 22,
+                backgroundColor: AppColors.accentTeal.withOpacity(0.15),
+                child: const Icon(Icons.school, color: AppColors.accentTeal, size: 24),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.initialProfile.fullName.isNotEmpty ? widget.initialProfile.fullName : 'Candidate Profile',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textPrimary(context)),
                     ),
-                  ),
-                  selected: isSelected,
-                  selectedColor: const Color(0xFFD97706),
-                  backgroundColor: AppColors.cardBackground(context),
-                  checkmarkColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(
-                      color: isSelected ? const Color(0xFFD97706) : Colors.grey.shade300,
+                    const SizedBox(height: 2),
+                    Text(
+                      widget.initialProfile.indexNumber.isNotEmpty
+                          ? 'Index No: ${widget.initialProfile.indexNumber}'
+                          : 'Form-Four Leaver',
+                      style: TextStyle(color: AppColors.textSecondary(context), fontSize: 12),
                     ),
-                  ),
-                  onSelected: (_) => _toggleItem(_selectedStrengths, str),
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 24),
-
-            // Section: Career Aspirations
-            _buildSectionHeader(
-              title: '7. Career Aspirations',
-              subtitle: 'Select intended professional pathways.',
-            ),
-            const SizedBox(height: 10),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: _availableAspirations.map((asp) {
-                final isSelected = _selectedAspirations.contains(asp);
-                return FilterChip(
-                  label: Text(
-                    asp,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                      color: isSelected ? Colors.white : AppColors.textPrimary(context),
-                    ),
-                  ),
-                  selected: isSelected,
-                  selectedColor: const Color(0xFF059669),
-                  backgroundColor: AppColors.cardBackground(context),
-                  checkmarkColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(
-                      color: isSelected ? const Color(0xFF059669) : Colors.grey.shade300,
-                    ),
-                  ),
-                  onSelected: (_) => _toggleItem(_selectedAspirations, asp),
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 32),
-
-            // Submit / Re-evaluate Button
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton.icon(
-                onPressed: _saveAndGenerate,
-                icon: const Icon(Icons.auto_awesome, color: Colors.white, size: 20),
-                label: const Text(
-                  'Run Decision Engine & Generate Recommendations',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF0EA5A4),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  elevation: 2,
+                  ],
                 ),
               ),
-            ),
-            const SizedBox(height: 24),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text('Mean Grade', style: TextStyle(fontSize: 10, color: AppColors.textSecondary(context))),
+                  const SizedBox(height: 2),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF14213D),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      meanGrade ?? '—',
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          'Mean Grade is calculated automatically from the subject grades you enter below.',
+          style: TextStyle(fontSize: 11, color: AppColors.textSecondary(context)),
+        ),
+        const SizedBox(height: 20),
+
+        _buildSectionHeader(
+          title: 'How many subjects did you sit?',
+          subtitle: 'KCSE candidates typically sit 7-9 subjects: 4 compulsory plus 3-5 optional, depending on your school.',
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [7, 8, 9].map((count) {
+            final isSelected = _totalSubjectCount == count;
+            return Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: ChoiceChip(
+                label: Text('$count subjects', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                selected: isSelected,
+                selectedColor: AppColors.accentTeal,
+                labelStyle: TextStyle(color: isSelected ? Colors.white : AppColors.textPrimary(context)),
+                backgroundColor: AppColors.cardBackground(context),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(color: isSelected ? AppColors.accentTeal : AppColors.cardBorder(context)),
+                ),
+                onSelected: (_) => _setTotalSubjectCount(count),
+              ),
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: 20),
+
+        _buildSectionHeader(
+          title: 'Compulsory subjects',
+          subtitle:
+              'Every candidate must enter these 4. Enter your actual grades - these determine your KUCCPS Cluster Weighted Points (CWP).',
+        ),
+        const SizedBox(height: 10),
+        _gradesCard(
+          context,
+          [for (final subject in _compulsorySubjects) _buildCompulsorySubjectRow(subject)],
+        ),
+        const SizedBox(height: 24),
+
+        _buildSectionHeader(
+          title: 'Optional subjects (${_optionalSubjectChoice.length})',
+          subtitle: 'Select the subjects you actually took and their grades.',
+        ),
+        const SizedBox(height: 10),
+        _gradesCard(
+          context,
+          [for (int i = 0; i < _optionalSubjectChoice.length; i++) _buildOptionalSubjectRow(i)],
+        ),
+        if (_showValidationErrors && !_subjectsComplete) ...[
+          const SizedBox(height: 8),
+          Text(
+            'Please select a grade for every compulsory subject and a subject + grade for every optional slot.',
+            style: TextStyle(fontSize: 11, color: Colors.red.shade700),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _gradesCard(BuildContext context, List<Widget> rows) {
+    return Card(
+      elevation: 0,
+      color: AppColors.cardBackground(context),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(color: AppColors.cardBorder(context)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+        child: Column(
+          children: [
+            for (int i = 0; i < rows.length; i++) ...[
+              if (i > 0) const Divider(height: 16),
+              rows[i],
+            ],
           ],
         ),
       ),
