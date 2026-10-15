@@ -252,4 +252,163 @@ class ApiService {
       if (response.statusCode != 200) throw _errorFor(response);
     });
   }
+
+  /// Admin-only: the last 10 freshness check runs (manual or the weekly
+  /// scheduled one) - what actually proves the automation is working over
+  /// time, not just that it registered at server startup.
+  static Future<List<Map<String, dynamic>>> fetchCatalogueFreshnessHistory() {
+    return _withRetry('Could not load freshness check history', () async {
+      final headers = await _authHeaders();
+      final response = await http
+          .get(Uri.parse('$baseUrl/api/admin/catalogue-freshness/history'), headers: headers)
+          .timeout(const Duration(seconds: 10));
+      if (response.statusCode != 200) throw _errorFor(response);
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.cast<Map<String, dynamic>>();
+    });
+  }
+
+  /// Admin-only: every programme including deactivated ones (unlike
+  /// fetchProgrammes, which hides inactive ones from students) - the admin
+  /// Catalog tab needs to show deactivated programmes greyed out with a
+  /// Reactivate action, not have them silently vanish.
+  static Future<List<Programme>> fetchAllProgrammesForAdmin() {
+    return _withRetry('Could not load the programme catalog', () async {
+      final headers = await _authHeaders();
+      final response = await http
+          .get(Uri.parse('$baseUrl/api/admin/programmes'), headers: headers)
+          .timeout(const Duration(seconds: 10));
+      if (response.statusCode != 200) throw _errorFor(response);
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.map((json) => Programme.fromJson(json)).toList();
+    });
+  }
+
+  /// Admin-only: soft-hides a programme from students and recommendations.
+  /// Reversible via reactivateProgramme - never a hard delete.
+  static Future<Programme> deactivateProgramme(String programmeId) {
+    return _withRetry('Could not deactivate the programme', () async {
+      final headers = await _authHeaders();
+      final response = await http
+          .post(Uri.parse('$baseUrl/api/admin/programmes/$programmeId/deactivate'), headers: headers)
+          .timeout(const Duration(seconds: 10));
+      if (response.statusCode != 200) throw _errorFor(response);
+      return Programme.fromJson(jsonDecode(response.body));
+    });
+  }
+
+  static Future<Programme> reactivateProgramme(String programmeId) {
+    return _withRetry('Could not reactivate the programme', () async {
+      final headers = await _authHeaders();
+      final response = await http
+          .post(Uri.parse('$baseUrl/api/admin/programmes/$programmeId/reactivate'), headers: headers)
+          .timeout(const Duration(seconds: 10));
+      if (response.statusCode != 200) throw _errorFor(response);
+      return Programme.fromJson(jsonDecode(response.body));
+    });
+  }
+
+  /// Admin-only: lists additional admins managed via Firestore (on top of
+  /// the ADMIN_EMAILS env-var bootstrap allowlist, which isn't shown or
+  /// editable here - see backend/main.py's list_admins docstring for why).
+  static Future<List<Map<String, dynamic>>> fetchAdmins() {
+    return _withRetry('Could not load the admin list', () async {
+      final headers = await _authHeaders();
+      final response = await http
+          .get(Uri.parse('$baseUrl/api/admin/admins'), headers: headers)
+          .timeout(const Duration(seconds: 10));
+      if (response.statusCode != 200) throw _errorFor(response);
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.cast<Map<String, dynamic>>();
+    });
+  }
+
+  /// Grants admin access to an existing account by email. Fails with a
+  /// clear message if that email hasn't signed up yet.
+  static Future<void> addAdmin(String email) {
+    return _withRetry('Could not add admin', () async {
+      final headers = await _authHeaders();
+      final response = await http
+          .post(
+            Uri.parse('$baseUrl/api/admin/admins'),
+            headers: headers,
+            body: jsonEncode({'email': email}),
+          )
+          .timeout(const Duration(seconds: 10));
+      if (response.statusCode != 200) throw _errorFor(response);
+    });
+  }
+
+  static Future<void> removeAdmin(String uid) {
+    return _withRetry('Could not remove admin', () async {
+      final headers = await _authHeaders();
+      final response = await http
+          .delete(Uri.parse('$baseUrl/api/admin/admins/$uid'), headers: headers)
+          .timeout(const Duration(seconds: 10));
+      if (response.statusCode != 200) throw _errorFor(response);
+    });
+  }
+
+  /// Admin-only: starts a model retrain as a separate OS process on the
+  /// server (see backend/main.py's _run_retrain_subprocess) - returns
+  /// immediately; poll fetchModelTrainingStatus() for progress.
+  static Future<void> triggerModelRetrain() {
+    return _withRetry('Could not start the retrain', () async {
+      final headers = await _authHeaders();
+      final response = await http
+          .post(Uri.parse('$baseUrl/api/admin/model/retrain'), headers: headers)
+          .timeout(const Duration(seconds: 10));
+      if (response.statusCode != 200) throw _errorFor(response);
+    });
+  }
+
+  static Future<Map<String, dynamic>> fetchModelTrainingStatus() {
+    return _withRetry('Could not load training status', () async {
+      final headers = await _authHeaders();
+      final response = await http
+          .get(Uri.parse('$baseUrl/api/admin/model/status'), headers: headers)
+          .timeout(const Duration(seconds: 10));
+      if (response.statusCode != 200) throw _errorFor(response);
+      return jsonDecode(response.body) as Map<String, dynamic>;
+    });
+  }
+
+  static Future<List<Map<String, dynamic>>> fetchModelBackups() {
+    return _withRetry('Could not load previous model versions', () async {
+      final headers = await _authHeaders();
+      final response = await http
+          .get(Uri.parse('$baseUrl/api/admin/model/backups'), headers: headers)
+          .timeout(const Duration(seconds: 10));
+      if (response.statusCode != 200) throw _errorFor(response);
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.cast<Map<String, dynamic>>();
+    });
+  }
+
+  static Future<void> restoreModelBackup(String timestamp) {
+    return _withRetry('Could not restore that model version', () async {
+      final headers = await _authHeaders();
+      final response = await http
+          .post(
+            Uri.parse('$baseUrl/api/admin/model/restore'),
+            headers: headers,
+            body: jsonEncode({'timestamp': timestamp}),
+          )
+          .timeout(const Duration(seconds: 10));
+      if (response.statusCode != 200) throw _errorFor(response);
+    });
+  }
+
+  /// Admin-only: the 5 most and 5 least recommended programmes across every
+  /// student recommendation ever persisted.
+  static Future<Map<String, dynamic>> fetchProgrammePopularity() {
+    return _withRetry('Could not load programme popularity', () async {
+      final headers = await _authHeaders();
+      final response = await http
+          .get(Uri.parse('$baseUrl/api/admin/analytics/programme-popularity'), headers: headers)
+          .timeout(const Duration(seconds: 10));
+      if (response.statusCode != 200) throw _errorFor(response);
+      return jsonDecode(response.body) as Map<String, dynamic>;
+    });
+  }
 }

@@ -52,6 +52,12 @@ class Programme {
   final List<String> professionalCertifications;
   final List<UniversityOffering> offeringUniversities;
   final int durationYears;
+  // Null/absent means active. "inactive" means an admin has deactivated it
+  // (hidden from students and recommendations, reversible) - see
+  // backend's POST /api/admin/programmes/{id}/deactivate.
+  final String? status;
+
+  bool get isActive => status != 'inactive';
 
   Programme({
     required this.id,
@@ -69,6 +75,7 @@ class Programme {
     required this.professionalCertifications,
     required this.offeringUniversities,
     this.durationYears = 4,
+    this.status,
   });
 
   factory Programme.fromJson(Map<String, dynamic> json) {
@@ -90,6 +97,7 @@ class Programme {
           .map((u) => UniversityOffering.fromJson(u))
           .toList(),
       durationYears: json['durationYears'] ?? 4,
+      status: json['status'] as String?,
     );
   }
 
@@ -109,5 +117,6 @@ class Programme {
     'professionalCertifications': professionalCertifications,
     'offeringUniversities': offeringUniversities.map((u) => u.toJson()).toList(),
     'durationYears': durationYears,
+    if (status != null) 'status': status,
   };
 }
