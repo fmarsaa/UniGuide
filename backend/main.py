@@ -354,6 +354,20 @@ class ProgrammeUpdatePayload(BaseModel):
     description: Optional[str] = None
 
 
+
+class UniversityCutoffPayload(BaseModel):
+    """One university's cutoff points for a programme (latest and previous year).
+    KUCCPS cluster points run from 0 to 48, so anything outside that is a typo."""
+    latestCutoff: float
+    previousCutoff: float
+
+    @field_validator("latestCutoff", "previousCutoff")
+    @classmethod
+    def _within_cluster_point_scale(cls, v: float) -> float:
+        if not (0 < v <= 48):
+            raise ValueError("Cutoff points must be between 0 and 48 (the KUCCPS cluster points scale).")
+        return v
+
 class AdminInvitePayload(BaseModel):
     email: str
 
@@ -906,6 +920,47 @@ def update_programme(programme_id: str, body: ProgrammeUpdatePayload, decoded: d
     })
 
     return doc_ref.get().to_dict()
+
+
+@app.put("/api/admin/programmes/{programme_id}/universities/{kuccps_code}")
+def update_university_cutoff(
+    programme_id: str, kuccps_code: str, body: UniversityCutoffPayload, decoded: dict = Depends(require_admin)
+):
+    """Edits one university's cutoff for a programme. This is the figure students
+    are actually compared with (each university has its own cutoff), so an edit
+    here reaches the very next recommendation. Recorded in the audit log."""
+    db = get_db()
+    if db is None:
+        raise HTTPException(status_code=503, detail="This service is temporarily unavailable. Please try again later.")
+    programme = CATALOG_BY_ID.get(programme_id)
+    if programme is None:
+        raise HTTPException(status_code=404, detail="Unknown programme id.")
+
+    offerings = [dict(u) for u in programme["offeringUniversities"]]
+    target = next((u for u in offerings if str(u["kuccpsCode"]) == kuccps_code), None)
+    if target is None:
+        raise HTTPException(status_code=404, detail="That university is not listed for this programme.")
+
+    before = (target["latestCutoff"], target["previousCutoff"])
+    target["latestCutoff"] = round(body.latestCutoff, 3)
+    target["previousCutoff"] = round(body.previousCutoff, 3)
+
+    doc_ref = db.collection("programmes").document(programme_id)
+    if not doc_ref.get().exists:
+        doc_ref.set(CATALOG_BY_ID[programme_id])
+    doc_ref.update({"offeringUniversities": offerings})
+    _load_live_catalog()
+
+    db.collection("audit_logs").document().set({
+        "action": "University Cutoff Updated",
+        "actor": decoded.get("email") or decoded["uid"],
+        "details": (
+            f"{programme['title']} at {target['universityName']} ({kuccps_code}): "
+            f"latest {before[0]} -> {target['latestCutoff']}, previous {before[1]} -> {target['previousCutoff']}"
+        ),
+        "timestamp": fb_firestore.SERVER_TIMESTAMP,
+    })
+    return CATALOG_BY_ID[programme_id]
 
 
 def _set_programme_status(programme_id: str, status: Optional[str], decoded: dict, action: str) -> dict:

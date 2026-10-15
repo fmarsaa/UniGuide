@@ -821,7 +821,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
-                            '${prog.averageCutoff.toStringAsFixed(1)} pts',
+                            prog.cutoffRangeLabel,
                             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary(context)),
                           ),
                         ),
@@ -1510,7 +1510,15 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   }
 
   void _showEditProgrammeDialog(BuildContext context, Programme prog) {
-    final cutoffController = TextEditingController(text: prog.averageCutoff.toString());
+    // One (latest, previous) pair per university: students are compared with
+    // each university's own cutoff, so that is what an admin edits.
+    final uniControllers = <String, List<TextEditingController>>{
+      for (final u in prog.offeringUniversities)
+        u.kuccpsCode: [
+          TextEditingController(text: u.latestCutoff.toString()),
+          TextEditingController(text: u.previousCutoff.toString()),
+        ],
+    };
     final minGradeController = TextEditingController(text: prog.minMeanGrade);
     final descriptionController = TextEditingController(text: prog.description);
     bool isSaving = false;
@@ -1526,15 +1534,38 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             children: [
               Text(prog.title, style: TextStyle(fontSize: 12, color: Colors.grey.shade700)),
               const SizedBox(height: 14),
-              TextField(
-                controller: cutoffController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(
-                  labelText: 'KUCCPS Average Cutoff (Points)',
-                  border: OutlineInputBorder(),
-                ),
+              const Text('Cutoff points by university', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 2),
+              Text(
+                "Students are compared with each university's own cutoff.",
+                style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 10),
+              for (final u in prog.offeringUniversities) ...[
+                Text('${u.universityName} (${u.kuccpsCode})', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: uniControllers[u.kuccpsCode]![0],
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        decoration: const InputDecoration(labelText: 'Latest', border: OutlineInputBorder(), isDense: true),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
+                        controller: uniControllers[u.kuccpsCode]![1],
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        decoration: const InputDecoration(labelText: 'Previous', border: OutlineInputBorder(), isDense: true),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+              ],
+              const SizedBox(height: 2),
               TextField(
                 controller: minGradeController,
                 decoration: const InputDecoration(
@@ -1569,18 +1600,49 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             onPressed: isSaving
                 ? null
                 : () async {
-                    final newPts = double.tryParse(cutoffController.text);
-                    if (newPts == null) return;
+                    final newOfferings = <UniversityOffering>[];
+                    var allValid = true;
+                    for (final u in prog.offeringUniversities) {
+                      final latest = double.tryParse(uniControllers[u.kuccpsCode]![0].text.trim());
+                      final previous = double.tryParse(uniControllers[u.kuccpsCode]![1].text.trim());
+                      if (latest == null || previous == null || latest <= 0 || latest > 48 || previous <= 0 || previous > 48) {
+                        allValid = false;
+                        break;
+                      }
+                      newOfferings.add(UniversityOffering(
+                        universityName: u.universityName,
+                        universityType: u.universityType,
+                        location: u.location,
+                        latestCutoff: latest,
+                        previousCutoff: previous,
+                        kuccpsCode: u.kuccpsCode,
+                      ));
+                    }
+                    if (!allValid) {
+                      ScaffoldMessenger.of(ctx).showSnackBar(
+                        const SnackBar(content: Text('Enter cutoffs between 0 and 48 for every university.'), backgroundColor: Colors.redAccent),
+                      );
+                      return;
+                    }
                     final newMinGrade = minGradeController.text.trim();
                     final newDescription = descriptionController.text.trim();
                     setDialogState(() => isSaving = true);
                     try {
-                      await widget.onUpdateProgramme(
-                        prog.id,
-                        averageCutoff: newPts,
-                        minMeanGrade: newMinGrade.isNotEmpty ? newMinGrade : null,
-                        description: newDescription.isNotEmpty ? newDescription : null,
-                      );
+                      for (int i = 0; i < newOfferings.length; i++) {
+                        final old = prog.offeringUniversities[i];
+                        final updated = newOfferings[i];
+                        if (old.latestCutoff != updated.latestCutoff || old.previousCutoff != updated.previousCutoff) {
+                          await ApiService.updateUniversityCutoff(
+                              prog.id, updated.kuccpsCode, updated.latestCutoff, updated.previousCutoff);
+                        }
+                      }
+                      if (newMinGrade.isNotEmpty || newDescription.isNotEmpty) {
+                        await widget.onUpdateProgramme(
+                          prog.id,
+                          minMeanGrade: newMinGrade.isNotEmpty ? newMinGrade : null,
+                          description: newDescription.isNotEmpty ? newDescription : null,
+                        );
+                      }
                       if (!mounted) return;
                       setState(() {
                         final idx = _displayedProgrammes.indexWhere((p) => p.id == prog.id);
@@ -1591,7 +1653,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                             title: prog.title,
                             faculty: prog.faculty,
                             minMeanGrade: newMinGrade.isNotEmpty ? newMinGrade : prog.minMeanGrade,
-                            averageCutoff: newPts,
+                            averageCutoff: prog.averageCutoff,
                             clusterGroup: prog.clusterGroup,
                             clusterSubjects: prog.clusterSubjects,
                             minimumSubjectRequirements: prog.minimumSubjectRequirements,
@@ -1599,7 +1661,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                             careerOpportunities: prog.careerOpportunities,
                             requiredSkills: prog.requiredSkills,
                             professionalCertifications: prog.professionalCertifications,
-                            offeringUniversities: prog.offeringUniversities,
+                            offeringUniversities: newOfferings,
                             durationYears: prog.durationYears,
                             status: prog.status,
                           );
@@ -1618,9 +1680,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                             label: 'Undo',
                             onPressed: () async {
                               try {
+                                for (final old in prog.offeringUniversities) {
+                                  await ApiService.updateUniversityCutoff(
+                                      prog.id, old.kuccpsCode, old.latestCutoff, old.previousCutoff);
+                                }
                                 await widget.onUpdateProgramme(
                                   prog.id,
-                                  averageCutoff: prog.averageCutoff,
                                   minMeanGrade: prog.minMeanGrade,
                                   description: prog.description,
                                 );

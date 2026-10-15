@@ -151,6 +151,23 @@ class ApiService {
     });
   }
 
+  /// Admin-only: edits one university's cutoff points for a programme - the
+  /// figure students are actually compared with.
+  static Future<void> updateUniversityCutoff(
+      String programmeId, String kuccpsCode, double latestCutoff, double previousCutoff) {
+    return _withRetry('Could not update that cutoff', () async {
+      final headers = await _authHeaders();
+      final response = await http
+          .put(
+            Uri.parse('$baseUrl/api/admin/programmes/$programmeId/universities/$kuccpsCode'),
+            headers: headers,
+            body: jsonEncode({'latestCutoff': latestCutoff, 'previousCutoff': previousCutoff}),
+          )
+          .timeout(const Duration(seconds: 10));
+      if (response.statusCode != 200) throw _errorFor(response);
+    });
+  }
+
   /// The signed-in student's saved programmes (oldest save first).
   static Future<List<Programme>> fetchShortlist() {
     return _withRetry('Could not load your saved programmes', () async {
