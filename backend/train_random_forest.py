@@ -61,7 +61,7 @@ from synthetic_data_generator import (
 INCLUDE_CLUSTER_SCORE_FEATURES = False
 
 # One numeric feature per subject that actually feeds a real KUCCPS cluster
-# requirement somewhere in programmes_catalog.py (5 compulsory + 4 optional
+# requirement somewhere in programmes_catalog.py (4 compulsory + 5 optional
 # cluster-relevant subjects), plus overall mean points, plus one boolean
 # feature per interest/skill/strength a student can select (TRAIT_FEATURE_
 # COLUMNS - every option they picked, not just the first), plus (Experiment 2

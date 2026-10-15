@@ -93,11 +93,24 @@ class TestMeetsMinimumRequirements:
         reqs = {"Mathematics": "C+", "Physics": "C+"}
         assert meets_minimum_requirements(grades, reqs) is False
 
-    def test_missing_subject_falls_back_to_mean_grade(self):
-        # Mathematics not stated by the student - falls back to mean_grade.
-        reqs = {"Mathematics": "C+"}
-        assert meets_minimum_requirements({}, reqs, mean_grade="B") is True
-        assert meets_minimum_requirements({}, reqs, mean_grade="D") is False
+    def test_missing_subject_fails_the_requirement_whatever_the_mean_grade(self):
+        # A subject the student never sat (e.g. Biology, now optional) cannot
+        # satisfy a minimum-grade requirement for it, even with a high mean.
+        reqs = {"Biology": "C+"}
+        assert meets_minimum_requirements({}, reqs, mean_grade="A") is False
+        assert meets_minimum_requirements({"Mathematics": "A"}, reqs, mean_grade="A") is False
+        assert meets_minimum_requirements({"Biology": "B"}, reqs, mean_grade="D") is True
+
+    def test_student_without_biology_fails_every_real_programme_that_needs_it(self):
+        """Biology is optional, so a student may not have sat it. Every real
+        catalogue programme that gates on Biology must then be unreachable."""
+        from programmes_catalog import PROGRAMMES
+
+        no_biology = {"Mathematics": "A", "English": "A", "Kiswahili": "A", "Chemistry": "A", "Physics": "A"}
+        gated = [p for p in PROGRAMMES if "Biology" in (p.get("minimumSubjectRequirements") or {})]
+        assert gated, "expected some programmes to require Biology"
+        for p in gated:
+            assert meets_minimum_requirements(no_biology, p["minimumSubjectRequirements"], mean_grade="A") is False
 
     def test_no_requirements_always_passes(self):
         assert meets_minimum_requirements({}, {}) is True

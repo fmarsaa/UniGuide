@@ -331,7 +331,7 @@ class StudentProfilePayload(BaseModel):
         if missing:
             raise ValueError(
                 f"Missing grade(s) for compulsory subject(s): {', '.join(missing)}. "
-                f"All 5 compulsory KCSE subjects must be provided: {', '.join(COMPULSORY_SUBJECTS)}."
+                f"All {len(COMPULSORY_SUBJECTS)} compulsory subjects must be provided: {', '.join(COMPULSORY_SUBJECTS)}."
             )
         return v
 

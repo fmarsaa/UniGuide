@@ -7,7 +7,8 @@ Strathmore University - School of Computing and Engineering Sciences
 Implements the synthetic data generation pipeline described in Chapter 3:
 - Realistic Kenyan form-four leaver KCSE grade distributions across the six
   subjects actually captured by the Flutter profile setup screen (Mathematics,
-  English, Kiswahili, Biology, Chemistry, Physics).
+  English, Kiswahili and Chemistry are compulsory; Biology, Physics and the
+  rest are optional subjects a student may or may not have sat).
 - Interests, skills, strengths, and career aspirations drawn from the exact
   option lists presented to students in the mobile app, so the trained model's
   vocabulary matches what the app can ever submit.
@@ -286,9 +287,9 @@ def build_trait_features(interests: List[str], skills: List[str], strengths: Lis
 # History). Not guaranteed - real students don't always follow the "expected"
 # combination, so this only biases the random pick, it doesn't force it.
 ASPIRATION_LIKELY_OPTIONALS: Dict[str, List[str]] = {
-    "Medical Doctor (Physician/Surgeon)": [],
-    "Pharmacist": [],
-    "Registered Nursing Specialist": [],
+    "Medical Doctor (Physician/Surgeon)": ["Biology"],
+    "Pharmacist": ["Biology"],
+    "Registered Nursing Specialist": ["Biology"],
     "Software Engineer / AI Architect": ["Physics", "Computer Studies"],
     "Civil Infrastructure Engineer": ["Physics", "Building Construction"],
     "Electrical Power Engineer": ["Physics", "Electricity"],
@@ -296,32 +297,32 @@ ASPIRATION_LIKELY_OPTIONALS: Dict[str, List[str]] = {
     "Actuary / Risk Strategist": ["Physics", "Business Studies"],
     "Financial Analyst / Investment Banker": ["Business Studies", "Geography"],
     "Cybersecurity Architect": ["Physics", "Computer Studies"],
-    "Dentist": [],
-    "Veterinary Doctor": ["Agriculture"],
-    "Nutritionist / Dietitian": ["Home Science"],
+    "Dentist": ["Biology"],
+    "Veterinary Doctor": ["Biology", "Agriculture"],
+    "Nutritionist / Dietitian": ["Biology", "Home Science"],
     "Mechanical Engineer": ["Physics"],
     "Architect": ["Physics", "Art & Design"],
     "Quantity Surveyor": ["Physics", "Building Construction"],
     "Mathematician / Data Analyst": ["Physics", "Computer Studies"],
     "Economist / Policy Analyst": ["Business Studies", "Geography"],
     "Journalist / Media Professional": ["History & Government"],
-    "Agricultural Officer / Agronomist": ["Agriculture", "Geography"],
+    "Agricultural Officer / Agronomist": ["Agriculture", "Biology", "Geography"],
     "Business Systems Analyst / IT Project Manager": ["Computer Studies", "Business Studies"],
-    "Healthcare Professional (General)": [],
+    "Healthcare Professional (General)": ["Biology"],
     "Technology Professional (General)": ["Computer Studies"],
     "Engineering Professional (General)": ["Physics"],
     "Finance & Business Professional (General)": ["Business Studies"],
     "Built Environment Professional (General)": ["Physics", "Building Construction"],
     "Quantitative Analyst / Researcher (General)": ["Physics"],
     "Public Policy & Communications Professional (General)": ["History & Government"],
-    "Agricultural & Environmental Professional (General)": ["Agriculture"],
+    "Agricultural & Environmental Professional (General)": ["Agriculture", "Biology"],
     "Industrial Chemist / Process Chemist": ["Physics"],
-    "Microbiologist": ["Agriculture"],
-    "Food Scientist / Food Technologist": ["Agriculture", "Home Science"],
+    "Microbiologist": ["Biology", "Agriculture"],
+    "Food Scientist / Food Technologist": ["Biology", "Agriculture", "Home Science"],
     "Statistician / Data Analyst": ["Physics", "Computer Studies"],
-    "Science Teacher / Educator": ["Physics"],
+    "Science Teacher / Educator": ["Physics", "Biology"],
     "Arts Teacher / Educator": ["History & Government"],
-    "Public Health Officer": ["Agriculture"],
+    "Public Health Officer": ["Biology", "Agriculture"],
     "Sociologist / Social Researcher": ["History & Government", "Geography"],
     "Social Worker": ["History & Government"],
     "Counseling Psychologist": ["Christian Religious Education (CRE)"],
@@ -334,17 +335,17 @@ ASPIRATION_LIKELY_OPTIONALS: Dict[str, List[str]] = {
     "International Trade Manager": ["Business Studies", "Geography"],
     "Urban & Regional Planner": ["Geography", "Physics"],
     "Geospatial Analyst / Land Surveyor": ["Geography", "Physics"],
-    "Medical Laboratory Technologist": [],
-    "Physiotherapist": [],
-    "Community Health Officer": ["Agriculture"],
+    "Medical Laboratory Technologist": ["Biology"],
+    "Physiotherapist": ["Biology"],
+    "Community Health Officer": ["Biology", "Agriculture"],
     "Data Scientist": ["Computer Studies", "Physics"],
-    "Biochemist": [],
+    "Biochemist": ["Biology"],
     "Physicist / Research Scientist": ["Physics"],
     "Chemist / Analytical Scientist": ["Physics"],
     "Procurement & Supply Chain Manager": ["Business Studies"],
-    "Environmental Scientist / Conservationist": ["Agriculture", "Geography"],
-    "Forester / Conservation Officer": ["Agriculture", "Geography"],
-    "Biomedical Engineer": ["Physics"],
+    "Environmental Scientist / Conservationist": ["Agriculture", "Biology", "Geography"],
+    "Forester / Conservation Officer": ["Agriculture", "Biology", "Geography"],
+    "Biomedical Engineer": ["Physics", "Biology"],
     "Political Analyst / Public Administrator": ["History & Government"],
     "Criminologist / Security Analyst": ["History & Government"],
     "Educator / Teaching Professional (General)": [],
@@ -824,7 +825,6 @@ _JITTER_SPREADS = {
     "Mathematics": [-1, 0, 1, 2],
     "English": [-1, 0, 1],
     "Kiswahili": [-1, 0, 1],
-    "Biology": [-2, -1, 0, 1],
     "Chemistry": [-2, -1, 0, 1],
 }
 _DEFAULT_OPTIONAL_SPREAD = [-2, -1, 0, 1]
@@ -929,8 +929,8 @@ def _build_profile_for_target(profile_id: int, target_title: str) -> dict:
         own_prob=0.55, shared_prob=0.25,
     )
 
-    # Real KCSE candidates sit 7-9 subjects: the 5 compulsory ones plus 2-4
-    # optional ones, chosen with a bias toward whatever plausibly fits the
+    # Real KCSE candidates sit 7-9 subjects: the 4 compulsory ones plus 3-5
+    # optional ones (Biology among them), chosen with a bias toward whatever plausibly fits the
     # student's stated aspiration (see _choose_optional_subjects).
     total_subjects = random.choice([7, 7, 8, 8, 9])
     n_optional = total_subjects - len(COMPULSORY_SUBJECTS)

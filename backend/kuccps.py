@@ -13,17 +13,19 @@ GRADE_POINTS: Dict[str, int] = {
 }
 POINTS_TO_GRADE: Dict[int, str] = {v: k for k, v in GRADE_POINTS.items()}
 
-# The 5 subjects every KCSE candidate sits - always collected by the app.
-COMPULSORY_SUBJECTS = ["Mathematics", "English", "Kiswahili", "Biology", "Chemistry"]
+# The 4 subjects every candidate must provide a grade for. Biology is
+# deliberately NOT here: it is an optional subject a student may not have
+# sat, so it lives in CLUSTER_OPTIONAL_SUBJECTS / FULL_OPTIONAL_SUBJECTS below.
+COMPULSORY_SUBJECTS = ["Mathematics", "English", "Kiswahili", "Chemistry"]
 
 # Every subject referenced by at least one programme's clusterSubjects/
 # minimumSubjectRequirements in programmes_catalog.py, beyond the compulsory
-# 5. A student picks these as part of their optional subjects; when they do,
+# 4. A student picks these as part of their optional subjects; when they do,
 # the grade is used both for real KUCCPS cluster scoring AND as a genuine
 # Random Forest feature (see train_random_forest.py). Keep in sync with
 # programmes_catalog.py - a `python -c "from programmes_catalog import
 # PROGRAMMES; ..."` scan is how this list was derived.
-CLUSTER_OPTIONAL_SUBJECTS = ["Physics", "History", "Business Studies", "Geography"]
+CLUSTER_OPTIONAL_SUBJECTS = ["Biology", "Physics", "History", "Business Studies", "Geography"]
 
 # All subjects the Random Forest model takes as numeric input features.
 ML_FEATURE_SUBJECTS = COMPULSORY_SUBJECTS + CLUSTER_OPTIONAL_SUBJECTS
@@ -45,13 +47,13 @@ FEATURE_COLUMN: Dict[str, str] = {
 assert set(FEATURE_COLUMN) == set(ML_FEATURE_SUBJECTS)
 
 # The full KNEC optional subject list offered in the app's subject picker,
-# beyond the 5 compulsory ones. Only the CLUSTER_OPTIONAL_SUBJECTS above feed
+# beyond the 4 compulsory ones. Only the CLUSTER_OPTIONAL_SUBJECTS above feed
 # the ML model directly; the rest still count fully toward the real KCSE
 # aggregate/mean grade (see aggregate_points) and toward matching a student's
 # actual subject combination, they're just not individual model features
 # since no programme in the catalog currently keys eligibility off them.
 FULL_OPTIONAL_SUBJECTS = [
-    "Physics", "History & Government", "Geography",
+    "Biology", "Physics", "History & Government", "Geography",
     "Christian Religious Education (CRE)", "Islamic Religious Education (IRE)",
     "Business Studies", "Agriculture", "Computer Studies",
     "French", "German", "Home Science", "Art & Design", "Music",
@@ -120,7 +122,14 @@ def cluster_weighted_points(raw_points: int, agg_points: int, max_cluster_points
 
 def meets_minimum_requirements(grades: Dict[str, str], minimum_requirements: Dict[str, str], mean_grade: str = "C+") -> bool:
     for subject, min_grade in minimum_requirements.items():
-        candidate_grade = find_grade_for_subject(grades, subject) or mean_grade
+        candidate_grade = find_grade_for_subject(grades, subject)
+        # A subject the student did not sit cannot satisfy a minimum-grade
+        # requirement for it (e.g. no Biology -> no Medicine). This used to
+        # fall back to the mean grade, which was harmless while every gated
+        # subject was compulsory, but would let a student who skipped an
+        # optional subject (Biology, Physics, Geography) clear its gate.
+        if candidate_grade is None:
+            return False
         if grade_to_points(candidate_grade) < grade_to_points(min_grade):
             return False
     return True

@@ -13,7 +13,7 @@ import main
 
 
 def _valid_grades():
-    return {"Mathematics": "A", "English": "B+", "Kiswahili": "B", "Biology": "A-", "Chemistry": "A"}
+    return {"Mathematics": "A", "English": "B+", "Kiswahili": "B", "Chemistry": "A"}
 
 
 def test_valid_payload_constructs_without_error():
@@ -35,15 +35,15 @@ def test_rejects_invalid_subject_grade():
 
 def test_rejects_missing_compulsory_subject():
     """Covers the 'incomplete' half of DR-05, not just malformed values -
-    a profile missing one of the 5 compulsory KCSE subjects must be
+    a profile missing one of the 4 compulsory subjects must be
     refused too, not silently processed with a guessed default."""
-    incomplete = {"Mathematics": "A", "English": "B+"}  # missing Kiswahili/Biology/Chemistry
+    incomplete = {"Mathematics": "A", "English": "B+"}  # missing Kiswahili/Chemistry
     with pytest.raises(pydantic.ValidationError):
         main.StudentProfilePayload(kcseMeanGrade="B+", grades=incomplete)
 
 
 def test_accepts_extra_non_compulsory_subjects():
-    """Validation should only enforce the 5 compulsory subjects are present
+    """Validation should only enforce the 4 compulsory subjects are present
     and every stated grade is real - it must not reject a profile just for
     including optional subjects beyond those."""
     grades = _valid_grades()
