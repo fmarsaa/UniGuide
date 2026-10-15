@@ -44,10 +44,14 @@ from kuccps import (
     FEATURE_COLUMN,
     GRADE_POINTS,
     ML_FEATURE_SUBJECTS,
+    UNDECIDED_ASPIRATION,
     aggregate_points,
     cluster_weighted_points,
     eligibility_status,
+    university_cutoff_summary,
+    cutoff_tier,
     extract_ml_feature_points,
+    find_grade_for_subject,
     grade_to_points,
     meets_minimum_requirements,
     points_to_grade,
@@ -406,7 +410,7 @@ def profile_to_feature_row(payload: StudentProfilePayload):
     row["mean_points"] = mean_points
     row.update(build_trait_features(payload.interests or [], payload.skills or [], payload.strengths or []))
     row.update(build_cluster_score_features(grades, mean_grade))
-    row["aspiration"] = payload.aspirations[0] if payload.aspirations else ""
+    row["aspiration"] = payload.aspirations[0] if payload.aspirations else UNDECIDED_ASPIRATION
     return pd.DataFrame([row]), grades, mean_grade
 
 
@@ -462,7 +466,10 @@ def describe_feature(raw_name: str, row: dict):
             # claim it was selected when it actually was, mirroring the
             # TRAIT_COLUMN_INFO branch above.
             selected = row.get(col) == value
-            if selected:
+            if selected and value == UNDECIDED_ASPIRATION:
+                feature_name = "Career choice: not sure yet"
+                desc = "You have not picked a career yet, so your grades, interests and skills decide this result."
+            elif selected:
                 feature_name = f"{word}: {value}"
                 desc = f"Your stated {word.lower()} of '{value}' relates to this programme's profile."
             else:
@@ -482,12 +489,65 @@ def top_shap_explanations(class_shap_row: np.ndarray, feature_names, row: dict, 
             continue
         category, feature_name, desc = describe_feature(feature_names[idx], row)
         explanations.append({
+            "rawName": str(feature_names[idx]),
             "featureName": feature_name,
             "category": category,
             "shapValue": round(value, 4),
             "description": desc,
         })
     return explanations
+
+
+def build_plain_reasons(shap_list, row: dict, programme: dict, grades: Dict[str, str], mean_grade: str, max_reasons: int = 3):
+    """Turns the factors that actually pushed a result UP (positive SHAP values)
+    into plain sentences a student can read. Nothing is invented: every sentence
+    comes from a real top factor, and a subject the student did not sit is never
+    described as if they had a grade in it."""
+    reasons = []
+    requirements = programme.get("minimumSubjectRequirements") or {}
+    for entry in shap_list:
+        if entry.get("shapValue", 0) <= 0:
+            continue
+        prefix, _, rest = str(entry.get("rawName", "")).partition("__")
+        sentence = None
+        if prefix == "num":
+            if rest in TRAIT_COLUMN_INFO:
+                if not row.get(rest):
+                    continue
+                _category, word, label = TRAIT_COLUMN_INFO[rest]
+                if word == "Interest":
+                    sentence = f"You said you are interested in {label}."
+                elif word == "Skill":
+                    sentence = f"You listed {label} as one of your skills."
+                else:
+                    sentence = f"{label} is one of the strengths you picked."
+            elif rest == "mean_points":
+                sentence = f"Your overall KCSE mean grade ({mean_grade}) supports this match."
+            elif rest in NUMERIC_LABELS:
+                subject = NUMERIC_LABELS[rest]
+                grade = find_grade_for_subject(grades, subject)
+                if grade is None:
+                    continue  # not sat - no claim about a grade they do not have
+                needed = requirements.get(subject)
+                if needed and grade_to_points(grade) >= grade_to_points(needed):
+                    sentence = f"Your {subject} grade ({grade}) meets the {needed} this programme asks for."
+                else:
+                    sentence = f"Your {subject} grade ({grade}) supports this match."
+        else:
+            for col in CATEGORY_INFO:
+                if rest.startswith(f"{col}_"):
+                    value = rest[len(col) + 1:]
+                    if row.get(col) != value:
+                        break  # a one-hot dummy for an option the student did not choose
+                    if value == UNDECIDED_ASPIRATION:
+                        sentence = "You have not picked a career yet, so this match is based on your grades, interests and skills."
+                    else:
+                        sentence = f"You picked {value} as a career you have in mind."
+        if sentence and sentence not in reasons:
+            reasons.append(sentence)
+        if len(reasons) >= max_reasons:
+            break
+    return reasons or ["This programme fits the overall pattern of your grades and answers."]
 
 
 def build_primary_reason(shap_list, title: str, confidence: float) -> str:
@@ -646,7 +706,22 @@ def select_recommended_indices(
         for i, c in enumerate(classes)
     ]
     eligible_idx = [i for i in range(n_classes) if eligible_mask[i]]
-    top_idx = sorted(eligible_idx, key=lambda i: -proba[i])[:3]
+
+    # Within the eligible programmes, prefer ones the student can realistically
+    # get into: compare their points with EACH university's own latest cutoff
+    # (cutoffs differ by university), then rank by model probability inside each
+    # tier. A programme the model barely considers (probability under the
+    # 1-in-53 chance level) never jumps ahead of one it does, whatever its tier.
+    agg = aggregate_points(grades, mean_grade)
+
+    def rank_key(i):
+        programme = CATALOG_BY_TITLE[classes[i]]
+        cwp = cluster_weighted_points(raw_cluster_points(grades, programme["clusterSubjects"], mean_grade), agg)
+        summary = university_cutoff_summary(cwp, programme.get("offeringUniversities"), programme.get("averageCutoff"))
+        tier = cutoff_tier(summary) + (3 if proba[i] < 0.02 else 0)
+        return (tier, -proba[i])
+
+    top_idx = sorted(eligible_idx, key=rank_key)[:3]
 
     if len(top_idx) < 3:
         for title in FALLBACK_ORDER:
@@ -707,11 +782,13 @@ def get_recommendations(payload: StudentProfilePayload, decoded: dict = Depends(
         confidence = float(proba[class_idx])
         raw_cluster = raw_cluster_points(grades, programme["clusterSubjects"], mean_grade)
         cwp = cluster_weighted_points(raw_cluster, agg)
-        cutoff_diff = round(cwp - programme["averageCutoff"], 1)
+        uni_summary = university_cutoff_summary(cwp, programme.get("offeringUniversities"), programme.get("averageCutoff"))
+        cutoff_diff = uni_summary["gap"] if uni_summary else round(cwp - programme["averageCutoff"], 1)
 
         class_shap = _extract_class_shap(raw_shap, class_idx, n_classes)[0]
         shap_list = top_shap_explanations(class_shap, feature_names, row_values)
         primary_reason = build_primary_reason(shap_list, title, confidence)
+        plain_reasons = build_plain_reasons(shap_list, row_values, programme, grades, mean_grade)
 
         meets_requirements = eligible_mask[class_idx]
 
@@ -720,15 +797,70 @@ def get_recommendations(payload: StudentProfilePayload, decoded: dict = Depends(
             "confidenceScore": round(confidence, 3),
             "studentClusterScore": cwp,
             "cutoffDiff": cutoff_diff,
-            "eligibilityStatus": eligibility_status(cwp, programme["averageCutoff"], meets_requirements),
+            "universityCutoffs": uni_summary,
+            "eligibilityStatus": eligibility_status(cwp, programme["averageCutoff"], meets_requirements, uni_summary),
             "meetsMinimumRequirements": meets_requirements,
             "primaryReason": primary_reason,
+            "plainReasons": plain_reasons,
             "programme": programme,
             "shapExplanations": shap_list,
         })
 
     _persist_recommendation(uid, decoded.get("email"), payload, results)
     return results
+
+
+SHORTLIST_LIMIT = 30
+
+
+def _shortlist_collection(db, uid: str):
+    return db.collection("students").document(uid).collection("shortlist")
+
+
+@app.get("/api/shortlist")
+def get_shortlist(decoded: dict = Depends(require_auth)):
+    """The student's saved programmes, oldest save first, as full programme
+    records (deactivated programmes are left out)."""
+    db = get_db()
+    if db is None:
+        raise HTTPException(status_code=503, detail="This service is temporarily unavailable. Please try again later.")
+    saved = []
+    for doc in _shortlist_collection(db, decoded["uid"]).stream():
+        saved_at = (doc.to_dict() or {}).get("savedAt")
+        saved.append((saved_at.isoformat() if hasattr(saved_at, "isoformat") else str(saved_at), doc.id))
+    saved.sort()
+    result = []
+    for _when, programme_id in saved:
+        programme = CATALOG_BY_ID.get(programme_id)
+        if programme is not None and programme.get("status") != "inactive":
+            result.append(programme)
+    return result
+
+
+@app.post("/api/shortlist/{programme_id}")
+def add_to_shortlist(programme_id: str, decoded: dict = Depends(require_auth)):
+    db = get_db()
+    if db is None:
+        raise HTTPException(status_code=503, detail="This service is temporarily unavailable. Please try again later.")
+    programme = CATALOG_BY_ID.get(programme_id)
+    if programme is None or programme.get("status") == "inactive":
+        raise HTTPException(status_code=404, detail="That programme could not be found.")
+    collection = _shortlist_collection(db, decoded["uid"])
+    ref = collection.document(programme_id)
+    if not ref.get().exists:
+        if sum(1 for _ in collection.stream()) >= SHORTLIST_LIMIT:
+            raise HTTPException(status_code=409, detail=f"You can save up to {SHORTLIST_LIMIT} programmes. Remove one to add another.")
+        ref.set({"savedAt": fb_firestore.SERVER_TIMESTAMP})
+    return {"saved": True, "programmeId": programme_id}
+
+
+@app.delete("/api/shortlist/{programme_id}")
+def remove_from_shortlist(programme_id: str, decoded: dict = Depends(require_auth)):
+    db = get_db()
+    if db is None:
+        raise HTTPException(status_code=503, detail="This service is temporarily unavailable. Please try again later.")
+    _shortlist_collection(db, decoded["uid"]).document(programme_id).delete()
+    return {"saved": False, "programmeId": programme_id}
 
 
 @app.post("/api/feedback")

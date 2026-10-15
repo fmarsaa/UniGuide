@@ -35,6 +35,7 @@ from kuccps import (
     FEATURE_COLUMN,
     FULL_OPTIONAL_SUBJECTS,
     ML_FEATURE_SUBJECTS,
+    UNDECIDED_ASPIRATION,
     aggregate_points,
     cluster_weighted_points,
     extract_ml_feature_points,
@@ -864,6 +865,11 @@ _DEFAULT_OPTIONAL_SPREAD = [-2, -1, 0, 1]
 
 THIN_CLASS_FLOOR = 200
 
+# Share of synthetic students who have not picked a career yet (their aspiration is
+# the UNDECIDED_ASPIRATION value). Their optional subjects were still chosen from the
+# underlying leaning, as a real undecided student's subjects would reflect one.
+UNDECIDED_RATE = 0.35
+
 
 def _weighted_sample(k: int, own_pool: List[str], shared_pool: List[str], full_pool: List[str],
                       own_prob: float, shared_prob: float) -> List[str]:
@@ -959,6 +965,9 @@ def _build_profile_for_target(profile_id: int, target_title: str) -> dict:
     }
     for subject in optional_subjects:
         grades[subject] = points_to_grade(biased_points(subject, _DEFAULT_OPTIONAL_SPREAD))
+
+    if random.random() < UNDECIDED_RATE:
+        aspiration = UNDECIDED_ASPIRATION
 
     label = assign_programme_label(grades, mean_grade, interests, skills, strengths, aspiration)
     feature_points = extract_ml_feature_points(grades, mean_grade)

@@ -8,11 +8,13 @@ import pytest
 from kuccps import (
     aggregate_points,
     cluster_weighted_points,
+    cutoff_tier,
     eligibility_status,
     grade_to_points,
     meets_minimum_requirements,
     points_to_grade,
     raw_cluster_points,
+    university_cutoff_summary,
 )
 
 
@@ -146,3 +148,46 @@ class TestEligibilityStatus:
     def test_default_meets_requirements_is_true_for_backwards_compatibility(self):
         status = eligibility_status(45.0, 40.0)
         assert "Likely Admission" in status
+
+
+UNIS = [
+    {"universityName": "A", "latestCutoff": 45.6},
+    {"universityName": "B", "latestCutoff": 45.0},
+    {"universityName": "C", "latestCutoff": 45.1},
+]
+
+
+class TestUniversityCutoffs:
+    """The same programme has a different cutoff at each university, so a
+    student is compared with each one rather than a single average."""
+
+    def test_counts_how_many_universities_are_met(self):
+        summary = university_cutoff_summary(45.3, UNIS)
+        assert (summary["total"], summary["meets"], summary["lowest"]) == (3, 2, 45.0)
+
+    def test_status_names_how_many_universities_are_met(self):
+        summary = university_cutoff_summary(45.3, UNIS)
+        assert eligibility_status(45.3, 40.0, True, summary) == "Meets the latest cutoff at 2 of 3 universities"
+        assert eligibility_status(46.0, 40.0, True, university_cutoff_summary(46.0, UNIS)) == "Meets the latest cutoff at all 3 universities"
+
+    def test_just_below_the_lowest_cutoff_is_a_close_call_not_a_match(self):
+        status = eligibility_status(44.4, 40.0, True, university_cutoff_summary(44.4, UNIS))
+        assert status.startswith("Close call: 0.6 pts below the lowest cutoff")
+
+    def test_far_below_is_a_reach(self):
+        status = eligibility_status(30.0, 40.0, True, university_cutoff_summary(30.0, UNIS))
+        assert status.startswith("Reach:")
+
+    def test_failing_minimum_subjects_still_overrides_everything(self):
+        summary = university_cutoff_summary(60.0, UNIS)
+        assert eligibility_status(60.0, 40.0, False, summary) == "Does Not Meet Minimum Subject Requirements"
+
+    def test_tiers_order_meets_then_close_then_reach(self):
+        assert cutoff_tier(university_cutoff_summary(45.3, UNIS)) == 0
+        assert cutoff_tier(university_cutoff_summary(44.4, UNIS)) == 1
+        assert cutoff_tier(university_cutoff_summary(30.0, UNIS)) == 2
+
+    def test_falls_back_to_the_programme_average_when_no_university_data(self):
+        summary = university_cutoff_summary(41.0, [], fallback_cutoff=40.0)
+        assert (summary["total"], summary["meets"]) == (1, 1)
+        assert university_cutoff_summary(41.0, [], None) is None

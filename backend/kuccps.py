@@ -13,6 +13,12 @@ GRADE_POINTS: Dict[str, int] = {
 }
 POINTS_TO_GRADE: Dict[int, str] = {v: k for k, v in GRADE_POINTS.items()}
 
+# What the model sees as the "aspiration" when a student has not picked a career
+# yet. UniGuide is for students who may not have decided, so the career step is
+# optional; the training data includes profiles with this value so the model
+# learns to decide from grades, interests, skills and strengths alone.
+UNDECIDED_ASPIRATION = "Not sure yet"
+
 # The 4 subjects every candidate must provide a grade for. Biology is
 # deliberately NOT here: it is an optional subject a student may not have
 # sat, so it lives in CLUSTER_OPTIONAL_SUBJECTS / FULL_OPTIONAL_SUBJECTS below.
@@ -151,16 +157,77 @@ def extract_ml_feature_points(grades: Dict[str, str], mean_grade: str = "C+") ->
     }
 
 
-def eligibility_status(student_score: float, cutoff: float, meets_requirements: bool = True) -> str:
+def university_cutoff_summary(student_score: float, offerings, fallback_cutoff: Optional[float] = None):
+    """How a student's Cluster Weighted Points compare with each university's
+    own latest cutoff for the same programme (cutoffs differ by university and
+    change every year). Returns None when there is nothing to compare with.
+
+    `offerings` is a programme's offeringUniversities list. If it has no usable
+    latestCutoff values, `fallback_cutoff` (the programme-level average) is used
+    as a single stand-in so a programme is never left unranked."""
+    cutoffs = [
+        (float(u["latestCutoff"]), u.get("universityName") or "")
+        for u in (offerings or [])
+        if (u.get("latestCutoff") or 0) > 0
+    ]
+    if not cutoffs and fallback_cutoff:
+        cutoffs = [(float(fallback_cutoff), "")]
+    if not cutoffs:
+        return None
+    lowest, lowest_name = min(cutoffs)
+    return {
+        "total": len(cutoffs),
+        "meets": sum(1 for c, _ in cutoffs if student_score >= c),
+        "lowest": round(lowest, 2),
+        "lowestUniversity": lowest_name,
+        "gap": round(student_score - lowest, 1),
+    }
+
+
+# A student this close to (but under) the lowest cutoff still has a realistic
+# chance, because cutoffs move from year to year.
+CLOSE_CALL_MARGIN = 1.5
+
+
+def cutoff_tier(summary) -> int:
+    """0 = meets at least one university's cutoff, 1 = just under the lowest,
+    2 = a real reach. Programmes with no cutoff data rank as 1 (neutral)."""
+    if summary is None:
+        return 1
+    if summary["meets"] > 0:
+        return 0
+    return 1 if summary["gap"] >= -CLOSE_CALL_MARGIN else 2
+
+
+def eligibility_status(
+    student_score: float, cutoff: float, meets_requirements: bool = True, university_summary=None
+) -> str:
     """`meets_requirements` is the hard KUCCPS minimum-subject-grade gate
     (see meets_minimum_requirements above) - a student who fails it cannot
     be admitted regardless of how close their Cluster Weighted Points are
     to the cutoff, so that case gets its own explicit message rather than
     being folded into "High Risk", which would wrongly imply admission is
     merely unlikely rather than impossible without improving specific
-    subject grades."""
+    subject grades.
+
+    When `university_summary` (see university_cutoff_summary) is given, the
+    message compares the student with each university's own latest cutoff
+    instead of one programme-wide average, and never promises admission -
+    cutoffs change every year."""
     if not meets_requirements:
         return "Does Not Meet Minimum Subject Requirements"
+    if university_summary is not None:
+        total, meets = university_summary["total"], university_summary["meets"]
+        lowest = university_summary["lowest"]
+        if meets > 0:
+            if total == 1:
+                return "Meets the latest cutoff"
+            where = "all" if meets == total else f"{meets} of"
+            return f"Meets the latest cutoff at {where} {total} universities"
+        short = abs(university_summary["gap"])
+        if university_summary["gap"] >= -CLOSE_CALL_MARGIN:
+            return f"Close call: {short} pts below the lowest cutoff ({lowest})"
+        return f"Reach: {short} pts below the lowest cutoff ({lowest})"
     diff = round(student_score - cutoff, 1)
     if diff >= 0.0:
         return f"Likely Admission (+{diff} pts margin)"

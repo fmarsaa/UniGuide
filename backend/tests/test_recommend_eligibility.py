@@ -175,3 +175,28 @@ def test_deactivated_programme_is_never_recommended():
         assert title not in recommended_titles
     finally:
         del main.CATALOG_BY_TITLE[title]["status"]
+
+
+def test_programme_you_can_get_into_outranks_a_reach_programme_the_model_likes_more():
+    """Ranking prefers programmes whose cutoff the student meets at some
+    university over ones far above it, even when the model's probability for
+    the harder programme is higher - as long as both are real candidates."""
+    classes = main._pipeline.classes_
+    hard, easy = classes[0], classes[1]
+    saved = {t: (main.CATALOG_BY_TITLE[t]["offeringUniversities"], main.CATALOG_BY_TITLE[t]["minimumSubjectRequirements"]) for t in (hard, easy)}
+    try:
+        main.CATALOG_BY_TITLE[hard]["offeringUniversities"] = [{"universityName": "H", "latestCutoff": 90.0}]
+        main.CATALOG_BY_TITLE[easy]["offeringUniversities"] = [{"universityName": "E", "latestCutoff": 5.0}]
+        for t in (hard, easy):
+            main.CATALOG_BY_TITLE[t]["minimumSubjectRequirements"] = {}
+
+        proba = np.zeros(len(classes))
+        proba[0], proba[1] = 0.70, 0.30
+        grades = {"Mathematics": "B", "English": "B", "Kiswahili": "B", "Chemistry": "B"}
+        top_idx, _ = main.select_recommended_indices(proba, classes, grades, "B")
+
+        assert top_idx.index(1) < top_idx.index(0)
+    finally:
+        for t, (unis, reqs) in saved.items():
+            main.CATALOG_BY_TITLE[t]["offeringUniversities"] = unis
+            main.CATALOG_BY_TITLE[t]["minimumSubjectRequirements"] = reqs
