@@ -323,8 +323,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       _subjectsComplete &&
       _selectedInterests.isNotEmpty &&
       _selectedSkills.isNotEmpty &&
-      _selectedStrengths.isNotEmpty &&
-      _selectedAspirations.isNotEmpty;
+      _selectedStrengths.isNotEmpty;
 
   void _toggleItem(List<String> list, String item) {
     setState(() {
@@ -381,7 +380,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       case 2:
         return _selectedSkills.isNotEmpty && _selectedStrengths.isNotEmpty;
       default:
-        return _selectedAspirations.isNotEmpty;
+        return true; // optional - an undecided student can simply continue
     }
   }
 
@@ -398,7 +397,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                 ? 'Pick at least one skill to continue.'
                 : 'Pick at least one strength to continue.';
       default:
-        return 'Pick at least one career aspiration to generate.';
+        return '';
     }
   }
 
@@ -607,13 +606,37 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
         );
       default:
         return _buildPickerStep(
-          title: 'Where do you see yourself?',
-          subtitle: 'Not sure yet? Pick the ones that sound closest - you can change them any time. You can also search for a job title.',
-          child: GroupedOptionPicker(
-            groups: {'': _availableAspirations},
-            selected: _selectedAspirations,
-            onToggle: (o) => _toggleItem(_selectedAspirations, o),
-            searchHint: 'Search careers',
+          title: 'Do you have a career in mind?',
+          subtitle: 'This is optional. If you have one, pick your top choice. If not, choose "Not sure yet" - we will recommend from your grades, interests and skills.',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ChoiceChip(
+                label: const Text('Not sure yet', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                selected: _selectedAspirations.isEmpty,
+                selectedColor: AppColors.accentTeal,
+                labelStyle: TextStyle(color: _selectedAspirations.isEmpty ? Colors.white : AppColors.textPrimary(context)),
+                backgroundColor: AppColors.cardBackground(context),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(color: _selectedAspirations.isEmpty ? AppColors.accentTeal : AppColors.cardBorder(context)),
+                ),
+                onSelected: (_) => setState(() => _selectedAspirations.clear()),
+              ),
+              const SizedBox(height: 14),
+              GroupedOptionPicker(
+                groups: {'': _availableAspirations},
+                selected: _selectedAspirations,
+                // One top choice only: the model uses a single career, so a
+                // new pick replaces the previous one.
+                onToggle: (o) => setState(() {
+                  final wasSelected = _selectedAspirations.contains(o);
+                  _selectedAspirations.clear();
+                  if (!wasSelected) _selectedAspirations.add(o);
+                }),
+                searchHint: 'Search careers',
+              ),
+            ],
           ),
         );
     }
