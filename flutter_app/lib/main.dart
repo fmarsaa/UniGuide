@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -22,9 +23,23 @@ import 'services/shortlist_controller.dart';
 import 'theme/app_colors.dart';
 import 'theme/theme_controller.dart';
 
+/// Firebase settings for the web admin portal. They are build-time settings
+/// (flutter run/build --dart-define-from-file=web_firebase.json) kept out of git,
+/// the same way android/app/google-services.json is for the phone app.
+const FirebaseOptions _webFirebaseOptions = FirebaseOptions(
+  apiKey: String.fromEnvironment('FIREBASE_API_KEY'),
+  appId: String.fromEnvironment('FIREBASE_APP_ID'),
+  messagingSenderId: String.fromEnvironment('FIREBASE_MESSAGING_SENDER_ID'),
+  projectId: String.fromEnvironment('FIREBASE_PROJECT_ID'),
+  authDomain: String.fromEnvironment('FIREBASE_AUTH_DOMAIN'),
+  storageBucket: String.fromEnvironment('FIREBASE_STORAGE_BUCKET'),
+);
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  // On Android the settings come from google-services.json; on the web build
+  // they come from the defines above.
+  await Firebase.initializeApp(options: kIsWeb ? _webFirebaseOptions : null);
   runApp(const UniGuideApp());
 }
 
@@ -205,6 +220,11 @@ class _RoleResolverState extends State<RoleResolver> {
           return AdminHome(onLogout: () => FirebaseAuth.instance.signOut());
         }
 
+        // The web build is the administrators' portal; students use the phone app.
+        if (kIsWeb) {
+          return _AdminPortalOnlyScaffold(onSignOut: () => FirebaseAuth.instance.signOut());
+        }
+
         final initialProfile = profileJson != null
             ? StudentProfile.fromJson(profileJson)
             : StudentProfile(uid: widget.user.uid, fullName: widget.user.email ?? 'Candidate');
@@ -249,6 +269,17 @@ class _AdminHomeState extends State<AdminHome> {
 
   @override
   Widget build(BuildContext context) {
+    final dashboard = _buildDashboard();
+    if (!kIsWeb) return dashboard;
+    // Centre the phone-sized dashboard in a readable column on a wide browser window.
+    return Container(
+      color: AppColors.scaffoldBackground(context),
+      alignment: Alignment.topCenter,
+      child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 960), child: dashboard),
+    );
+  }
+
+  Widget _buildDashboard() {
     return AdminDashboardScreen(
       key: ValueKey(_programmes?.length ?? 0),
       programmes: _programmes,
@@ -529,6 +560,51 @@ class _StudentHomeState extends State<StudentHome> {
       onAdjustProfile: () {
         setState(() => _currentTabIndex = 1);
       },
+    );
+  }
+}
+
+class _AdminPortalOnlyScaffold extends StatelessWidget {
+  final VoidCallback onSignOut;
+
+  const _AdminPortalOnlyScaffold({required this.onSignOut});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.scaffoldBackground(context),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 420),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.phone_android, size: 48, color: Color(0xFF0EA5A4)),
+                const SizedBox(height: 12),
+                Text(
+                  'This portal is for administrators',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppColors.textPrimary(context)),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Students: please use the UniGuide mobile app to get your recommendations.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 13, color: AppColors.textSecondary(context), height: 1.4),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: onSignOut,
+                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0EA5A4), foregroundColor: Colors.white),
+                  child: const Text('Sign out'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

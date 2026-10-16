@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
@@ -21,9 +22,11 @@ class ApiException implements Exception {
 class ApiService {
   // 10.0.2.2 is the Android emulator's alias for the host machine's localhost.
   // Override with --dart-define=API_BASE_URL=http://<lan-ip>:8000 for a real device.
+  // The web admin portal runs in the browser on the same computer as the server,
+  // so there the default is plain localhost.
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://10.0.2.2:8000',
+    defaultValue: kIsWeb ? 'http://localhost:8000' : 'http://10.0.2.2:8000',
   );
 
   static Future<Map<String, String>> _authHeaders() async {

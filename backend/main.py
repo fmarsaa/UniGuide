@@ -77,6 +77,15 @@ async def _lifespan(app: FastAPI):
     _stop_scheduler()
 
 
+# Browsers only run the web admin portal from these addresses (the phone app is not
+# a browser, so it is unaffected). Set CORS_ORIGINS="https://admin.example.com,..."
+# in backend/.env when the portal is hosted somewhere else.
+CORS_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get("CORS_ORIGINS", "http://localhost:5000,http://127.0.0.1:5000").split(",")
+    if origin.strip()
+]
+
 app = FastAPI(
     title="UniGuide REST API",
     description="Machine Learning Decision Support Backend for Kenyan Form-Four Leavers",
@@ -86,8 +95,8 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=CORS_ORIGINS,
+    allow_credentials=False,  # requests carry a bearer token in a header, never cookies
     allow_methods=["*"],
     allow_headers=["*"],
 )

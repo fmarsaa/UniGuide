@@ -52,3 +52,6 @@ Thumbs.db
 
 # Official KUCCPS source PDFs used for catalogue verification (public, large - download them again from kuccps.net)
 catalogue_verification/*.pdf
+
+# Firebase web config for the admin portal (build-time settings, kept out of git like google-services.json)
+flutter_app/web_firebase.json
