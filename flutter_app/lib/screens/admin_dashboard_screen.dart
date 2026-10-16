@@ -1380,12 +1380,16 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          (log['action'] ?? 'Action').toString(),
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppColors.textPrimary(context)),
+                        Expanded(
+                          child: Text(
+                            (log['action'] ?? 'Action').toString(),
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppColors.textPrimary(context)),
+                          ),
                         ),
+                        const SizedBox(width: 8),
                         Text(
-                          (log['timestamp'] ?? '').toString(),
+                          // 2026-10-16T11:23:45.123+00:00 -> 2026-10-16 11:23
+                          (log['timestamp'] ?? '').toString().replaceFirst('T', ' ').split('.').first.split('+').first,
                           style: TextStyle(fontSize: 10, color: AppColors.textSecondary(context)),
                         ),
                       ],
