@@ -23,7 +23,7 @@ import subprocess
 import sys
 import threading
 from contextlib import asynccontextmanager
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional
 
 import numpy as np
@@ -759,7 +759,9 @@ def select_recommended_indices(
 
 
 @app.post("/api/recommend")
-def get_recommendations(payload: StudentProfilePayload, decoded: dict = Depends(require_auth)):
+def get_recommendations(payload: StudentProfilePayload, decoded: dict = Depends(require_auth), preview: bool = False):
+    # preview=true is the "what if" simulator: it returns exactly what a real request would, but saves nothing,
+    # so trying out different grades never fills the student's history or the admin analytics.
     if _pipeline is None or _explainer is None:
         raise HTTPException(
             status_code=503,
@@ -829,7 +831,8 @@ def get_recommendations(payload: StudentProfilePayload, decoded: dict = Depends(
             "shapExplanations": shap_list,
         })
 
-    _persist_recommendation(uid, decoded.get("email"), payload, results)
+    if not preview:
+        _persist_recommendation(uid, decoded.get("email"), payload, results)
     return results
 
 
@@ -1208,6 +1211,55 @@ def list_feedback(decoded: dict = Depends(require_admin)):
 
     entries.sort(key=lambda e: e.get("submittedAt") or "", reverse=True)
     return entries[:50]
+
+
+def _utc_day(timestamp) -> Optional[str]:
+    """A Firestore timestamp as a YYYY-MM-DD day in UTC, or None if it is not a timestamp."""
+    if not hasattr(timestamp, "astimezone"):
+        return None
+    return timestamp.astimezone(timezone.utc).date().isoformat()
+
+
+@app.get("/api/admin/analytics/activity")
+def activity_analytics(days: int = 30, decoded: dict = Depends(require_admin)):
+    """Recommendations, feedback and new students per day for the last `days` days,
+    plus all-time totals. Counted in Python after plain scans, so no Firestore
+    composite index is needed."""
+    db = get_db()
+    if db is None:
+        raise HTTPException(status_code=503, detail="This service is temporarily unavailable. Please try again later.")
+    days = max(7, min(days, 90))
+    today = datetime.now(timezone.utc).date()
+    buckets = {}
+    for offset in range(days - 1, -1, -1):
+        day = (today - timedelta(days=offset)).isoformat()
+        buckets[day] = {"date": day, "recommendations": 0, "feedback": 0, "newStudents": 0}
+
+    totals = {"students": 0, "recommendations": 0, "feedback": 0, "averageRating": None}
+    ratings = []
+
+    for doc in db.collection_group("recommendations").stream():
+        totals["recommendations"] += 1
+        day = _utc_day((doc.to_dict() or {}).get("createdAt"))
+        if day in buckets:
+            buckets[day]["recommendations"] += 1
+    for doc in db.collection_group("feedback").stream():
+        entry = doc.to_dict() or {}
+        totals["feedback"] += 1
+        if isinstance(entry.get("rating"), (int, float)) and entry["rating"] > 0:
+            ratings.append(entry["rating"])
+        day = _utc_day(entry.get("submittedAt"))
+        if day in buckets:
+            buckets[day]["feedback"] += 1
+    for doc in db.collection("students").stream():
+        totals["students"] += 1
+        day = _utc_day((doc.to_dict() or {}).get("createdAt"))
+        if day in buckets:
+            buckets[day]["newStudents"] += 1
+
+    if ratings:
+        totals["averageRating"] = round(sum(ratings) / len(ratings), 2)
+    return {"days": list(buckets.values()), "totals": totals}
 
 
 @app.get("/api/admin/analytics/programme-popularity")
