@@ -1,6 +1,7 @@
 package edu.strathmore.uniguide;
 
-import io.flutter.embedding.android.FlutterActivity;
+import io.flutter.embedding.android.FlutterFragmentActivity;
 
-public class MainActivity extends FlutterActivity {
+// local_auth (fingerprint / face unlock) needs a FragmentActivity.
+public class MainActivity extends FlutterFragmentActivity {
 }

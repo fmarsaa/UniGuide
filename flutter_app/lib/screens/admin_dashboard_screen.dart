@@ -5,6 +5,7 @@ import '../data/programme_repository.dart';
 import '../services/api_service.dart';
 import '../theme/app_colors.dart';
 import '../theme/theme_controller.dart';
+import '../widgets/biometric_gate.dart';
 import 'package:provider/provider.dart';
 
 typedef ProgrammeUpdater = Future<void> Function(
@@ -493,6 +494,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         backgroundColor: const Color(0xFF1E293B),
         foregroundColor: Colors.white,
         actions: [
+          const BiometricToggleButton(),
           IconButton(
             icon: Icon(isDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined, size: 20),
             tooltip: isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode',

@@ -20,6 +20,7 @@ import 'models/programme.dart';
 import 'services/api_service.dart';
 import 'services/recommendation_cache.dart';
 import 'services/shortlist_controller.dart';
+import 'widgets/biometric_gate.dart';
 import 'theme/app_colors.dart';
 import 'theme/theme_controller.dart';
 
@@ -166,7 +167,12 @@ class _AuthGateState extends State<AuthGate> {
           );
         }
 
-        return RoleResolver(key: ValueKey(user.uid), user: user);
+        // If the student turned on fingerprint/face unlock, this shows a lock screen first.
+        return BiometricGate(
+          key: ValueKey(user.uid),
+          user: user,
+          child: RoleResolver(key: ValueKey(user.uid), user: user),
+        );
       },
     );
   }
@@ -402,6 +408,7 @@ class _StudentHomeState extends State<StudentHome> {
         foregroundColor: Colors.white,
         elevation: 0,
         actions: [
+          const BiometricToggleButton(),
           IconButton(
             icon: Icon(isDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined, size: 20),
             tooltip: isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode',
