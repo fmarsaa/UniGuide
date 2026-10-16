@@ -269,14 +269,8 @@ class _AdminHomeState extends State<AdminHome> {
 
   @override
   Widget build(BuildContext context) {
-    final dashboard = _buildDashboard();
-    if (!kIsWeb) return dashboard;
-    // Centre the phone-sized dashboard in a readable column on a wide browser window.
-    return Container(
-      color: AppColors.scaffoldBackground(context),
-      alignment: Alignment.topCenter,
-      child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 960), child: dashboard),
-    );
+    // On a wide browser window the dashboard lays itself out with a side menu.
+    return _buildDashboard();
   }
 
   Widget _buildDashboard() {

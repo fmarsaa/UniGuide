@@ -481,6 +481,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       _buildAdminsTab(),
     ];
 
+    if (_isWide(context)) return _buildWebShell(adminPages, isDark);
+
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground(context),
       appBar: AppBar(
@@ -536,12 +538,320 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     );
   }
 
-  Widget _buildConsoleTab() {
+  // ---------------------------------------------------------------------------
+  // Web layout: on a wide window (the browser admin portal) the phone-style bottom
+  // tabs become a side menu, and pages use two columns and a table instead of one
+  // long list of cards. On a phone nothing changes.
+  // ---------------------------------------------------------------------------
+  bool _isWide(BuildContext context) => MediaQuery.of(context).size.width >= 900;
+
+  static const List<String> _pageTitles = ['Console', 'Catalog & Cutoffs', 'Feedback', 'Administrators'];
+  static const List<IconData> _pageIcons = [
+    Icons.dashboard_outlined,
+    Icons.menu_book_outlined,
+    Icons.reviews_outlined,
+    Icons.manage_accounts_outlined,
+  ];
+  static const List<IconData> _pageIconsSelected = [
+    Icons.dashboard,
+    Icons.menu_book,
+    Icons.reviews,
+    Icons.manage_accounts,
+  ];
+
+  Widget _sidebarButton({required IconData icon, required String label, required VoidCallback onTap, bool selected = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+      child: Material(
+        color: selected ? const Color(0xFF0EA5A4).withOpacity(0.18) : Colors.transparent,
+        borderRadius: BorderRadius.circular(10),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            child: Row(
+              children: [
+                Icon(icon, size: 20, color: selected ? const Color(0xFF2DD4BF) : const Color(0xFF94A3B8)),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    label,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                      color: selected ? Colors.white : const Color(0xFFCBD5E1),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWebShell(List<Widget> pages, bool isDark) {
+    return Scaffold(
+      backgroundColor: AppColors.scaffoldBackground(context),
+      body: Row(
+        children: [
+          Container(
+            width: 252,
+            color: const Color(0xFF14213D),
+            child: SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(22, 26, 22, 0),
+                    child: Row(
+                      children: const [
+                        Icon(Icons.school, color: Color(0xFF0EA5A4), size: 28),
+                        SizedBox(width: 10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('UniGuide', style: TextStyle(color: Colors.white, fontSize: 19, fontWeight: FontWeight.bold)),
+                            Text('Admin Portal', style: TextStyle(color: Color(0xFF94A3B8), fontSize: 11)),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  for (int i = 0; i < _pageTitles.length; i++)
+                    _sidebarButton(
+                      icon: i == _currentAdminTabIndex ? _pageIconsSelected[i] : _pageIcons[i],
+                      label: _pageTitles[i],
+                      selected: i == _currentAdminTabIndex,
+                      onTap: () => setState(() => _currentAdminTabIndex = i),
+                    ),
+                  const Spacer(),
+                  const Divider(color: Color(0xFF334155), height: 1),
+                  const SizedBox(height: 8),
+                  _sidebarButton(
+                    icon: isDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
+                    label: isDark ? 'Light mode' : 'Dark mode',
+                    onTap: () => context.read<ThemeController>().toggle(),
+                  ),
+                  if (widget.onLogout != null)
+                    _sidebarButton(icon: Icons.logout, label: 'Sign out', onTap: widget.onLogout!),
+                  const SizedBox(height: 12),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+            child: Column(
+              children: [
+                Container(
+                  height: 68,
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  decoration: BoxDecoration(
+                    color: AppColors.cardBackground(context),
+                    border: Border(bottom: BorderSide(color: AppColors.cardBorder(context))),
+                  ),
+                  child: Row(
+                    children: [
+                      Text(
+                        _pageTitles[_currentAdminTabIndex],
+                        style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold, color: AppColors.textPrimary(context)),
+                      ),
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF38BDF8).withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: const Color(0xFF38BDF8).withOpacity(0.4)),
+                        ),
+                        child: const Text(
+                          'Authenticated administrator',
+                          style: TextStyle(color: Color(0xFF38BDF8), fontSize: 11, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 1240),
+                      child: pages[_currentAdminTabIndex],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// A page made of a full-width top section and two side-by-side columns on a
+  /// wide window; the same sections stacked in one column on a phone.
+  Widget _twoColumnPage(List<Widget> top, List<Widget> left, List<Widget> right) {
+    if (!_isWide(context)) {
+      return SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [...top, ...left, ...right]),
+      );
+    }
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(28),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          ...top,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: left)),
+              const SizedBox(width: 28),
+              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: right)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// The catalogue as a table (wide windows): one row per programme with columns.
+  Widget _buildCatalogTable() {
+    Widget header(String label, {int flex = 1}) => Expanded(
+          flex: flex,
+          child: Text(
+            label,
+            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 0.6, color: AppColors.textSecondary(context)),
+          ),
+        );
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.cardBackground(context),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.cardBorder(context)),
+      ),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(
+              children: [
+                header('CODE'),
+                header('PROGRAMME', flex: 4),
+                header('FACULTY', flex: 3),
+                header('CUTOFF (LATEST)', flex: 2),
+                header('MIN GRADE'),
+                header('UNIVERSITIES'),
+                const SizedBox(width: 128),
+              ],
+            ),
+          ),
+          for (final prog in _filteredCatalogProgrammes) _catalogTableRow(prog),
+        ],
+      ),
+    );
+  }
+
+  Widget _catalogTableRow(Programme prog) {
+    final isFlagged = _freshnessFlags.any((f) => f['programmeId'] == prog.id);
+    final isInactive = !prog.isActive;
+    return Opacity(
+      opacity: isInactive ? 0.55 : 1.0,
+      child: Container(
+        decoration: BoxDecoration(border: Border(top: BorderSide(color: AppColors.cardBorder(context)))),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(prog.code, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textSecondary(context))),
+            ),
+            Expanded(
+              flex: 4,
+              child: Row(
+                children: [
+                  Flexible(
+                    child: Text(
+                      prog.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary(context)),
+                    ),
+                  ),
+                  if (isFlagged) ...[
+                    const SizedBox(width: 6),
+                    Tooltip(
+                      message: 'Flagged by the catalogue freshness check - see the Console page',
+                      child: Icon(Icons.warning_amber_rounded, size: 16, color: Colors.amber.shade700),
+                    ),
+                  ],
+                  if (isInactive) ...[
+                    const SizedBox(width: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                      decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
+                      child: const Text('INACTIVE', style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.black87)),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            Expanded(
+              flex: 3,
+              child: Text(
+                prog.faculty,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 12, color: AppColors.textSecondary(context)),
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Text(prog.cutoffRangeLabel, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.5, color: AppColors.textPrimary(context))),
+            ),
+            Expanded(
+              child: Text(prog.minMeanGrade, style: TextStyle(fontSize: 12.5, color: AppColors.textPrimary(context))),
+            ),
+            Expanded(
+              child: Text('${prog.offeringUniversities.length}', style: TextStyle(fontSize: 12.5, color: AppColors.textPrimary(context))),
+            ),
+            SizedBox(
+              width: 128,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  if (!isInactive) ...[
+                    IconButton(
+                      icon: const Icon(Icons.edit, size: 18, color: Color(0xFF0EA5A4)),
+                      tooltip: 'Edit programme and university cutoffs',
+                      onPressed: () => _showEditProgrammeDialog(context, prog),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.visibility_off_outlined, size: 18, color: Colors.redAccent),
+                      tooltip: 'Deactivate programme',
+                      onPressed: () => _confirmDeactivate(prog),
+                    ),
+                  ] else
+                    TextButton(
+                      onPressed: () => _reactivateProgramme(prog),
+                      child: const Text('Reactivate', style: TextStyle(fontSize: 12)),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildConsoleTab() {
+    final overview = <Widget>[
           // Admin Control Banner
           Container(
             padding: const EdgeInsets.all(16),
@@ -623,7 +933,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             ],
           ),
           const SizedBox(height: 22),
-
+    ];
+    final freshness = <Widget>[
           // Catalogue Freshness - re-checks the catalog against KUCCPS's own
           // published data and flags anything that may have changed, rather
           // than relying purely on an admin noticing on their own.
@@ -682,7 +993,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           const SizedBox(height: 8),
           _buildFreshnessHistorySummary(context),
           const SizedBox(height: 22),
-
+    ];
+    final audit = <Widget>[
           // Audit Trails & Activity Logs
           Text(
             'System Audit Trails & Model Inference Logs',
@@ -718,9 +1030,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             child: _buildAuditLogBody(),
           ),
           const SizedBox(height: 24),
-        ],
-      ),
-    );
+    ];
+    return _twoColumnPage(overview, freshness, audit);
   }
 
   Widget _buildCatalogTab() {
@@ -753,7 +1064,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           ),
           const SizedBox(height: 12),
 
-          ..._filteredCatalogProgrammes.map((prog) {
+          if (_isWide(context)) _buildCatalogTable() else ..._filteredCatalogProgrammes.map((prog) {
             final isFlagged = _freshnessFlags.any((f) => f['programmeId'] == prog.id);
             final isInactive = !prog.isActive;
             return Opacity(
@@ -864,11 +1175,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   }
 
   Widget _buildFeedbackTab() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    final top = <Widget>[
           Text(
             'Student Feedback & Ratings',
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary(context)),
@@ -881,7 +1188,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           const SizedBox(height: 12),
           _buildRatingSummary(context),
           const SizedBox(height: 16),
-
+    ];
+    final left = <Widget>[
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
@@ -892,7 +1200,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             child: _buildFeedbackBody(),
           ),
           const SizedBox(height: 22),
-
+    ];
+    final right = <Widget>[
           Text(
             'Programme Popularity',
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary(context)),
@@ -905,9 +1214,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           const SizedBox(height: 12),
           _buildPopularitySection(context),
           const SizedBox(height: 24),
-        ],
-      ),
-    );
+    ];
+    return _twoColumnPage(top, left, right);
   }
 
   Widget _buildRatingSummary(BuildContext context) {
@@ -1018,11 +1326,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   }
 
   Widget _buildAdminsTab() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    final left = <Widget>[
           Text(
             'Model Management',
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary(context)),
@@ -1035,7 +1339,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           const SizedBox(height: 12),
           _buildModelManagementSection(context),
           const SizedBox(height: 22),
-
+    ];
+    final right = <Widget>[
           Text(
             'Administrators',
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary(context)),
@@ -1048,9 +1353,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           const SizedBox(height: 12),
           _buildAdminsSection(context),
           const SizedBox(height: 24),
-        ],
-      ),
-    );
+    ];
+    return _twoColumnPage(const <Widget>[], left, right);
   }
 
   Widget _buildModelManagementSection(BuildContext context) {
