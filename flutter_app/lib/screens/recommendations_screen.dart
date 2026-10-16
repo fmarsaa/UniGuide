@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/recommendation.dart';
 import '../models/programme.dart';
+import '../models/student_profile.dart';
+import '../services/report_service.dart';
+import 'what_if_screen.dart';
 import '../theme/app_colors.dart';
 import '../widgets/save_programme_button.dart';
 import '../widgets/shap_bars.dart';
 
 class RecommendationsScreen extends StatelessWidget {
   final List<RecommendationItem> recommendations;
+  final StudentProfile profile;
   final Function(Programme programme) onSelectProgramme;
   final Function(RecommendationItem recommendation) onOpenFeedback;
   final VoidCallback onAdjustProfile;
@@ -22,6 +26,7 @@ class RecommendationsScreen extends StatelessWidget {
   const RecommendationsScreen({
     Key? key,
     required this.recommendations,
+    required this.profile,
     required this.onSelectProgramme,
     required this.onOpenFeedback,
     required this.onAdjustProfile,
@@ -39,6 +44,26 @@ class RecommendationsScreen extends StatelessWidget {
         backgroundColor: const Color(0xFF14213D),
         foregroundColor: Colors.white,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.science_outlined),
+            tooltip: 'What if? Try different grades',
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => WhatIfScreen(profile: profile, current: recommendations)),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.picture_as_pdf_outlined),
+            tooltip: 'Download my report (PDF)',
+            onPressed: () async {
+              final messenger = ScaffoldMessenger.of(context);
+              try {
+                await ReportService.shareReport(profile, recommendations);
+              } catch (_) {
+                messenger.showSnackBar(const SnackBar(content: Text('Could not create the report. Please try again.')));
+              }
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.tune),
             tooltip: 'Adjust Profile',

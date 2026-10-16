@@ -536,6 +536,7 @@ class _StudentHomeState extends State<StudentHome> {
 
     return RecommendationsScreen(
       recommendations: _recommendations,
+      profile: _currentProfile,
       studentPrimaryInterest: _currentProfile.interests.isNotEmpty ? _currentProfile.interests.first : null,
       cachedAt: _isShowingCachedRecommendations ? _cachedRecommendationsAt : null,
       onRefresh: _loadRecommendations,

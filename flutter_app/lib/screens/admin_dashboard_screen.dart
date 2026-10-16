@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import '../models/programme.dart';
 import '../data/programme_repository.dart';
 import '../services/api_service.dart';
+import '../utils/csv.dart';
+import '../utils/save_file.dart';
 import '../theme/app_colors.dart';
 import '../theme/theme_controller.dart';
 import '../widgets/biometric_gate.dart';
@@ -78,6 +81,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   Map<String, dynamic>? _popularity;
   bool _isLoadingPopularity = true;
 
+  Map<String, dynamic>? _activity;
+  bool _isLoadingActivity = true;
+
   @override
   void initState() {
     super.initState();
@@ -94,6 +100,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     _loadTrainingStatus();
     _loadModelBackups();
     _loadPopularity();
+    _loadActivity();
   }
 
   @override
@@ -852,6 +859,220 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // Activity chart and CSV exports
+  // ---------------------------------------------------------------------------
+  Future<void> _loadActivity() async {
+    setState(() => _isLoadingActivity = true);
+    try {
+      final activity = await ApiService.fetchActivity(days: 30);
+      if (mounted) setState(() {
+        _activity = activity;
+        _isLoadingActivity = false;
+      });
+    } on ApiException {
+      if (mounted) setState(() => _isLoadingActivity = false);
+    }
+  }
+
+  Future<void> _exportCsv(String filename, List<String> header, List<List<Object?>> rows) async {
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await saveTextFile(filename, toCsv(header, rows));
+    } catch (_) {
+      messenger.showSnackBar(const SnackBar(content: Text('Could not export the file.')));
+    }
+  }
+
+  Future<void> _exportAuditCsv() => _exportCsv(
+        'uniguide-audit-log.csv',
+        ['Time', 'Actor', 'Action', 'Details'],
+        [
+          for (final log in _auditLogs)
+            [log['timestamp'], log['actor'], log['action'], log['details']],
+        ],
+      );
+
+  Future<void> _exportFeedbackCsv() => _exportCsv(
+        'uniguide-student-feedback.csv',
+        ['Submitted', 'Student', 'Rating', 'Comments', 'Recommendation'],
+        [
+          for (final fb in _studentFeedback)
+            [fb['submittedAt'], fb['studentEmail'], fb['rating'], fb['comments'], fb['recommendationId']],
+        ],
+      );
+
+  Widget _exportButton(VoidCallback onPressed) => Align(
+        alignment: Alignment.centerRight,
+        child: TextButton.icon(
+          onPressed: onPressed,
+          icon: const Icon(Icons.download, size: 16),
+          label: const Text('Export CSV', style: TextStyle(fontSize: 12)),
+        ),
+      );
+
+  Widget _buildActivitySection(BuildContext context) {
+    final activity = _activity;
+    final days = ((activity?['days'] as List?) ?? const []).cast<Map<String, dynamic>>();
+    final totals = (activity?['totals'] as Map?)?.cast<String, dynamic>() ?? const <String, dynamic>{};
+    final perDay = [for (final d in days) (d['recommendations'] as num?)?.toDouble() ?? 0.0];
+    final hasActivity = perDay.any((v) => v > 0);
+    final maxY = perDay.isEmpty ? 1.0 : (perDay.reduce((a, b) => a > b ? a : b) + 1).clamp(2.0, double.infinity);
+
+    Widget tile(String label, String value, IconData icon, Color color) => Expanded(
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.cardBackground(context),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.cardBorder(context)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(icon, size: 16, color: color),
+                const SizedBox(height: 6),
+                Text(value, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary(context))),
+                Text(label, style: TextStyle(fontSize: 10.5, color: AppColors.textSecondary(context))),
+              ],
+            ),
+          ),
+        );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                'Student activity - last 30 days',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary(context)),
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.refresh, size: 18),
+              tooltip: 'Refresh',
+              onPressed: _isLoadingActivity ? null : _loadActivity,
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        if (_isLoadingActivity)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0EA5A4)))),
+          )
+        else if (activity == null)
+          Text(
+            'Activity could not be loaded.',
+            style: TextStyle(fontSize: 12, color: AppColors.textSecondary(context)),
+          )
+        else ...[
+          Row(
+            children: [
+              tile('Students', '${totals['students'] ?? 0}', Icons.people_outline, const Color(0xFF6366F1)),
+              const SizedBox(width: 10),
+              tile('Recommendations', '${totals['recommendations'] ?? 0}', Icons.auto_awesome, const Color(0xFF0EA5A4)),
+              const SizedBox(width: 10),
+              tile('Feedback', '${totals['feedback'] ?? 0}', Icons.reviews_outlined, const Color(0xFFF59E0B)),
+              const SizedBox(width: 10),
+              tile(
+                'Average rating',
+                totals['averageRating'] == null ? '-' : '${totals['averageRating']} / 5',
+                Icons.star_outline,
+                const Color(0xFFD97706),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Container(
+            height: 190,
+            padding: const EdgeInsets.fromLTRB(8, 14, 14, 8),
+            decoration: BoxDecoration(
+              color: AppColors.cardBackground(context),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.cardBorder(context)),
+            ),
+            child: hasActivity
+                ? BarChart(
+                    BarChartData(
+                      maxY: maxY,
+                      alignment: BarChartAlignment.spaceBetween,
+                      gridData: FlGridData(
+                        show: true,
+                        drawVerticalLine: false,
+                        horizontalInterval: maxY <= 6 ? 1 : (maxY / 4).ceilToDouble(),
+                        getDrawingHorizontalLine: (_) => FlLine(color: AppColors.cardBorder(context), strokeWidth: 1),
+                      ),
+                      borderData: FlBorderData(show: false),
+                      titlesData: FlTitlesData(
+                        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        leftTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            reservedSize: 28,
+                            interval: maxY <= 6 ? 1 : (maxY / 4).ceilToDouble(),
+                            getTitlesWidget: (value, meta) => Text(
+                              value.toInt().toString(),
+                              style: TextStyle(fontSize: 9, color: AppColors.textSecondary(context)),
+                            ),
+                          ),
+                        ),
+                        bottomTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            reservedSize: 22,
+                            interval: 1,
+                            getTitlesWidget: (value, meta) {
+                              final i = value.toInt();
+                              if (i < 0 || i >= days.length || i % 7 != 0) return const SizedBox.shrink();
+                              final date = (days[i]['date'] ?? '').toString(); // 2026-10-16
+                              return Padding(
+                                padding: const EdgeInsets.only(top: 4),
+                                child: Text(
+                                  date.length >= 10 ? date.substring(5) : date,
+                                  style: TextStyle(fontSize: 9, color: AppColors.textSecondary(context)),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                      barGroups: [
+                        for (int i = 0; i < perDay.length; i++)
+                          BarChartGroupData(
+                            x: i,
+                            barRods: [
+                              BarChartRodData(
+                                toY: perDay[i],
+                                width: 5,
+                                color: const Color(0xFF0EA5A4),
+                                borderRadius: const BorderRadius.vertical(top: Radius.circular(2)),
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
+                  )
+                : Center(
+                    child: Text(
+                      'No recommendations in the last 30 days yet.',
+                      style: TextStyle(fontSize: 12, color: AppColors.textSecondary(context)),
+                    ),
+                  ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Bars show recommendations generated per day.',
+            style: TextStyle(fontSize: 10.5, color: AppColors.textSecondary(context)),
+          ),
+        ],
+      ],
+    );
+  }
+
   Widget _buildConsoleTab() {
     final overview = <Widget>[
           // Admin Control Banner
@@ -934,6 +1155,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               ),
             ],
           ),
+          const SizedBox(height: 22),
+          _buildActivitySection(context),
           const SizedBox(height: 22),
     ];
     final freshness = <Widget>[
@@ -1020,7 +1243,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             style: const TextStyle(fontSize: 13),
             onChanged: (v) => setState(() => _auditSearchQuery = v.trim().toLowerCase()),
           ),
-          const SizedBox(height: 10),
+          _exportButton(_exportAuditCsv),
 
           Container(
             padding: const EdgeInsets.all(14),
@@ -1192,6 +1415,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           const SizedBox(height: 16),
     ];
     final left = <Widget>[
+          _exportButton(_exportFeedbackCsv),
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(

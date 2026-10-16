@@ -100,12 +100,14 @@ class ApiService {
   }
 
   /// Requests Top 3 Random Forest recommendations with real SHAP explanations.
-  static Future<List<RecommendationItem>> getRecommendations(StudentProfile profile) {
+  /// [preview] asks for the same answer without saving it - used by the "What if?"
+  /// simulator, so trying other grades never touches the student's real history.
+  static Future<List<RecommendationItem>> getRecommendations(StudentProfile profile, {bool preview = false}) {
     return _withRetry('Could not reach the UniGuide recommendation service', () async {
       final headers = await _authHeaders();
       final response = await http
           .post(
-            Uri.parse('$baseUrl/api/recommend'),
+            Uri.parse(preview ? '$baseUrl/api/recommend?preview=true' : '$baseUrl/api/recommend'),
             headers: headers,
             body: jsonEncode(profile.toJson()),
           )
@@ -460,6 +462,18 @@ class ApiService {
       final response = await http
           .get(Uri.parse('$baseUrl/api/admin/analytics/programme-popularity'), headers: headers)
           .timeout(const Duration(seconds: 10));
+      if (response.statusCode != 200) throw _errorFor(response);
+      return jsonDecode(response.body) as Map<String, dynamic>;
+    });
+  }
+
+  /// Admin-only: recommendations, feedback and new students per day, plus totals.
+  static Future<Map<String, dynamic>> fetchActivity({int days = 30}) {
+    return _withRetry('Could not load activity', () async {
+      final headers = await _authHeaders();
+      final response = await http
+          .get(Uri.parse('$baseUrl/api/admin/analytics/activity?days=$days'), headers: headers)
+          .timeout(const Duration(seconds: 20));
       if (response.statusCode != 200) throw _errorFor(response);
       return jsonDecode(response.body) as Map<String, dynamic>;
     });
