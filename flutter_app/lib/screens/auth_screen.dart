@@ -290,7 +290,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
                 const SizedBox(height: 6),
                 const Text(
-                  'University Degree Programme Decision Support System\nSchool of Computing and Engineering Sciences',
+                  'University Degree Programme Decision Support System',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Color(0xFF94A3B8),
