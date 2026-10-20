@@ -55,3 +55,6 @@ catalogue_verification/*.pdf
 
 # Firebase web config for the admin portal (build-time settings, kept out of git like google-services.json)
 flutter_app/web_firebase.json
+
+# Real student session data (never commit)
+ml/experiments/student_evaluation/sessions.csv

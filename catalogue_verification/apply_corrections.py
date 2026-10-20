@@ -7,7 +7,6 @@ is not found exactly once, so it can never half-apply. Run once from the project
 """
 import os
 import re
-import sys
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 PY = os.path.join(ROOT, "backend", "programmes_catalog.py")
