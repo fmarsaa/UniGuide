@@ -223,6 +223,8 @@ class _RoleResolverState extends State<RoleResolver> {
         final profileJson = data['profile'] as Map<String, dynamic>?;
 
         if (role == 'administrator') {
+          // Administrators work in the web portal; the phone app is for students.
+          if (!kIsWeb) return _UseWebPortalScaffold(onSignOut: () => FirebaseAuth.instance.signOut());
           return AdminHome(onLogout: () => FirebaseAuth.instance.signOut());
         }
 
@@ -309,6 +311,34 @@ class StudentHome extends StatefulWidget {
 }
 
 class _StudentHomeState extends State<StudentHome> {
+
+  Future<void> _confirmDeleteAccount() async {
+    final messenger = ScaffoldMessenger.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete your account?'),
+        content: const Text(
+          'This removes your account, grades, saved programmes, recommendations and feedback. It cannot be undone.',
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.redAccent),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    try {
+      await ApiService.deleteAccount();
+      widget.onLogout();
+    } on ApiException catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(e.message), backgroundColor: Colors.redAccent));
+    }
+  }
   int _currentTabIndex = 0;
   late StudentProfile _currentProfile;
   List<RecommendationItem> _recommendations = [];
@@ -414,10 +444,17 @@ class _StudentHomeState extends State<StudentHome> {
             tooltip: isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode',
             onPressed: () => context.read<ThemeController>().toggle(),
           ),
-          IconButton(
-            icon: const Icon(Icons.logout, size: 20),
-            tooltip: 'Sign Out',
-            onPressed: widget.onLogout,
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert, size: 20),
+            tooltip: 'Account',
+            onSelected: (value) {
+              if (value == 'signout') widget.onLogout();
+              if (value == 'delete') _confirmDeleteAccount();
+            },
+            itemBuilder: (context) => const [
+              PopupMenuItem(value: 'signout', child: Text('Sign out')),
+              PopupMenuItem(value: 'delete', child: Text('Delete my account')),
+            ],
           ),
         ],
       ),
@@ -562,6 +599,51 @@ class _StudentHomeState extends State<StudentHome> {
       onAdjustProfile: () {
         setState(() => _currentTabIndex = 1);
       },
+    );
+  }
+}
+
+class _UseWebPortalScaffold extends StatelessWidget {
+  final VoidCallback onSignOut;
+
+  const _UseWebPortalScaffold({required this.onSignOut});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.scaffoldBackground(context),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 420),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.computer, size: 48, color: Color(0xFF0EA5A4)),
+                const SizedBox(height: 12),
+                Text(
+                  'Administrators use the web portal',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppColors.textPrimary(context)),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'This app is for students. Please sign in to the UniGuide web portal on a computer.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 13, color: AppColors.textSecondary(context), height: 1.4),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: onSignOut,
+                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0EA5A4), foregroundColor: Colors.white),
+                  child: const Text('Sign out'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

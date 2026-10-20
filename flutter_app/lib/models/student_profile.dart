@@ -29,7 +29,7 @@ class StudentProfile {
     this.calculatedClusterScore = 0.0,
     DateTime? updatedAt,
   })  : uid = uid ?? id ?? 'cand_default',
-        kcseMeanPoints = kcseMeanPoints ?? KCSEGrade.fromString(kcseMeanGrade ?? 'B').points,
+        kcseMeanPoints = kcseMeanPoints ?? KCSEGrade.fromString(kcseMeanGrade).points,
         grades = grades ?? {},
         interests = interests ?? [],
         skills = skills ?? [],

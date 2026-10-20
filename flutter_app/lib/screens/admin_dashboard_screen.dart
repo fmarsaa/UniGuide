@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import '../models/programme.dart';
 import '../data/programme_repository.dart';
@@ -8,6 +7,7 @@ import '../utils/csv.dart';
 import '../utils/save_file.dart';
 import '../theme/app_colors.dart';
 import '../theme/theme_controller.dart';
+import '../widgets/admin_charts.dart';
 import '../widgets/biometric_gate.dart';
 import 'package:provider/provider.dart';
 
@@ -82,7 +82,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   bool _isLoadingPopularity = true;
 
   Map<String, dynamic>? _activity;
-  bool _isLoadingActivity = true;
+
+  Map<String, dynamic>? _overview;
+  bool _isLoadingOverview = true;
 
   @override
   void initState() {
@@ -101,6 +103,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     _loadModelBackups();
     _loadPopularity();
     _loadActivity();
+    _loadOverview();
   }
 
   @override
@@ -483,6 +486,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             MediaQuery.platformBrightnessOf(context) == Brightness.dark);
 
     final List<Widget> adminPages = [
+      _buildInsightsTab(),
       _buildConsoleTab(),
       _buildCatalogTab(),
       _buildFeedbackTab(),
@@ -523,6 +527,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         },
         destinations: const [
           NavigationDestination(
+            icon: Icon(Icons.insights_outlined),
+            selectedIcon: Icon(Icons.insights, color: Color(0xFF0EA5A4)),
+            label: 'Insights',
+          ),
+          NavigationDestination(
             icon: Icon(Icons.dashboard_outlined),
             selectedIcon: Icon(Icons.dashboard, color: Color(0xFF0EA5A4)),
             label: 'Console',
@@ -554,14 +563,16 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   // ---------------------------------------------------------------------------
   bool _isWide(BuildContext context) => MediaQuery.of(context).size.width >= 900;
 
-  static const List<String> _pageTitles = ['Console', 'Catalog & Cutoffs', 'Feedback', 'Administrators'];
+  static const List<String> _pageTitles = ['Insights', 'Console', 'Catalog & Cutoffs', 'Feedback', 'Administrators'];
   static const List<IconData> _pageIcons = [
+    Icons.insights_outlined,
     Icons.dashboard_outlined,
     Icons.menu_book_outlined,
     Icons.reviews_outlined,
     Icons.manage_accounts_outlined,
   ];
   static const List<IconData> _pageIconsSelected = [
+    Icons.insights,
     Icons.dashboard,
     Icons.menu_book,
     Icons.reviews,
@@ -862,16 +873,28 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   // ---------------------------------------------------------------------------
   // Activity chart and CSV exports
   // ---------------------------------------------------------------------------
-  Future<void> _loadActivity() async {
-    setState(() => _isLoadingActivity = true);
+  Future<void> _loadOverview() async {
+    setState(() => _isLoadingOverview = true);
     try {
-      final activity = await ApiService.fetchActivity(days: 30);
+      final overview = await ApiService.fetchOverview();
       if (mounted) setState(() {
-        _activity = activity;
-        _isLoadingActivity = false;
+        _overview = overview;
+        _isLoadingOverview = false;
       });
     } on ApiException {
-      if (mounted) setState(() => _isLoadingActivity = false);
+      if (mounted) setState(() {
+        _overview = null;
+        _isLoadingOverview = false;
+      });
+    }
+  }
+
+  Future<void> _loadActivity() async {
+    try {
+      final activity = await ApiService.fetchActivity(days: 30);
+      if (mounted) setState(() => _activity = activity);
+    } on ApiException {
+      // The page still shows everything else; only the daily chart stays empty.
     }
   }
 
@@ -911,166 +934,147 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         ),
       );
 
-  Widget _buildActivitySection(BuildContext context) {
-    final activity = _activity;
-    final days = ((activity?['days'] as List?) ?? const []).cast<Map<String, dynamic>>();
-    final totals = (activity?['totals'] as Map?)?.cast<String, dynamic>() ?? const <String, dynamic>{};
-    final perDay = [for (final d in days) (d['recommendations'] as num?)?.toDouble() ?? 0.0];
-    final hasActivity = perDay.any((v) => v > 0);
-    final maxY = perDay.isEmpty ? 1.0 : (perDay.reduce((a, b) => a > b ? a : b) + 1).clamp(2.0, double.infinity);
+  Widget _buildInsightsTab() {
+    final overview = _overview;
+    final totals = (overview?['totals'] as Map?)?.cast<String, dynamic>() ?? const <String, dynamic>{};
+    List<Map<String, dynamic>> listOf(String key) => ((overview?[key] as List?) ?? const []).cast<Map<String, dynamic>>();
+    final growth = listOf('growth');
+    final funnel = listOf('funnel');
+    final grades = listOf('gradeDistribution');
+    final ratings = listOf('ratingDistribution');
+    final topSaved = listOf('topSaved');
+    final career = (overview?['careerChoice'] as Map?)?.cast<String, dynamic>() ?? const <String, dynamic>{};
+    final reach = (overview?['eligibility'] as Map?)?.cast<String, dynamic>() ?? const <String, dynamic>{};
+    final days = ((_activity?['days'] as List?) ?? const []).cast<Map<String, dynamic>>();
+    int n(Object? v) => (v as num?)?.toInt() ?? 0;
+    String shortDate(Object? iso) {
+      final text = (iso ?? '').toString(); // 2026-10-16
+      return text.length >= 10 ? text.substring(5) : text;
+    }
 
-    Widget tile(String label, String value, IconData icon, Color color) => Expanded(
-          child: Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: AppColors.cardBackground(context),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.cardBorder(context)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(icon, size: 16, color: color),
-                const SizedBox(height: 6),
-                Text(value, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary(context))),
-                Text(label, style: TextStyle(fontSize: 10.5, color: AppColors.textSecondary(context))),
-              ],
-            ),
-          ),
-        );
+    Widget kpis() {
+      final average = totals['averageRating'];
+      final tiles = [
+        KpiTile(label: 'Students', value: '${n(totals['students'])}', icon: Icons.people_outline, color: kChartIndigo),
+        KpiTile(label: 'New in the last 7 days', value: '${n(totals['newLast7Days'])}', icon: Icons.person_add_alt, color: kChartTeal),
+        KpiTile(label: 'Active in the last 30 days', value: '${n(totals['active30Days'])}', icon: Icons.bolt, color: kChartAmber),
+        KpiTile(label: 'Recommendations given', value: '${n(totals['recommendations'])}', icon: Icons.auto_awesome, color: kChartTeal),
+        KpiTile(label: 'Average rating', value: average == null ? '-' : '$average / 5', icon: Icons.star_outline, color: kChartAmber),
+      ];
+      return LayoutBuilder(builder: (context, constraints) {
+        final columns = constraints.maxWidth >= 700 ? 5 : 2;
+        final width = (constraints.maxWidth - 10 * (columns - 1)) / columns;
+        return Wrap(spacing: 10, runSpacing: 10, children: [for (final t in tiles) SizedBox(width: width, child: t)]);
+      });
+    }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                'Student activity - last 30 days',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary(context)),
-              ),
+    final top = <Widget>[
+      Row(
+        children: [
+          Expanded(
+            child: Text(
+              'Counts only. No student names, emails or grades are shown here.',
+              style: TextStyle(fontSize: 12, color: AppColors.textSecondary(context)),
             ),
-            IconButton(
-              icon: const Icon(Icons.refresh, size: 18),
-              tooltip: 'Refresh',
-              onPressed: _isLoadingActivity ? null : _loadActivity,
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        if (_isLoadingActivity)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
-            child: Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0EA5A4)))),
-          )
-        else if (activity == null)
-          Text(
-            'Activity could not be loaded.',
-            style: TextStyle(fontSize: 12, color: AppColors.textSecondary(context)),
-          )
-        else ...[
-          Row(
-            children: [
-              tile('Students', '${totals['students'] ?? 0}', Icons.people_outline, const Color(0xFF6366F1)),
-              const SizedBox(width: 10),
-              tile('Recommendations', '${totals['recommendations'] ?? 0}', Icons.auto_awesome, const Color(0xFF0EA5A4)),
-              const SizedBox(width: 10),
-              tile('Feedback', '${totals['feedback'] ?? 0}', Icons.reviews_outlined, const Color(0xFFF59E0B)),
-              const SizedBox(width: 10),
-              tile(
-                'Average rating',
-                totals['averageRating'] == null ? '-' : '${totals['averageRating']} / 5',
-                Icons.star_outline,
-                const Color(0xFFD97706),
-              ),
-            ],
           ),
-          const SizedBox(height: 12),
-          Container(
-            height: 190,
-            padding: const EdgeInsets.fromLTRB(8, 14, 14, 8),
-            decoration: BoxDecoration(
-              color: AppColors.cardBackground(context),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.cardBorder(context)),
-            ),
-            child: hasActivity
-                ? BarChart(
-                    BarChartData(
-                      maxY: maxY,
-                      alignment: BarChartAlignment.spaceBetween,
-                      gridData: FlGridData(
-                        show: true,
-                        drawVerticalLine: false,
-                        horizontalInterval: maxY <= 6 ? 1 : (maxY / 4).ceilToDouble(),
-                        getDrawingHorizontalLine: (_) => FlLine(color: AppColors.cardBorder(context), strokeWidth: 1),
-                      ),
-                      borderData: FlBorderData(show: false),
-                      titlesData: FlTitlesData(
-                        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                        rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                        leftTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            reservedSize: 28,
-                            interval: maxY <= 6 ? 1 : (maxY / 4).ceilToDouble(),
-                            getTitlesWidget: (value, meta) => Text(
-                              value.toInt().toString(),
-                              style: TextStyle(fontSize: 9, color: AppColors.textSecondary(context)),
-                            ),
-                          ),
-                        ),
-                        bottomTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            reservedSize: 22,
-                            interval: 1,
-                            getTitlesWidget: (value, meta) {
-                              final i = value.toInt();
-                              if (i < 0 || i >= days.length || i % 7 != 0) return const SizedBox.shrink();
-                              final date = (days[i]['date'] ?? '').toString(); // 2026-10-16
-                              return Padding(
-                                padding: const EdgeInsets.only(top: 4),
-                                child: Text(
-                                  date.length >= 10 ? date.substring(5) : date,
-                                  style: TextStyle(fontSize: 9, color: AppColors.textSecondary(context)),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                      barGroups: [
-                        for (int i = 0; i < perDay.length; i++)
-                          BarChartGroupData(
-                            x: i,
-                            barRods: [
-                              BarChartRodData(
-                                toY: perDay[i],
-                                width: 5,
-                                color: const Color(0xFF0EA5A4),
-                                borderRadius: const BorderRadius.vertical(top: Radius.circular(2)),
-                              ),
-                            ],
-                          ),
-                      ],
-                    ),
-                  )
-                : Center(
-                    child: Text(
-                      'No recommendations in the last 30 days yet.',
-                      style: TextStyle(fontSize: 12, color: AppColors.textSecondary(context)),
-                    ),
-                  ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Bars show recommendations generated per day.',
-            style: TextStyle(fontSize: 10.5, color: AppColors.textSecondary(context)),
+          IconButton(
+            icon: const Icon(Icons.refresh, size: 18),
+            tooltip: 'Refresh',
+            onPressed: _isLoadingOverview ? null : () {
+              _loadOverview();
+              _loadActivity();
+            },
           ),
         ],
+      ),
+      const SizedBox(height: 8),
+      if (_isLoadingOverview)
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 40),
+          child: Center(child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(kChartTeal))),
+        )
+      else if (overview == null)
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          child: Text('Insights could not be loaded. Check the connection and press refresh.',
+              style: TextStyle(fontSize: 13, color: AppColors.textSecondary(context))),
+        )
+      else ...[
+        kpis(),
+        const SizedBox(height: 18),
       ],
-    );
+    ];
+    if (_isLoadingOverview || overview == null) return _twoColumnPage(top, const [], const []);
+
+    final left = <Widget>[
+      ChartCard(
+        title: 'Students registered',
+        note: 'Running total over the last 30 days.',
+        child: TrendLineChart(
+          labels: [for (final d in growth) shortDate(d['date'])],
+          values: [for (final d in growth) n(d['totalStudents']).toDouble()],
+        ),
+      ),
+      ChartCard(
+        title: 'Recommendations per day',
+        note: 'Last 30 days. What-if tries are not counted.',
+        child: BarSeriesChart(
+          labels: [for (final d in days) shortDate(d['date'])],
+          values: [for (final d in days) n(d['recommendations']).toDouble()],
+          labelEvery: 7,
+        ),
+      ),
+      ChartCard(
+        title: 'How far students get',
+        note: 'Students at each step, as a share of those registered.',
+        child: FunnelBars(steps: [for (final f in funnel) MapEntry(f['stage'].toString(), n(f['count']))]),
+      ),
+    ];
+    final right = <Widget>[
+      ChartCard(
+        title: 'KCSE mean grade of students',
+        note: 'Students who have entered their grades.',
+        child: BarSeriesChart(
+          labels: [for (final g in grades) g['grade'].toString()],
+          values: [for (final g in grades) n(g['count']).toDouble()],
+          color: kChartIndigo,
+        ),
+      ),
+      ChartCard(
+        title: 'Students who named a career',
+        note: 'Naming a career is optional.',
+        child: DonutChart(slices: [
+          DonutSlice('Named a career', n(career['decided']), kChartTeal),
+          DonutSlice('Not sure yet', n(career['undecided']), kChartAmber),
+        ]),
+      ),
+      ChartCard(
+        title: 'Recommended programmes within reach',
+        note: 'Whether the student met a latest cutoff when the programme was shown.',
+        child: DonutChart(slices: [
+          DonutSlice('Met a latest cutoff', n(reach['meetsCutoff']), kChartTeal),
+          DonutSlice('Below the cutoffs', n(reach['belowCutoff']), kChartAmber),
+          DonutSlice('Missing a required subject grade', n(reach['missingSubject']), kChartRed),
+        ]),
+      ),
+      ChartCard(
+        title: 'Ratings from students',
+        child: BarSeriesChart(
+          labels: [for (final r in ratings) '${r['rating']}'],
+          values: [for (final r in ratings) n(r['count']).toDouble()],
+          color: kChartAmber,
+          height: 140,
+        ),
+      ),
+      ChartCard(
+        title: 'Most saved programmes',
+        child: RankedList(
+          items: [for (final t in topSaved) MapEntry(t['title'].toString(), n(t['count']))],
+          emptyMessage: 'No programmes have been saved yet.',
+        ),
+      ),
+    ];
+    return _twoColumnPage(top, left, right);
   }
 
   Widget _buildConsoleTab() {
@@ -1155,8 +1159,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 22),
-          _buildActivitySection(context),
           const SizedBox(height: 22),
     ];
     final freshness = <Widget>[

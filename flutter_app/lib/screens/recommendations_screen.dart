@@ -6,6 +6,7 @@ import '../models/student_profile.dart';
 import '../services/report_service.dart';
 import 'what_if_screen.dart';
 import '../theme/app_colors.dart';
+import '../widgets/career_note_card.dart';
 import '../widgets/save_programme_button.dart';
 import '../widgets/shap_bars.dart';
 
@@ -157,6 +158,8 @@ class RecommendationsScreen extends StatelessWidget {
 
             // Top 3 Recommendation Cards
             ...recommendations.map((item) => _buildRecommendationCard(context, item)).toList(),
+
+            if (profile.aspirations.isNotEmpty) CareerNoteCard(profile: profile),
 
             const SizedBox(height: 20),
             // Adjust Profile Banner (Sequence Diagram Option B)

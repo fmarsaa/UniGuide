@@ -99,6 +99,17 @@ class ApiService {
     });
   }
 
+  /// Deletes the signed-in student's account and everything stored about them.
+  static Future<void> deleteAccount() {
+    return _withRetry('Could not delete the account', () async {
+      final headers = await _authHeaders();
+      final response = await http
+          .delete(Uri.parse('$baseUrl/api/me'), headers: headers, body: jsonEncode({'confirm': 'DELETE'}))
+          .timeout(const Duration(seconds: 30));
+      if (response.statusCode != 200) throw _errorFor(response);
+    });
+  }
+
   /// Requests Top 3 Random Forest recommendations with real SHAP explanations.
   /// [preview] asks for the same answer without saving it - used by the "What if?"
   /// simulator, so trying other grades never touches the student's real history.
@@ -118,6 +129,21 @@ class ApiService {
       final List<dynamic> data = jsonDecode(response.body);
       return data.map((json) => RecommendationItem.fromJson(json)).toList();
     });
+  }
+
+  /// Why a programme for the career the student named is not among their results (empty if none).
+  /// This is an extra note, so a failure just means no note is shown.
+  static Future<List<Map<String, dynamic>>> fetchCareerNote(StudentProfile profile) async {
+    try {
+      final headers = await _authHeaders();
+      final response = await http
+          .post(Uri.parse('$baseUrl/api/career-note'), headers: headers, body: jsonEncode(profile.toJson()))
+          .timeout(const Duration(seconds: 10));
+      if (response.statusCode != 200) return [];
+      return (jsonDecode(response.body) as List).cast<Map<String, dynamic>>();
+    } catch (_) {
+      return [];
+    }
   }
 
   /// Submits student rating and feedback for a recommendation.
@@ -474,6 +500,18 @@ class ApiService {
       final response = await http
           .get(Uri.parse('$baseUrl/api/admin/analytics/activity?days=$days'), headers: headers)
           .timeout(const Duration(seconds: 20));
+      if (response.statusCode != 200) throw _errorFor(response);
+      return jsonDecode(response.body) as Map<String, dynamic>;
+    });
+  }
+
+  /// Admin-only: counts behind the Insights page (students, growth, journey, grades, ratings).
+  static Future<Map<String, dynamic>> fetchOverview() {
+    return _withRetry('Could not load insights', () async {
+      final headers = await _authHeaders();
+      final response = await http
+          .get(Uri.parse('$baseUrl/api/admin/analytics/overview'), headers: headers)
+          .timeout(const Duration(seconds: 30));
       if (response.statusCode != 200) throw _errorFor(response);
       return jsonDecode(response.body) as Map<String, dynamic>;
     });

@@ -15,6 +15,7 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _isLoginMode = true;
   bool _obscurePassword = true;
   bool _isLoading = false;
+  bool _acceptedPrivacy = false;
   String? _errorText;
 
   final TextEditingController _emailController = TextEditingController();
@@ -31,8 +32,43 @@ class _AuthScreenState extends State<AuthScreen> {
     super.dispose();
   }
 
+  Widget _buildPrivacyConsent() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: InkWell(
+        onTap: () => setState(() => _acceptedPrivacy = !_acceptedPrivacy),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 24,
+              height: 24,
+              child: Checkbox(
+                value: _acceptedPrivacy,
+                activeColor: const Color(0xFF0EA5A4),
+                onChanged: (v) => setState(() => _acceptedPrivacy = v ?? false),
+              ),
+            ),
+            const SizedBox(width: 10),
+            const Expanded(
+              child: Text(
+                'I understand that UniGuide keeps my grades and answers so it can give me recommendations, '
+                'and that I can delete my account and all of this from the menu at any time.',
+                style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12, height: 1.4),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _submit() async {
     if (!_formKey.currentState!.validate()) return;
+    if (!_isLoginMode && !_acceptedPrivacy) {
+      setState(() => _errorText = 'Please tick the box to continue.');
+      return;
+    }
 
     setState(() {
       _isLoading = true;
@@ -467,6 +503,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             },
                           ),
                           if (!_isLoginMode) _buildPasswordChecklist(),
+                          if (!_isLoginMode) _buildPrivacyConsent(),
                           if (_isLoginMode) ...[
                             Align(
                               alignment: Alignment.centerRight,
