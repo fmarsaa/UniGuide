@@ -1,0 +1,12 @@
+.env
+.env.*
+serviceAccountKey.json
+*firebase-adminsdk*.json
+rf_model_pipeline.pkl
+model_metrics.json
+model_backups/
+model_release/
+tests/
+__pycache__/
+.pytest_cache/
+*.csv

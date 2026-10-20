@@ -29,11 +29,18 @@ performance is validated there's no reason to withhold real training
 signal from the model that actually gets deployed.
 """
 
+import hashlib
 import json
 import os
-import pickle
+import platform
 import shutil
+import subprocess
 from datetime import datetime
+
+import joblib
+import numpy as np
+import pandas as pd
+import sklearn
 
 from sklearn.base import clone
 from sklearn.compose import ColumnTransformer
@@ -114,8 +121,31 @@ _METRICS_PATH = os.path.join(_DIR, "model_metrics.json")
 _BACKUPS_DIR = os.path.join(_DIR, "model_backups")
 
 
+def build_run_record(df, started_at=None):
+    """Everything needed to trace a trained model back to the code and data that
+    produced it: the git commit, a fingerprint of the exact dataset, the random
+    seeds and the library versions. Saved inside model_metrics.json."""
+    try:
+        commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=_DIR, text=True, stderr=subprocess.DEVNULL).strip()
+    except Exception:
+        commit = "unknown"
+    started_at = started_at or datetime.now()
+    dataset_hash = hashlib.sha256(pd.util.hash_pandas_object(df, index=False).values.tobytes()).hexdigest()
+    short = commit[:7] if commit != "unknown" else "nogit"
+    return {
+        "model_version": f"rf-{started_at.strftime('%Y%m%d')}-{short}",
+        "trained_at": started_at.isoformat(timespec="seconds"),
+        "git_commit": commit,
+        "dataset": {"rows": len(df), "sha256_of_row_hashes": dataset_hash, "generator_size_argument": DATASET_SIZE},
+        "seeds": {"model": 42, "train_test_split": 42, "cross_validation": 42},
+        "versions": {"python": platform.python_version(), "scikit-learn": sklearn.__version__,
+                     "numpy": np.__version__, "pandas": pd.__version__},
+    }
+
+
 def train_and_evaluate_model():
     print(f"Step 1: Generating validated synthetic student dataset (N={DATASET_SIZE} balanced-target profiles + a floor of {THIN_CLASS_FLOOR} for every one of the 21 trained classes)...")
+    started_at = datetime.now()
     df = create_synthetic_dataset(DATASET_SIZE)
     print(f"Total profiles after oversampling: {len(df)}")
     print(df["programme_label"].value_counts().to_string())
@@ -177,9 +207,25 @@ def train_and_evaluate_model():
     print(f"Cross-validated (out-of-fold) Weighted F1-Score: {cv_f1 * 100:.2f}%")
     print("\nCross-validated Classification Report (this is the one cited in 5.4):\n", classification_report(y, y_pred_cv, zero_division=0))
 
+    # Model versioning/rollback: before overwriting the artifact main.py
+    # actually loads (and its metrics file), archive whatever was previously deployed (pipeline +
+    # its metrics) under a timestamp. If a retrain ever regresses, the
+    # previous model can be restored with a plain file copy instead of
+    # re-running an old experiment by hand.
+    if os.path.exists(_MODEL_PATH):
+        os.makedirs(_BACKUPS_DIR, exist_ok=True)
+        stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        shutil.copy(_MODEL_PATH, os.path.join(_BACKUPS_DIR, f"rf_model_pipeline_{stamp}.pkl"))
+        if os.path.exists(_METRICS_PATH):
+            shutil.copy(_METRICS_PATH, os.path.join(_BACKUPS_DIR, f"model_metrics_{stamp}.json"))
+        print(f"  (previous deployed model backed up to model_backups/*_{stamp}.*)")
+
     print("Step 6: Persisting evaluation metrics to model_metrics.json...")
+    run_record = build_run_record(df, started_at)
     with open(_METRICS_PATH, "w") as f:
         json.dump({
+            "model_version": run_record["model_version"],
+            "run_record": run_record,
             # Primary headline numbers: cross-validated out-of-fold, across
             # the full dataset - the defensible per-class numbers, not a
             # single lucky/unlucky 20% split.
@@ -208,21 +254,9 @@ def train_and_evaluate_model():
     final_pipeline = clone(pipeline).set_params(**best_params)
     final_pipeline.fit(X, y)
 
-    # Model versioning/rollback: before overwriting the artifact main.py
-    # actually loads, archive whatever was previously deployed (pipeline +
-    # its metrics) under a timestamp. If a retrain ever regresses, the
-    # previous model can be restored with a plain file copy instead of
-    # re-running an old experiment by hand.
-    if os.path.exists(_MODEL_PATH):
-        os.makedirs(_BACKUPS_DIR, exist_ok=True)
-        stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        shutil.copy(_MODEL_PATH, os.path.join(_BACKUPS_DIR, f"rf_model_pipeline_{stamp}.pkl"))
-        if os.path.exists(_METRICS_PATH):
-            shutil.copy(_METRICS_PATH, os.path.join(_BACKUPS_DIR, f"model_metrics_{stamp}.json"))
-        print(f"  (previous deployed model backed up to model_backups/*_{stamp}.*)")
-
-    with open(_MODEL_PATH, "wb") as f:
-        pickle.dump(final_pipeline, f)
+    # zlib level 3 shrinks the file about tenfold with no change to any prediction
+    # (checked: identical classes and probabilities); main.py reads it with joblib.
+    joblib.dump(final_pipeline, _MODEL_PATH, compress=("zlib", 3))
 
     print("Training complete! Model artifacts saved to rf_model_pipeline.pkl and model_metrics.json.")
     print("To roll back: copy the desired model_backups/rf_model_pipeline_<timestamp>.pkl over rf_model_pipeline.pkl (and its matching model_metrics_<timestamp>.json over model_metrics.json), then restart the backend.")

@@ -7,14 +7,14 @@
 
 ---
 
-## Technical Specifications (Proposal Chapter 3 & 4)
+## Technical Specifications
 
-- **Language**: Python 3.10+
-- **Framework**: FastAPI (Asynchronous REST API)
-- **Machine Learning**: Scikit-Learn `RandomForestClassifier`, hyperparameters chosen by grid search (see `model_metrics.json` after training)
-- **Explainability**: SHAP (SHapley Additive exPlanations) `TreeExplainer`
-- **Data Generation**: Deterministic rule-based synthetic student profile generator (N=3,000 seeded/reproducible profiles), each with 7-9 KCSE subjects (5 compulsory + 2-4 optional from the full KNEC list, matching real candidates - see `kuccps.py`)
-- **Database Connection**: Firebase Authentication & Cloud Firestore
+- **Language**: Python 3.12 (dependencies are pinned in `requirements.txt`; `requirements-dev.txt` adds the test tools)
+- **Framework**: FastAPI
+- **Machine learning**: scikit-learn `RandomForestClassifier` inside a pipeline, hyperparameters chosen by grid search
+- **Explainability**: SHAP `TreeExplainer` (approximate mode, so a request takes milliseconds rather than half a minute)
+- **Data generation**: a seeded, rule-based generator (`synthetic_data_generator.py`) that produces 15,322 profiles over 53 programmes; the same seed gives the same data
+- **Database and sign-in**: Firebase Authentication and Cloud Firestore, reached only through this backend
 
 ---
 
@@ -23,35 +23,35 @@
 ### 1. Install Dependencies
 ```bash
 cd backend
-pip install -r requirements.txt
+pip install -r requirements-dev.txt
 ```
 
-### 2. Generate Dataset & Train the Random Forest Model
+### 2. Train the Random Forest Model
 ```bash
 python train_random_forest.py
 ```
-This runs the full CRISP-DM training pipeline:
-- Generates 3,000 synthetic Kenyan student profiles (seeded, so re-running
-  produces the same dataset), labelled by a deterministic rule (KUCCPS
-  eligibility gate, then interest/skill/aspiration matching against
-  `programmes_catalog.py`, tie-broken by closeness to each programme's cutoff).
-- Executes an 80/20 stratified train-test split.
-- Performs one-hot encoding for interests, skills, strengths, and aspirations.
-- Grid-searches Random Forest hyperparameters with 5-fold cross-validation
-  (weighted F1), using balanced class weights to compensate for programmes
-  like Medicine that have far fewer eligible synthetic profiles than others.
-- Refits the best pipeline and writes the Classification Report (Accuracy,
-  Precision, Recall, Weighted F1, confusion matrix, chosen hyperparameters)
-  to `model_metrics.json`.
-- Serializes the fitted pipeline to `rf_model_pipeline.pkl`, loaded directly by
-  `main.py` at inference time (no logic is duplicated between training and serving).
+This generates the dataset, holds out 20% for a reference check, grid-searches the Random Forest with 5-fold
+cross-validation on the training split, evaluates with 5-fold out-of-fold predictions over all profiles, refits on
+the full data, and writes:
 
-Latest run: **74.5% accuracy / 72.5% weighted F1** on held-out test data. Some
-programmes remain harder to separate than others - Software Engineering vs.
-Informatics and Computer Science share nearly identical KUCCPS requirements and
-a combined "Software Engineer / AI Architect" aspiration option in the app, so
-the model has genuinely little signal to tell them apart. Worth naming as a
-limitation in your evaluation chapter rather than a bug to chase further.
+- `rf_model_pipeline.pkl`: the fitted pipeline (compressed with joblib; about a tenth of the plain pickle)
+- `model_metrics.json`: accuracy, F1, per-programme report, confusion matrix, chosen settings, and a run record
+  (git commit, dataset fingerprint, seeds, library versions, model version)
+
+The previous model is backed up to `model_backups/` before it is replaced. Latest run: 80.85% accuracy and 80.68%
+weighted F1 out of fold; 81.14% and 80.98% on the held-out 20%. See `ml/experiments/` for every experiment, including
+the comparison with Logistic Regression and Gradient Boosting.
+
+### 2b. Run the tests
+```bash
+python -m pytest -q
+```
+Tests that need the trained model are skipped when `rf_model_pipeline.pkl` is absent.
+
+### 2c. A server without the model file
+Run `python package_model.py` to compress the model and print its SHA-256, publish the file, and set `MODEL_URL`
+and `MODEL_SHA256` on the server (see `.env.example`). It downloads the file once and refuses one that does not match.
+A `Dockerfile` is included; the model, the Firebase key and `.env` are not copied into the image.
 
 ### 3. Configure Firebase (required for auth + persistence)
 `/api/recommend`, `/api/feedback`, `/api/auth/whoami`, and the admin endpoint all

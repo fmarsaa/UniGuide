@@ -1,0 +1,140 @@
+{
+  "started": "2026-10-19T21:24:00",
+  "git_commit": "c84cb4d77acbb218329674e0fc90c9eff2c50a59",
+  "dataset": {
+    "rows": 15322,
+    "classes": 53,
+    "sha256_of_row_hashes": "756ad21869abd12e130c72fed479af497d8a4620dcb6c63ab6c4e27786890a25",
+    "generator_size_argument": 15000
+  },
+  "cv": "5-fold StratifiedKFold out-of-fold predictions, shuffled; one run per seed",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "versions": {
+    "python": "3.12.4",
+    "scikit-learn": "1.9.0",
+    "numpy": "2.0.1",
+    "pandas": "2.2.2"
+  },
+  "majority_class_baseline": 0.04379323848061611,
+  "chance": 0.018867924528301886,
+  "runs": {
+    "logistic_regression": [
+      {
+        "seed": 42,
+        "accuracy": 0.8363137971544184,
+        "weighted_f1": 0.836307640999714,
+        "macro_f1": 0.8365418176416857,
+        "seconds": 170
+      },
+      {
+        "seed": 43,
+        "accuracy": 0.836770656572249,
+        "weighted_f1": 0.8365054577297573,
+        "macro_f1": 0.8378031147088537,
+        "seconds": 240
+      },
+      {
+        "seed": 44,
+        "accuracy": 0.8384675629813341,
+        "weighted_f1": 0.8381756209723425,
+        "macro_f1": 0.8393905489873615,
+        "seconds": 231
+      }
+    ],
+    "random_forest": [
+      {
+        "seed": 42,
+        "accuracy": 0.8085106382978723,
+        "weighted_f1": 0.8067637546685065,
+        "macro_f1": 0.8103931985654402,
+        "seconds": 57
+      },
+      {
+        "seed": 43,
+        "accuracy": 0.806878997519906,
+        "weighted_f1": 0.8050703702176222,
+        "macro_f1": 0.8081568441723991,
+        "seconds": 31
+      },
+      {
+        "seed": 44,
+        "accuracy": 0.8090980289779403,
+        "weighted_f1": 0.8075490645783285,
+        "macro_f1": 0.8106864012892069,
+        "seconds": 29
+      }
+    ],
+    "gradient_boosting": [
+      {
+        "seed": 42,
+        "accuracy": 0.8580472523169299,
+        "weighted_f1": 0.8578178130841624,
+        "macro_f1": 0.8591610250455982,
+        "seconds": 393
+      },
+      {
+        "seed": 43,
+        "accuracy": 0.8609842057172693,
+        "weighted_f1": 0.8607644228158022,
+        "macro_f1": 0.8626957375113056,
+        "seconds": 298
+      },
+      {
+        "seed": 44,
+        "accuracy": 0.8603968150372014,
+        "weighted_f1": 0.8602566593483747,
+        "macro_f1": 0.861129006544407,
+        "seconds": 216
+      }
+    ]
+  },
+  "summary": {
+    "logistic_regression": {
+      "accuracy": {
+        "mean": 0.8371840055693339,
+        "std": 0.0009265778810010712
+      },
+      "weighted_f1": {
+        "mean": 0.8369962399006047,
+        "std": 0.0008378494888508968
+      },
+      "macro_f1": {
+        "mean": 0.8379118271126337,
+        "std": 0.001165527451417246
+      }
+    },
+    "random_forest": {
+      "accuracy": {
+        "mean": 0.8081625549319061,
+        "std": 0.0009387568642210239
+      },
+      "weighted_f1": {
+        "mean": 0.8064610631548191,
+        "std": 0.0010343107359632167
+      },
+      "macro_f1": {
+        "mean": 0.8097454813423487,
+        "std": 0.0011296955349754706
+      }
+    },
+    "gradient_boosting": {
+      "accuracy": {
+        "mean": 0.8598094243571336,
+        "std": 0.0012689088953937938
+      },
+      "weighted_f1": {
+        "mean": 0.8596129650827797,
+        "std": 0.0012861788259073226
+      },
+      "macro_f1": {
+        "mean": 0.8609952563671035,
+        "std": 0.0014461362052617477
+      }
+    }
+  },
+  "finished": "2026-10-19T21:51:46"
+}

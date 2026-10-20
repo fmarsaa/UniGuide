@@ -69,9 +69,10 @@ FULL_OPTIONAL_SUBJECTS = [
 
 
 def grade_to_points(grade: Optional[str], default: str = "C+") -> int:
+    fallback = GRADE_POINTS[default.strip().upper()]
     if not grade:
-        grade = default
-    return GRADE_POINTS.get(grade.strip().upper() if isinstance(grade, str) else grade, GRADE_POINTS[default])
+        return fallback
+    return GRADE_POINTS.get(grade.strip().upper() if isinstance(grade, str) else grade, fallback)
 
 
 def points_to_grade(points: int) -> str:
@@ -139,6 +140,19 @@ def meets_minimum_requirements(grades: Dict[str, str], minimum_requirements: Dic
         if grade_to_points(candidate_grade) < grade_to_points(min_grade):
             return False
     return True
+
+
+def unmet_requirements(grades: Dict[str, str], minimum_requirements: Dict[str, str]) -> list:
+    """Plain sentences for each minimum subject grade the student does not meet, for example
+    "English: asks for at least B, and your grade is D+". Empty when every requirement is met."""
+    notes = []
+    for subject, min_grade in minimum_requirements.items():
+        have = find_grade_for_subject(grades, subject)
+        if have is None:
+            notes.append(f"{subject}: asks for at least {min_grade}, and you did not sit this subject")
+        elif grade_to_points(have) < grade_to_points(min_grade):
+            notes.append(f"{subject}: asks for at least {min_grade}, and your grade is {have.strip().upper()}")
+    return notes
 
 
 def extract_ml_feature_points(grades: Dict[str, str], mean_grade: str = "C+") -> Dict[str, int]:

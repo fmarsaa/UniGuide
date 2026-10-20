@@ -13,15 +13,29 @@ endpoint that requires authentication or persistence - it never silently
 pretends a write succeeded.
 """
 
+import json
 import logging
 import os
-from typing import Optional
 
 logger = logging.getLogger("uniguide")
 
 _db = None
 _app = None
 _initialized = False
+
+
+def credential_source():
+    """The Firebase key as a dict (FIREBASE_SERVICE_ACCOUNT_JSON, for hosts that keep
+    secrets in environment variables) or as a file path (FIREBASE_SERVICE_ACCOUNT_PATH);
+    None when neither is usable."""
+    raw = os.environ.get("FIREBASE_SERVICE_ACCOUNT_JSON")
+    if raw:
+        try:
+            return json.loads(raw)
+        except ValueError:
+            logger.error("FIREBASE_SERVICE_ACCOUNT_JSON is not valid JSON; ignoring it.")
+    path = os.environ.get("FIREBASE_SERVICE_ACCOUNT_PATH")
+    return path if path and os.path.isfile(path) else None
 
 
 def init_firebase() -> bool:
@@ -31,14 +45,14 @@ def init_firebase() -> bool:
         return _db is not None
 
     _initialized = True
-    cred_path = os.environ.get("FIREBASE_SERVICE_ACCOUNT_PATH")
+    source = credential_source()
 
-    if not cred_path or not os.path.isfile(cred_path):
+    if source is None:
         logger.warning(
-            "FIREBASE_SERVICE_ACCOUNT_PATH is not set or the file does not exist "
-            "(looked for: %s). Authentication and Firestore persistence are disabled "
-            "until this is configured - see backend/README.md.",
-            cred_path,
+            "No Firebase key found: FIREBASE_SERVICE_ACCOUNT_JSON is not set and "
+            "FIREBASE_SERVICE_ACCOUNT_PATH is not set or the file does not exist. "
+            "Authentication and Firestore persistence are disabled until this is "
+            "configured - see backend/README.md."
         )
         return False
 
@@ -46,7 +60,7 @@ def init_firebase() -> bool:
         import firebase_admin
         from firebase_admin import credentials, firestore
 
-        cred = credentials.Certificate(cred_path)
+        cred = credentials.Certificate(source)
         _app = firebase_admin.initialize_app(cred)
         _db = firestore.client()
         logger.info("Firebase Admin initialized. Firestore persistence and auth verification enabled.")
@@ -75,3 +89,10 @@ def verify_id_token(id_token: str) -> dict:
 def admin_emails() -> set:
     raw = os.environ.get("ADMIN_EMAILS", "")
     return {e.strip().lower() for e in raw.split(",") if e.strip()}
+
+
+def delete_auth_user(uid: str) -> None:
+    """Removes the sign-in account itself. Caller must ensure is_configured() first."""
+    from firebase_admin import auth as fb_auth
+
+    fb_auth.delete_user(uid)

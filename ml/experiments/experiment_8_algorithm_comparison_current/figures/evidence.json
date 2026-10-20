@@ -1,0 +1,249 @@
+{
+  "class_counts": {
+    "min": 200,
+    "median": 274.0,
+    "max": 671
+  },
+  "f1_lowest": [
+    [
+      "Bachelor of Science in Business Information Technology (BBIT)",
+      0.679
+    ],
+    [
+      "Bachelor of Science in Informatics and Computer Science",
+      0.681
+    ],
+    [
+      "Bachelor of Science in Industrial Chemistry",
+      0.702
+    ],
+    [
+      "Bachelor of Science in Software Engineering",
+      0.712
+    ],
+    [
+      "Bachelor of Science in Biochemistry",
+      0.733
+    ],
+    [
+      "Bachelor of Economics",
+      0.733
+    ],
+    [
+      "Bachelor of Science in Statistics",
+      0.749
+    ],
+    [
+      "Bachelor of Education (Science)",
+      0.758
+    ],
+    [
+      "Bachelor of Engineering in Chemical Engineering",
+      0.762
+    ],
+    [
+      "Bachelor of Commerce (BCom) - Finance & Accounting",
+      0.767
+    ]
+  ],
+  "f1_highest": [
+    [
+      "Bachelor of Science in Electrical and Electronic Engineering",
+      0.879
+    ],
+    [
+      "Bachelor of Pharmacy (BPharm)",
+      0.891
+    ],
+    [
+      "Bachelor of Social Work",
+      0.916
+    ]
+  ],
+  "confused_pairs": [
+    [
+      36,
+      "Bachelor of Science in Industrial Chemistry",
+      "Bachelor of Science in Chemistry"
+    ],
+    [
+      33,
+      "Bachelor of Science in Statistics",
+      "Bachelor of Science in Mathematics"
+    ],
+    [
+      33,
+      "Bachelor of Science in Software Engineering",
+      "Bachelor of Science in Informatics and Computer Science"
+    ],
+    [
+      27,
+      "Bachelor of Engineering in Chemical Engineering",
+      "Bachelor of Science in Chemistry"
+    ],
+    [
+      24,
+      "Bachelor of Education (Science)",
+      "Bachelor of Education (Arts)"
+    ],
+    [
+      23,
+      "Bachelor of Science in Physics",
+      "Bachelor of Science in Biomedical Engineering"
+    ]
+  ],
+  "comparison": {
+    "logistic_regression": {
+      "mean": 83.71840055693339,
+      "std": 0.09265778810011274,
+      "n": 3,
+      "weighted_f1": 83.69962399006046
+    },
+    "random_forest": {
+      "mean": 80.81625549319061,
+      "std": 0.09387568642210083,
+      "n": 3,
+      "weighted_f1": 80.64610631548192
+    },
+    "gradient_boosting": {
+      "mean": 85.98094243571336,
+      "std": 0.1268908895393837,
+      "n": 3,
+      "weighted_f1": 85.96129650827798
+    }
+  },
+  "model_params": {
+    "class_weight": "balanced_subsample",
+    "max_depth": "None",
+    "max_features": "log2",
+    "min_samples_leaf": "1",
+    "n_estimators": "350",
+    "random_state": "42"
+  },
+  "top_k": {
+    "logistic_regression": {
+      "top1": 0.8363137971544184,
+      "top3": 0.968215637645216
+    },
+    "random_forest": {
+      "top1": 0.8084453726667536,
+      "top3": 0.9407388069442632
+    },
+    "gradient_boosting": {
+      "top1": 0.8580472523169299,
+      "top3": 0.9763738415350477
+    }
+  },
+  "shap_top": [
+    [
+      "Career choice",
+      0.0106
+    ],
+    [
+      "Strength: Attention to Precision",
+      0.0038
+    ],
+    [
+      "Skill: Scientific Laboratory Research",
+      0.0032
+    ],
+    [
+      "Strength: Leadership & Strategic Direction",
+      0.0032
+    ],
+    [
+      "Interest: Agribusiness & Food Sustainability",
+      0.0029
+    ],
+    [
+      "Strength: Empathy & Human Care",
+      0.0026
+    ],
+    [
+      "Skill: Mathematical & Quantitative Analysis",
+      0.0024
+    ],
+    [
+      "Skill: Critical Thinking & Persuasive Debate",
+      0.0022
+    ],
+    [
+      "Interest: Clinical Laboratory & Diagnostic Sciences",
+      0.0019
+    ],
+    [
+      "Interest: Chemical & Materials Sciences",
+      0.0018
+    ],
+    [
+      "Chemistry grade",
+      0.0017
+    ],
+    [
+      "Skill: Clinical Diagnostics & Health Care",
+      0.0016
+    ]
+  ],
+  "sample_rows": [
+    {
+      "math_score": 10,
+      "eng_score": 8,
+      "kis_score": 10,
+      "chem_score": 10,
+      "bio_score": 11,
+      "phys_score": 9,
+      "mean_points": 9,
+      "aspiration": "Medical Laboratory Technologist",
+      "programme_label": "Bachelor of Science in Medical Laboratory Sciences"
+    },
+    {
+      "math_score": 8,
+      "eng_score": 9,
+      "kis_score": 8,
+      "chem_score": 6,
+      "bio_score": 7,
+      "phys_score": 8,
+      "mean_points": 8,
+      "aspiration": "Food Scientist / Food Technologist",
+      "programme_label": "Bachelor of Science in Food Science and Technology"
+    },
+    {
+      "math_score": 9,
+      "eng_score": 7,
+      "kis_score": 6,
+      "chem_score": 8,
+      "bio_score": 7,
+      "phys_score": 10,
+      "mean_points": 7,
+      "aspiration": "Built Environment Professional (General)",
+      "programme_label": "Bachelor of Science in Civil Engineering"
+    },
+    {
+      "math_score": 9,
+      "eng_score": 8,
+      "kis_score": 7,
+      "chem_score": 6,
+      "bio_score": 9,
+      "phys_score": 7,
+      "mean_points": 7,
+      "aspiration": "Not sure yet",
+      "programme_label": "Bachelor of Education (Arts)"
+    },
+    {
+      "math_score": 12,
+      "eng_score": 12,
+      "kis_score": 12,
+      "chem_score": 10,
+      "bio_score": 10,
+      "phys_score": 12,
+      "mean_points": 12,
+      "aspiration": "Not sure yet",
+      "programme_label": "Bachelor of Education (Science)"
+    }
+  ],
+  "dataset": {
+    "rows": 15322,
+    "classes": 53,
+    "features": 96
+  }
+}

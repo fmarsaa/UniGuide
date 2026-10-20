@@ -4,7 +4,7 @@ Trained Random Forest (Experiment 1b's validated hyperparameters),
 Histogram Gradient Boosting (sklearn defaults), and multinomial Logistic
 Regression on the **identical** dataset, features, and evaluation
 methodology (5-fold StratifiedKFold out-of-fold `cross_val_predict` — same
-as every other reported number in this project) via `backend/model_comparison.py`.
+as every other reported number in this project) via `model_comparison.py` (this folder).
 This does not touch the deployed model; it's a comparison-only script.
 
 ## Result

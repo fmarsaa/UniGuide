@@ -177,26 +177,46 @@ def test_deactivated_programme_is_never_recommended():
         del main.CATALOG_BY_TITLE[title]["status"]
 
 
-def test_programme_you_can_get_into_outranks_a_reach_programme_the_model_likes_more():
-    """Ranking prefers programmes whose cutoff the student meets at some
-    university over ones far above it, even when the model's probability for
-    the harder programme is higher - as long as both are real candidates."""
+def _with_cutoffs(cutoffs):
+    """Temporarily gives the first classes the given latest cutoffs and no subject requirements."""
     classes = main._pipeline.classes_
-    hard, easy = classes[0], classes[1]
-    saved = {t: (main.CATALOG_BY_TITLE[t]["offeringUniversities"], main.CATALOG_BY_TITLE[t]["minimumSubjectRequirements"]) for t in (hard, easy)}
-    try:
-        main.CATALOG_BY_TITLE[hard]["offeringUniversities"] = [{"universityName": "H", "latestCutoff": 90.0}]
-        main.CATALOG_BY_TITLE[easy]["offeringUniversities"] = [{"universityName": "E", "latestCutoff": 5.0}]
-        for t in (hard, easy):
-            main.CATALOG_BY_TITLE[t]["minimumSubjectRequirements"] = {}
+    saved = {}
+    for i, cutoff in enumerate(cutoffs):
+        t = classes[i]
+        saved[t] = (main.CATALOG_BY_TITLE[t]["offeringUniversities"], main.CATALOG_BY_TITLE[t]["minimumSubjectRequirements"])
+        main.CATALOG_BY_TITLE[t]["offeringUniversities"] = [{"universityName": "U", "latestCutoff": cutoff}]
+        main.CATALOG_BY_TITLE[t]["minimumSubjectRequirements"] = {}
+    return saved
 
+
+def _restore(saved):
+    for t, (unis, reqs) in saved.items():
+        main.CATALOG_BY_TITLE[t]["offeringUniversities"] = unis
+        main.CATALOG_BY_TITLE[t]["minimumSubjectRequirements"] = reqs
+
+
+def test_the_best_fit_is_shown_first_even_when_it_is_a_stretch():
+    classes = main._pipeline.classes_
+    saved = _with_cutoffs([90.0, 5.0])
+    try:
         proba = np.zeros(len(classes))
         proba[0], proba[1] = 0.70, 0.30
         grades = {"Mathematics": "B", "English": "B", "Kiswahili": "B", "Chemistry": "B"}
         top_idx, _ = main.select_recommended_indices(proba, classes, grades, "B")
-
-        assert top_idx.index(1) < top_idx.index(0)
+        assert top_idx[0] == 0  # the 0.70 fit leads although its cutoff is far above the student
+        assert top_idx[1] == 1  # then a programme the student can reach
     finally:
-        for t, (unis, reqs) in saved.items():
-            main.CATALOG_BY_TITLE[t]["offeringUniversities"] = unis
-            main.CATALOG_BY_TITLE[t]["minimumSubjectRequirements"] = reqs
+        _restore(saved)
+
+
+def test_after_the_best_fit_a_programme_you_can_reach_outranks_a_stretch():
+    classes = main._pipeline.classes_
+    saved = _with_cutoffs([90.0, 90.0, 5.0])
+    try:
+        proba = np.zeros(len(classes))
+        proba[0], proba[1], proba[2] = 0.50, 0.30, 0.20
+        grades = {"Mathematics": "B", "English": "B", "Kiswahili": "B", "Chemistry": "B"}
+        top_idx, _ = main.select_recommended_indices(proba, classes, grades, "B")
+        assert top_idx[:3] == [0, 2, 1]
+    finally:
+        _restore(saved)

@@ -16,29 +16,36 @@ so; if Firebase Admin isn't configured (FIREBASE_SERVICE_ACCOUNT_PATH), those
 endpoints return a clear 503 instead of silently pretending to succeed.
 """
 
+import hashlib
+import json
 import logging
 import os
-import pickle
 import subprocess
 import sys
 import threading
+import time
+from collections import defaultdict, deque
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional
 
 import numpy as np
+import joblib
 import pandas as pd
 import shap
 from apscheduler.schedulers.background import BackgroundScheduler
 from dotenv import load_dotenv
-from fastapi import Depends, FastAPI, Header, HTTPException
+from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from firebase_admin import firestore as fb_firestore
 from pydantic import BaseModel, field_validator
 
-from firebase_setup import admin_emails, get_db, init_firebase, verify_id_token
+from analytics import build_overview
+from analytics import day_of as _utc_day
+from model_store import ensure_model
+from firebase_setup import admin_emails, delete_auth_user, get_db, init_firebase, verify_id_token
 from kuccps import (
     COMPULSORY_SUBJECTS,
     FEATURE_COLUMN,
@@ -55,11 +62,12 @@ from kuccps import (
     grade_to_points,
     meets_minimum_requirements,
     points_to_grade,
+    unmet_requirements,
     raw_cluster_points,
 )
 from programmes_catalog import CATALOG_BY_ID as _STATIC_CATALOG_BY_ID
 from programmes_catalog import PROGRAMMES
-from synthetic_data_generator import FALLBACK_ORDER, TRAIT_COLUMN_INFO, build_cluster_score_features, build_trait_features
+from synthetic_data_generator import ASPIRATION_MAP, FALLBACK_ORDER, TRAIT_COLUMN_INFO, build_cluster_score_features, build_trait_features
 from catalogue_freshness import check_catalogue_freshness
 
 load_dotenv()
@@ -174,16 +182,35 @@ _explainer = None
 
 def _load_model() -> None:
     global _pipeline, _explainer
+    ensure_model(MODEL_PATH, os.environ.get("MODEL_URL"), os.environ.get("MODEL_SHA256"), os.environ.get("MODEL_TOKEN"))
     if not os.path.isfile(MODEL_PATH):
         logger.warning(
             "rf_model_pipeline.pkl not found at %s. Run `python train_random_forest.py` "
             "in backend/ before calling /api/recommend.", MODEL_PATH,
         )
         return
-    with open(MODEL_PATH, "rb") as f:
-        _pipeline = pickle.load(f)
+    # joblib.load reads both the older plain-pickle file and the compressed one
+    # that train_random_forest.py now writes, so an existing model keeps working.
+    _pipeline = joblib.load(MODEL_PATH)
     _explainer = shap.TreeExplainer(_pipeline.named_steps["classifier"])
     logger.info("Random Forest pipeline and SHAP explainer loaded (%d classes).", len(_pipeline.classes_))
+
+
+def model_version() -> str:
+    """Identifies the model that produced a result. Training writes a version into
+    model_metrics.json; a model trained before that existed falls back to the date
+    its file was last written, so every result still says which model made it."""
+    try:
+        with open(METRICS_PATH, encoding="utf-8") as f:
+            recorded = json.load(f).get("model_version")
+        if recorded:
+            return str(recorded)
+    except (OSError, ValueError):
+        pass
+    try:
+        return "rf-" + datetime.fromtimestamp(os.path.getmtime(MODEL_PATH), timezone.utc).strftime("%Y%m%d")
+    except OSError:
+        return "unknown"
 
 
 # ---------------------------------------------------------------------------
@@ -210,7 +237,6 @@ def _run_retrain_subprocess(actor: str) -> None:
     parallelism further for the same reason. If the child process OOMs or
     crashes, this server keeps serving the model it already has loaded -
     it never shares the crash."""
-    global _training_status
     db = get_db()
     try:
         env = {**os.environ, "TRAIN_N_JOBS": "2"}
@@ -409,6 +435,11 @@ def require_auth(authorization: Optional[str] = Header(None)) -> dict:
     return decoded
 
 
+def rate_limited_user(decoded: dict = Depends(require_auth)) -> dict:
+    check_rate_limit(decoded["uid"])
+    return decoded
+
+
 def require_admin(decoded: dict = Depends(require_auth)) -> dict:
     db = get_db()
     email = (decoded.get("email") or "").lower()
@@ -418,6 +449,48 @@ def require_admin(decoded: dict = Depends(require_auth)) -> dict:
     if not is_admin:
         raise HTTPException(status_code=403, detail="Administrator privileges required.")
     return decoded
+
+
+# ---------------------------------------------------------------------------
+# Abuse protection: request size, request rate, repeated submissions
+# ---------------------------------------------------------------------------
+MAX_BODY_BYTES = 64 * 1024  # a full profile is a few KB; anything this large is not one
+RATE_LIMIT_REQUESTS = int(os.environ.get("RATE_LIMIT_REQUESTS", "30"))
+RATE_LIMIT_WINDOW_SECONDS = int(os.environ.get("RATE_LIMIT_WINDOW_SECONDS", "60"))
+DUPLICATE_WINDOW_SECONDS = 10
+
+_recent_requests: Dict[str, deque] = defaultdict(deque)
+_last_submission: Dict[str, tuple] = {}
+
+
+@app.middleware("http")
+async def _reject_oversized_bodies(request: Request, call_next):
+    declared = request.headers.get("content-length")
+    if declared and declared.isdigit() and int(declared) > MAX_BODY_BYTES:
+        return JSONResponse(status_code=413, content={"detail": "That request is too large."})
+    return await call_next(request)
+
+
+def check_rate_limit(key: str, now: Optional[float] = None) -> None:
+    """Allows RATE_LIMIT_REQUESTS per signed-in user per window; raises 429 beyond that.
+    Kept in this process's memory, which is enough for a single-server deployment."""
+    now = time.monotonic() if now is None else now
+    window = _recent_requests[key]
+    while window and now - window[0] > RATE_LIMIT_WINDOW_SECONDS:
+        window.popleft()
+    if len(window) >= RATE_LIMIT_REQUESTS:
+        raise HTTPException(status_code=429, detail="You are doing that too quickly. Please wait a minute and try again.")
+    window.append(now)
+
+
+def _is_duplicate_submission(uid: str, payload: StudentProfilePayload, now: Optional[float] = None) -> bool:
+    """True when this exact profile was already saved moments ago (a double tap or a
+    retry after a dropped connection), so the history gets one record, not two."""
+    now = time.monotonic() if now is None else now
+    fingerprint = hashlib.sha256(payload.model_dump_json().encode()).hexdigest()
+    previous = _last_submission.get(uid)
+    _last_submission[uid] = (fingerprint, now)
+    return previous is not None and previous[0] == fingerprint and now - previous[1] < DUPLICATE_WINDOW_SECONDS
 
 
 # ---------------------------------------------------------------------------
@@ -607,6 +680,7 @@ def _persist_recommendation(uid: str, email: Optional[str], payload: StudentProf
         }, merge=True)
         student_ref.collection("recommendations").add({
             "recommendations": results,
+            "modelVersion": results[0].get("modelVersion") if results else None,
             "createdAt": fb_firestore.SERVER_TIMESTAMP,
         })
     except Exception:
@@ -638,6 +712,7 @@ def health_check():
         "system": "UniGuide Mobile ML Backend",
         "model": "Random Forest Classifier (Scikit-Learn)",
         "model_loaded": _pipeline is not None,
+        "model_version": model_version() if _pipeline is not None else None,
         "model_metrics": _load_model_metrics(),
         "explainability": "SHAP (SHapley Additive exPlanations)",
         "firestore_configured": init_firebase(),
@@ -700,7 +775,8 @@ def list_all_programmes_for_admin(decoded: dict = Depends(require_admin)):
 def select_recommended_indices(
     proba: np.ndarray, classes: np.ndarray, grades: Dict[str, str], mean_grade: str
 ) -> tuple:
-    """Ranks genuinely eligible programmes by predicted probability, falling
+    """Picks the three programmes to show: the best fit among the genuinely eligible
+    programmes first, then the best two the student can reach, falling
     back to FALLBACK_ORDER when fewer than 3 are eligible. Returns
     (top_idx, eligible_mask). Factored out of get_recommendations so it's
     unit-testable (backend/tests/test_recommend_eligibility.py) without
@@ -744,7 +820,14 @@ def select_recommended_indices(
         tier = cutoff_tier(summary) + (3 if proba[i] < 0.02 else 0)
         return (tier, -proba[i])
 
-    top_idx = sorted(eligible_idx, key=rank_key)[:3]
+    # The model's best fit is always shown first, even when it is a stretch (the app says so in
+    # plain words). The other two places go to the best programmes the student can reach. Ranking
+    # purely by reachability pushed good fits out of the three shown: on out-of-fold profiles the
+    # labelled programme was shown 73% of the time, against 92% with this rule (Experiment 9).
+    top_idx = []
+    if eligible_idx:
+        best_fit = max(eligible_idx, key=lambda i: proba[i])
+        top_idx = [best_fit] + [i for i in sorted(eligible_idx, key=rank_key) if i != best_fit][:2]
 
     if len(top_idx) < 3:
         for title in FALLBACK_ORDER:
@@ -759,7 +842,7 @@ def select_recommended_indices(
 
 
 @app.post("/api/recommend")
-def get_recommendations(payload: StudentProfilePayload, decoded: dict = Depends(require_auth), preview: bool = False):
+def get_recommendations(payload: StudentProfilePayload, decoded: dict = Depends(rate_limited_user), preview: bool = False):
     # preview=true is the "what if" simulator: it returns exactly what a real request would, but saves nothing,
     # so trying out different grades never fills the student's history or the admin analytics.
     if _pipeline is None or _explainer is None:
@@ -796,6 +879,7 @@ def get_recommendations(payload: StudentProfilePayload, decoded: dict = Depends(
     row_values = row_df.iloc[0].to_dict()
 
     agg = aggregate_points(grades, mean_grade)
+    version = model_version()
 
     results = []
     for rank, class_idx in enumerate(top_idx, start=1):
@@ -829,11 +913,35 @@ def get_recommendations(payload: StudentProfilePayload, decoded: dict = Depends(
             "plainReasons": plain_reasons,
             "programme": programme,
             "shapExplanations": shap_list,
+            "modelVersion": version,
         })
 
-    if not preview:
+    if not preview and not _is_duplicate_submission(uid, payload):
         _persist_recommendation(uid, decoded.get("email"), payload, results)
     return results
+
+
+def programmes_missed_for_career(grades: Dict[str, str], careers: List[str]) -> list:
+    """For each career the student named, the programmes that lead to it which the student cannot
+    be admitted to yet, with the grades that are missing. Programmes the student does qualify for
+    are left out, so an empty list means nothing is being held back."""
+    notes = []
+    for career in careers:
+        for title in ASPIRATION_MAP.get(career, []):
+            programme = CATALOG_BY_TITLE.get(title)
+            if programme is None or programme.get("status") == "inactive":
+                continue
+            reasons = unmet_requirements(grades, programme.get("minimumSubjectRequirements") or {})
+            if reasons:
+                notes.append({"career": career, "programme": title, "reasons": reasons})
+    return notes
+
+
+@app.post("/api/career-note")
+def career_note(payload: StudentProfilePayload, decoded: dict = Depends(rate_limited_user)):
+    """Tells a student why a programme for the career they named is not among their results,
+    in terms of the exact subject grades. Nothing is saved."""
+    return programmes_missed_for_career(payload.grades or {}, payload.aspirations or [])
 
 
 SHORTLIST_LIMIT = 30
@@ -903,6 +1011,48 @@ def submit_feedback(feedback: FeedbackPayload, decoded: dict = Depends(require_a
         "submittedAt": fb_firestore.SERVER_TIMESTAMP,
     })
     return {"status": "success", "feedback_id": doc_ref.id}
+
+
+STUDENT_SUBCOLLECTIONS = ("recommendations", "shortlist", "feedback")
+
+
+class DeleteAccountPayload(BaseModel):
+    confirm: str = ""
+
+
+def delete_student_data(db, uid: str) -> None:
+    """Removes everything stored about one student: their recommendations, saved
+    programmes, feedback and profile."""
+    student_ref = db.collection("students").document(uid)
+    for name in STUDENT_SUBCOLLECTIONS:
+        collection = student_ref.collection(name)
+        for snap in list(collection.stream()):
+            collection.document(snap.id).delete()
+    student_ref.delete()
+
+
+@app.delete("/api/me")
+def delete_my_account(body: DeleteAccountPayload, decoded: dict = Depends(rate_limited_user)):
+    """The student deletes their own account and all data stored about them.
+    The body must say {"confirm": "DELETE"} so a stray request cannot do it."""
+    if body.confirm != "DELETE":
+        raise HTTPException(status_code=400, detail='To delete your account, confirm by sending "DELETE".')
+    db = get_db()
+    if db is None:
+        raise HTTPException(status_code=503, detail="This service is temporarily unavailable. Please try again later.")
+    uid = decoded["uid"]
+    if (decoded.get("email") or "").lower() in admin_emails() or db.collection("admins").document(uid).get().exists:
+        raise HTTPException(status_code=403, detail="Administrator accounts are removed by another administrator, not here.")
+    delete_student_data(db, uid)
+    delete_auth_user(uid)
+    # The log keeps only that a deletion happened, never who the student was.
+    db.collection("audit_logs").document().set({
+        "action": "Student Account Deleted",
+        "actor": "Student (self-service)",
+        "details": "A student deleted their account and stored data.",
+        "timestamp": fb_firestore.SERVER_TIMESTAMP,
+    })
+    return {"deleted": True}
 
 
 @app.put("/api/admin/programmes/{programme_id}")
@@ -1213,13 +1363,6 @@ def list_feedback(decoded: dict = Depends(require_admin)):
     return entries[:50]
 
 
-def _utc_day(timestamp) -> Optional[str]:
-    """A Firestore timestamp as a YYYY-MM-DD day in UTC, or None if it is not a timestamp."""
-    if not hasattr(timestamp, "astimezone"):
-        return None
-    return timestamp.astimezone(timezone.utc).date().isoformat()
-
-
 @app.get("/api/admin/analytics/activity")
 def activity_analytics(days: int = 30, decoded: dict = Depends(require_admin)):
     """Recommendations, feedback and new students per day for the last `days` days,
@@ -1260,6 +1403,38 @@ def activity_analytics(days: int = 30, decoded: dict = Depends(require_admin)):
     if ratings:
         totals["averageRating"] = round(sum(ratings) / len(ratings), 2)
     return {"days": list(buckets.values()), "totals": totals}
+
+
+@app.get("/api/admin/analytics/overview")
+def analytics_overview(decoded: dict = Depends(require_admin)):
+    """Counts for the admin Insights page: users and growth, activity, how far students
+    get, who they are (grade bands, decided or not), what they were shown and what they
+    saved. Plain scans with the counting done in Python, so no Firestore index is needed;
+    only totals leave the server, never a student's name, email or grades."""
+    db = get_db()
+    if db is None:
+        raise HTTPException(status_code=503, detail="This service is temporarily unavailable. Please try again later.")
+
+    def owner(doc) -> str:
+        return doc.reference.parent.parent.id
+
+    students = []
+    for doc in db.collection("students").stream():
+        data = doc.to_dict() or {}
+        students.append({
+            "uid": doc.id,
+            "createdAt": data.get("createdAt"),
+            "kcseMeanGrade": data.get("kcseMeanGrade"),
+            "aspirations": data.get("aspirations") or [],
+        })
+    recommendations = []
+    for doc in db.collection_group("recommendations").stream():
+        data = doc.to_dict() or {}
+        recommendations.append({"uid": owner(doc), "createdAt": data.get("createdAt"), "items": data.get("recommendations") or []})
+    feedback = [{"uid": owner(doc), "rating": (doc.to_dict() or {}).get("rating")} for doc in db.collection_group("feedback").stream()]
+    saved = [{"uid": owner(doc), "programmeId": doc.id} for doc in db.collection_group("shortlist").stream()]
+    titles = {pid: programme["title"] for pid, programme in CATALOG_BY_ID.items()}
+    return build_overview(students, recommendations, feedback, saved, titles)
 
 
 @app.get("/api/admin/analytics/programme-popularity")

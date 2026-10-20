@@ -16,6 +16,8 @@ train_random_forest.py.
 """
 
 import json
+import os
+import sys
 
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import HistGradientBoostingClassifier, RandomForestClassifier
@@ -24,6 +26,9 @@ from sklearn.metrics import accuracy_score, classification_report, f1_score
 from sklearn.model_selection import StratifiedKFold, cross_val_predict
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(HERE, "..", "..", "..", "backend"))
 
 from kuccps import ML_FEATURE_SUBJECTS, FEATURE_COLUMN
 from synthetic_data_generator import THIN_CLASS_FLOOR, TRAIT_FEATURE_COLUMNS, create_synthetic_dataset
@@ -104,7 +109,7 @@ def main():
     for name, r in results.items():
         print(f"{name:25s}  accuracy={r['accuracy']*100:6.2f}%  weighted_f1={r['weighted_f1']*100:6.2f}%  macro_f1={r['macro_f1']*100:6.2f}%")
 
-    with open("model_comparison_results.json", "w") as f:
+    with open(os.path.join(HERE, "model_comparison_results.json"), "w") as f:
         json.dump(
             {
                 "dataset_size": len(df),

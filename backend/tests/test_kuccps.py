@@ -3,7 +3,6 @@ rules that decide, for a real student, what they can and can't be admitted
 to. These are the functions a wrong formula or a silent regression here
 would be hardest to notice by eye, since results still "look plausible"."""
 
-import pytest
 
 from kuccps import (
     aggregate_points,
@@ -191,3 +190,8 @@ class TestUniversityCutoffs:
         summary = university_cutoff_summary(41.0, [], fallback_cutoff=40.0)
         assert (summary["total"], summary["meets"]) == (1, 1)
         assert university_cutoff_summary(41.0, [], None) is None
+
+
+def test_a_grade_typed_in_lower_case_is_read_like_the_capital_letter():
+    assert grade_to_points("b+") == grade_to_points("B+")
+    assert grade_to_points(None, default="b+") == grade_to_points("B+")
