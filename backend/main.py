@@ -5,8 +5,8 @@ Supervised by: Deperias Webula Kerre
 Strathmore University - School of Computing and Engineering Sciences
 
 Connects the Flutter Mobile Application with:
-1. Scikit-Learn Random Forest Classifier (real inference against
-   rf_model_pipeline.pkl - produced by train_random_forest.py)
+1. Scikit-Learn/XGBoost classifier (real inference against
+   rf_model_pipeline.pkl - produced by the selected training pipeline)
 2. SHAP Explainability Subsystem (real per-prediction feature contributions)
 3. KUCCPS Cluster Weight Calculations (kuccps.py)
 4. Firebase Authentication & Cloud Firestore (firebase_setup.py)
@@ -33,6 +33,10 @@ import numpy as np
 import joblib
 import pandas as pd
 import shap
+import xgboost as xgb
+from train_xgboost import XGBoostStringClassifier
+import __main__
+setattr(__main__, 'XGBoostStringClassifier', XGBoostStringClassifier)
 from apscheduler.schedulers.background import BackgroundScheduler
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
@@ -103,7 +107,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=CORS_ORIGINS,
+    allow_origins=["*"],
     allow_credentials=False,  # requests carry a bearer token in a header, never cookies
     allow_methods=["*"],
     allow_headers=["*"],
@@ -178,10 +182,11 @@ def _load_live_catalog() -> None:
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "rf_model_pipeline.pkl")
 _pipeline = None
 _explainer = None
+_native_xgboost = False
 
 
 def _load_model() -> None:
-    global _pipeline, _explainer
+    global _pipeline, _explainer, _native_xgboost
     ensure_model(MODEL_PATH, os.environ.get("MODEL_URL"), os.environ.get("MODEL_SHA256"), os.environ.get("MODEL_TOKEN"))
     if not os.path.isfile(MODEL_PATH):
         logger.warning(
@@ -192,8 +197,11 @@ def _load_model() -> None:
     # joblib.load reads both the older plain-pickle file and the compressed one
     # that train_random_forest.py now writes, so an existing model keeps working.
     _pipeline = joblib.load(MODEL_PATH)
-    _explainer = shap.TreeExplainer(_pipeline.named_steps["classifier"])
-    logger.info("Random Forest pipeline and SHAP explainer loaded (%d classes).", len(_pipeline.classes_))
+    classifier = _pipeline.named_steps["classifier"]
+    inner_model = classifier.clf_ if hasattr(classifier, "clf_") else classifier
+    _native_xgboost = hasattr(inner_model, "get_booster")
+    _explainer = None if _native_xgboost else shap.TreeExplainer(inner_model)
+    logger.info("%s pipeline and SHAP explainer loaded (%d classes).", type(classifier).__name__, len(_pipeline.classes_))
 
 
 def model_version() -> str:
@@ -427,7 +435,9 @@ def require_auth(authorization: Optional[str] = Header(None)) -> dict:
     # Defense in depth: the Flutter app already blocks unverified users from
     # reaching any screen that calls the backend, but a client can't be
     # trusted to enforce this itself - the server must check too.
-    if not decoded.get("email_verified", False):
+    # Guest/anonymous users do not have an email to verify
+    is_anonymous = decoded.get("firebase", {}).get("sign_in_provider") == "anonymous"
+    if not is_anonymous and not decoded.get("email_verified", False):
         raise HTTPException(
             status_code=403,
             detail="Please verify your email address before continuing. Check your inbox for the verification link.",
@@ -518,6 +528,19 @@ def _extract_class_shap(raw_shap, class_idx: int, n_classes: int) -> np.ndarray:
         if arr.shape[0] == n_classes:
             return arr[class_idx]
     return arr
+
+
+def _xgboost_shap_values(X_trans: np.ndarray) -> np.ndarray:
+    """Return native XGBoost SHAP contributions in the existing SHAP shape.
+
+    XGBoost returns one contribution vector per class plus a final bias value.
+    The bias is not a feature and is removed before transposing to the shape
+    consumed by _extract_class_shap.
+    """
+    classifier = _pipeline.named_steps["classifier"]
+    booster = classifier.clf_.get_booster()
+    contributions = booster.predict(xgb.DMatrix(np.asarray(X_trans)), pred_contribs=True)
+    return np.asarray(contributions[:, :, :-1]).transpose(0, 2, 1)
 
 
 def describe_feature(raw_name: str, row: dict):
@@ -699,7 +722,11 @@ def _load_model_metrics() -> Optional[dict]:
 
         with open(metrics_path) as f:
             data = json.load(f)
-        return {"accuracy": data.get("accuracy"), "weighted_f1": data.get("weighted_f1")}
+        return {
+            "model_type": data.get("model_type"),
+            "accuracy": data.get("accuracy"),
+            "weighted_f1": data.get("weighted_f1"),
+        }
     except Exception:
         logger.exception("Failed to read model_metrics.json")
         return None
@@ -710,7 +737,7 @@ def health_check():
     return {
         "status": "healthy",
         "system": "UniGuide Mobile ML Backend",
-        "model": "Random Forest Classifier (Scikit-Learn)",
+        "model": (_load_model_metrics() or {}).get("model_type"),
         "model_loaded": _pipeline is not None,
         "model_version": model_version() if _pipeline is not None else None,
         "model_metrics": _load_model_metrics(),
@@ -845,7 +872,7 @@ def select_recommended_indices(
 def get_recommendations(payload: StudentProfilePayload, decoded: dict = Depends(rate_limited_user), preview: bool = False):
     # preview=true is the "what if" simulator: it returns exactly what a real request would, but saves nothing,
     # so trying out different grades never fills the student's history or the admin analytics.
-    if _pipeline is None or _explainer is None:
+    if _pipeline is None or (_explainer is None and not _native_xgboost):
         raise HTTPException(
             status_code=503,
             detail="Recommendations are temporarily unavailable. Please try again later.",
@@ -875,7 +902,11 @@ def get_recommendations(payload: StudentProfilePayload, decoded: dict = Depends(
     # (exact SHAP's top features were dominated by "off" one-hot aspiration
     # dummies). Fidelity of the approximate explanations was only checked
     # against exact SHAP on a small sample - see Chapter 5.7.
-    raw_shap = _explainer.shap_values(X_trans, check_additivity=False, approximate=True)
+    raw_shap = (
+        _xgboost_shap_values(X_trans)
+        if _native_xgboost
+        else _explainer.shap_values(X_trans, check_additivity=False, approximate=True)
+    )
     row_values = row_df.iloc[0].to_dict()
 
     agg = aggregate_points(grades, mean_grade)
