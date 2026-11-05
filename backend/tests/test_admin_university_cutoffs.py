@@ -7,7 +7,7 @@ from fastapi import HTTPException
 
 import main
 
-pytestmark = pytest.mark.skipif(main._pipeline is None, reason="rf_model_pipeline.pkl not trained yet")
+pytestmark = pytest.mark.skipif(main._pipeline is None, reason="uniguide_xgb_v2.joblib not trained yet")
 
 ADMIN = {"uid": "admin-1", "email": "admin@example.com"}
 

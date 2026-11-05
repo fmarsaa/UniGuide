@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 
 import main
 
-pytestmark = pytest.mark.skipif(main._pipeline is None, reason="rf_model_pipeline.pkl not trained yet")
+pytestmark = pytest.mark.skipif(main._pipeline is None, reason="uniguide_xgb_v2.joblib not trained yet")
 
 
 def _preflight(origin):

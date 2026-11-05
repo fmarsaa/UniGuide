@@ -10,7 +10,7 @@ import main
 from kuccps import UNDECIDED_ASPIRATION
 from synthetic_data_generator import TRAIT_COLUMN_INFO, UNDECIDED_RATE, _build_profile_for_target
 
-pytestmark = pytest.mark.skipif(main._pipeline is None, reason="rf_model_pipeline.pkl not trained yet")
+pytestmark = pytest.mark.skipif(main._pipeline is None, reason="uniguide_xgb_v2.joblib not trained yet")
 
 
 # ---------------------------------------------------------------- plain reasons

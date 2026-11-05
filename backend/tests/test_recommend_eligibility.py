@@ -4,8 +4,8 @@ requirements must never be ranked into that programme's recommendation
 slot on raw model confidence alone - eligibility_status has to say so
 honestly rather than a misleading 'high risk'. Exercises
 main.select_recommended_indices directly (no HTTP layer, no Firebase Auth,
-no Firestore writes) - needs backend/rf_model_pipeline.pkl to already
-exist (run train_random_forest.py first if this errors on import).
+no Firestore writes) - needs backend/uniguide_xgb_v2.joblib to already
+exist (run train_evaluate.py first if this errors on import).
 """
 
 import numpy as np
@@ -14,7 +14,7 @@ import pytest
 import main
 from kuccps import eligibility_status, meets_minimum_requirements
 
-pytestmark = pytest.mark.skipif(main._pipeline is None, reason="rf_model_pipeline.pkl not trained yet")
+pytestmark = pytest.mark.skipif(main._pipeline is None, reason="uniguide_xgb_v2.joblib not trained yet")
 
 
 def _feature_row(grades, mean_grade):

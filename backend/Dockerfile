@@ -8,8 +8,8 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY *.py ./
-COPY rf_model_pipeline.pkl ./
-COPY model_metrics.json ./
+COPY uniguide_xgb_v2.joblib ./
+COPY model_metrics_v2.json ./
 
 RUN useradd --create-home appuser && chown -R appuser /app
 USER appuser

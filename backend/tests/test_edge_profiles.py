@@ -8,7 +8,7 @@ import pytest
 import main
 from kuccps import COMPULSORY_SUBJECTS, GRADE_POINTS, grade_to_points, meets_minimum_requirements
 
-pytestmark = pytest.mark.skipif(main._pipeline is None, reason="rf_model_pipeline.pkl not trained yet")
+pytestmark = pytest.mark.skipif(main._pipeline is None, reason="uniguide_xgb_v2.joblib not trained yet")
 
 USER = {"uid": "edge-test", "email": "edge@example.com", "email_verified": True}
 ALL = ["Mathematics", "English", "Kiswahili", "Chemistry", "Biology", "Physics", "History", "Geography", "Business Studies"]

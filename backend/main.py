@@ -5,8 +5,8 @@ Supervised by: Deperias Webula Kerre
 Strathmore University - School of Computing and Engineering Sciences
 
 Connects the Flutter Mobile Application with:
-1. Scikit-Learn/XGBoost classifier (real inference against
-   rf_model_pipeline.pkl - produced by the selected training pipeline)
+1. XGBoost classifier (real inference against uniguide_xgb_v2.joblib -
+   produced by train_evaluate.py, trained without student skills)
 2. SHAP Explainability Subsystem (real per-prediction feature contributions)
 3. KUCCPS Cluster Weight Calculations (kuccps.py)
 4. Firebase Authentication & Cloud Firestore (firebase_setup.py)
@@ -189,7 +189,8 @@ def _load_live_catalog() -> None:
 # ---------------------------------------------------------------------------
 # Model loading
 # ---------------------------------------------------------------------------
-MODEL_PATH = os.path.join(os.path.dirname(__file__), "rf_model_pipeline.pkl")
+MODEL_FILENAME = "uniguide_xgb_v2.joblib"
+MODEL_PATH = os.path.join(os.path.dirname(__file__), MODEL_FILENAME)
 _pipeline = None
 _explainer = None
 _native_xgboost = False
@@ -200,14 +201,19 @@ def _load_model() -> None:
     ensure_model(MODEL_PATH, os.environ.get("MODEL_URL"), os.environ.get("MODEL_SHA256"), os.environ.get("MODEL_TOKEN"))
     if not os.path.isfile(MODEL_PATH):
         logger.warning(
-            "rf_model_pipeline.pkl not found at %s. Run `python train_random_forest.py` "
-            "in backend/ before calling /api/recommend.", MODEL_PATH,
+            "%s not found at %s. Run `python backend/train_evaluate.py` "
+            "before calling /api/recommend.", MODEL_FILENAME, MODEL_PATH,
         )
         return
-    # joblib.load reads both the older plain-pickle file and the compressed one
-    # that train_random_forest.py now writes, so an existing model keeps working.
     _pipeline = joblib.load(MODEL_PATH)
     classifier = _pipeline.named_steps["classifier"]
+    # Recommendations are looked up in the catalogue by title, so the classes
+    # must be programme titles; map encoded labels back if a model stores integers.
+    if not all(isinstance(c, str) for c in classifier.classes_) and hasattr(classifier, "encoder_"):
+        classifier.classes_ = classifier.encoder_.inverse_transform(np.asarray(classifier.classes_, dtype=int))
+    first = list(_pipeline.classes_[:3])
+    print(f"Loaded model {MODEL_FILENAME}: {type(classifier).__name__}, classes_[:3]={first} "
+          f"types={[type(c).__name__ for c in first]}", flush=True)
     inner_model = classifier.clf_ if hasattr(classifier, "clf_") else classifier
     _native_xgboost = hasattr(inner_model, "get_booster")
     _explainer = None if _native_xgboost else shap.TreeExplainer(inner_model)
@@ -216,7 +222,7 @@ def _load_model() -> None:
 
 def model_version() -> str:
     """Identifies the model that produced a result. Training writes a version into
-    model_metrics.json; a model trained before that existed falls back to the date
+    model_metrics_v2.json; a model trained before that existed falls back to the date
     its file was last written, so every result still says which model made it."""
     try:
         with open(METRICS_PATH, encoding="utf-8") as f:
@@ -234,9 +240,29 @@ def model_version() -> str:
 # ---------------------------------------------------------------------------
 # Model retrain/rollback (admin-triggered)
 # ---------------------------------------------------------------------------
-TRAIN_SCRIPT_PATH = os.path.join(os.path.dirname(__file__), "train_random_forest.py")
+# Retraining runs the evaluation protocol (which refits and saves the deployment
+# model last) and then exports the dashboard metrics for the new model.
+TRAIN_SCRIPT_PATHS = [
+    os.path.join(os.path.dirname(__file__), "train_evaluate.py"),
+    os.path.join(os.path.dirname(__file__), "export_model_metrics.py"),
+]
 MODEL_BACKUPS_DIR = os.path.join(os.path.dirname(__file__), "model_backups")
-METRICS_PATH = os.path.join(os.path.dirname(__file__), "model_metrics.json")
+METRICS_PATH = os.path.join(os.path.dirname(__file__), "model_metrics_v2.json")
+# Backups of the deployed model: uniguide_xgb_v2_<timestamp>.joblib. Backups of the
+# earlier skills-trained model use a different name and cannot serve this API.
+BACKUP_PREFIX = MODEL_FILENAME.rsplit(".", 1)[0] + "_"
+BACKUP_SUFFIX = ".joblib"
+
+
+def _backup_current_model() -> None:
+    import shutil
+
+    if os.path.isfile(MODEL_PATH):
+        os.makedirs(MODEL_BACKUPS_DIR, exist_ok=True)
+        stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        shutil.copy(MODEL_PATH, os.path.join(MODEL_BACKUPS_DIR, f"{BACKUP_PREFIX}{stamp}{BACKUP_SUFFIX}"))
+        if os.path.isfile(METRICS_PATH):
+            shutil.copy(METRICS_PATH, os.path.join(MODEL_BACKUPS_DIR, f"model_metrics_{stamp}.json"))
 
 # In-memory only (single-process FYP scope, not Firestore-backed) - a
 # retrain genuinely in progress is always tied to this one running server
@@ -247,7 +273,7 @@ _training_status: Dict[str, Optional[str]] = {
 
 
 def _run_retrain_subprocess(actor: str) -> None:
-    """Runs train_random_forest.py as a genuinely separate OS process (not
+    """Runs the training scripts as genuinely separate OS processes (not
     a thread in this one) - this machine's available RAM is tight enough
     that a second full-parallelism model fit sharing memory with the
     already-running live server risked an out-of-memory failure (observed
@@ -258,16 +284,18 @@ def _run_retrain_subprocess(actor: str) -> None:
     db = get_db()
     try:
         env = {**os.environ, "TRAIN_N_JOBS": "2"}
-        result = subprocess.run(
-            [sys.executable, TRAIN_SCRIPT_PATH],
-            cwd=os.path.dirname(__file__),
-            env=env,
-            capture_output=True,
-            text=True,
-            timeout=1800,  # 30 min ceiling - well above the ~1-5 min this normally takes
-        )
-        if result.returncode != 0:
-            raise RuntimeError(f"train_random_forest.py exited {result.returncode}: {result.stderr[-2000:]}")
+        _backup_current_model()
+        for script in TRAIN_SCRIPT_PATHS:
+            result = subprocess.run(
+                [sys.executable, script],
+                cwd=os.path.dirname(__file__),
+                env=env,
+                capture_output=True,
+                text=True,
+                timeout=3600,
+            )
+            if result.returncode != 0:
+                raise RuntimeError(f"{os.path.basename(script)} exited {result.returncode}: {result.stderr[-2000:]}")
         _load_model()  # hot-reload the freshly-trained pipeline into this process
         _training_status["lastError"] = None
         if db is not None:
@@ -729,7 +757,7 @@ def _persist_recommendation(uid: str, email: Optional[str], payload: StudentProf
 # Endpoints
 # ---------------------------------------------------------------------------
 def _load_model_metrics() -> Optional[dict]:
-    metrics_path = os.path.join(os.path.dirname(__file__), "model_metrics.json")
+    metrics_path = METRICS_PATH
     if not os.path.isfile(metrics_path):
         return None
     try:
@@ -743,7 +771,7 @@ def _load_model_metrics() -> Optional[dict]:
             "weighted_f1": data.get("weighted_f1"),
         }
     except Exception:
-        logger.exception("Failed to read model_metrics.json")
+        logger.exception("Failed to read %s", METRICS_PATH)
         return None
 
 
@@ -1309,9 +1337,9 @@ def list_model_backups(decoded: dict = Depends(require_admin)):
         return []
     backups = []
     for fname in os.listdir(MODEL_BACKUPS_DIR):
-        if not fname.startswith("rf_model_pipeline_") or not fname.endswith(".pkl"):
+        if not fname.startswith(BACKUP_PREFIX) or not fname.endswith(BACKUP_SUFFIX):
             continue
-        timestamp = fname[len("rf_model_pipeline_"):-len(".pkl")]
+        timestamp = fname[len(BACKUP_PREFIX):-len(BACKUP_SUFFIX)]
         entry = {"timestamp": timestamp}
         metrics_path = os.path.join(MODEL_BACKUPS_DIR, f"model_metrics_{timestamp}.json")
         if os.path.isfile(metrics_path):
@@ -1340,7 +1368,7 @@ def restore_model_backup(body: ModelRestorePayload, decoded: dict = Depends(requ
     if _training_status["running"]:
         raise HTTPException(status_code=409, detail="A retrain is already in progress.")
 
-    backup_pkl = os.path.join(MODEL_BACKUPS_DIR, f"rf_model_pipeline_{body.timestamp}.pkl")
+    backup_pkl = os.path.join(MODEL_BACKUPS_DIR, f"{BACKUP_PREFIX}{body.timestamp}{BACKUP_SUFFIX}")
     backup_metrics = os.path.join(MODEL_BACKUPS_DIR, f"model_metrics_{body.timestamp}.json")
     if not os.path.isfile(backup_pkl):
         raise HTTPException(status_code=404, detail="No backup with that timestamp exists.")
@@ -1349,12 +1377,7 @@ def restore_model_backup(body: ModelRestorePayload, decoded: dict = Depends(requ
     # Back up the CURRENT model before overwriting it, same as every normal
     # retrain already does - a restore is itself reversible, never a
     # one-way trip.
-    if os.path.isfile(MODEL_PATH):
-        os.makedirs(MODEL_BACKUPS_DIR, exist_ok=True)
-        stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        shutil.copy(MODEL_PATH, os.path.join(MODEL_BACKUPS_DIR, f"rf_model_pipeline_{stamp}.pkl"))
-        if os.path.isfile(METRICS_PATH):
-            shutil.copy(METRICS_PATH, os.path.join(MODEL_BACKUPS_DIR, f"model_metrics_{stamp}.json"))
+    _backup_current_model()
 
     shutil.copy(backup_pkl, MODEL_PATH)
     if os.path.isfile(backup_metrics):
