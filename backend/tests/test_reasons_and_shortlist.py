@@ -95,8 +95,9 @@ def test_a_student_with_no_career_still_gets_three_recommendations():
     )
     row_df, grades, mean_grade = main.profile_to_feature_row(payload)
     proba = main._pipeline.predict_proba(row_df)[0]
-    top_idx, _ = main.select_recommended_indices(proba, main._pipeline.classes_, grades, mean_grade)
-    assert len(top_idx) == 3
+    top_idx, eligible_mask = main.select_recommended_indices(proba, main._pipeline.classes_, grades, mean_grade)
+    assert len(top_idx) == min(3, sum(eligible_mask))
+    assert all(eligible_mask[i] for i in top_idx)
 
 
 def test_training_data_includes_a_realistic_share_of_undecided_students():

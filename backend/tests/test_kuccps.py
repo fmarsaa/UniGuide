@@ -100,7 +100,10 @@ class TestMeetsMinimumRequirements:
         reqs = {"Biology": "C+"}
         assert meets_minimum_requirements({}, reqs, mean_grade="A") is False
         assert meets_minimum_requirements({"Mathematics": "A"}, reqs, mean_grade="A") is False
-        assert meets_minimum_requirements({"Biology": "B"}, reqs, mean_grade="D") is True
+        assert meets_minimum_requirements({}, reqs, mean_grade="C+") is False
+        assert meets_minimum_requirements({"Mathematics": "A"}, reqs, mean_grade="C+") is False
+        assert meets_minimum_requirements({"Biology": "B"}, reqs, mean_grade="C+") is True
+        assert meets_minimum_requirements({"Biology": "B"}, reqs, mean_grade="A") is True
 
     def test_student_without_biology_fails_every_real_programme_that_needs_it(self):
         """Biology is optional, so a student may not have sat it. Every real

@@ -16,6 +16,10 @@ so; if Firebase Admin isn't configured (FIREBASE_SERVICE_ACCOUNT_PATH), those
 endpoints return a clear 503 instead of silently pretending to succeed.
 """
 
+import os
+for v in ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREADS"):
+    os.environ.setdefault(v, "1")
+
 import hashlib
 import json
 import logging
@@ -90,13 +94,19 @@ async def _lifespan(app: FastAPI):
 
 
 # Browsers only run the web admin portal from these addresses (the phone app is not
-# a browser, so it is unaffected). Set CORS_ORIGINS="https://admin.example.com,..."
-# in backend/.env when the portal is hosted somewhere else.
-CORS_ORIGINS = [
-    origin.strip()
-    for origin in os.environ.get("CORS_ORIGINS", "http://localhost:5000,http://127.0.0.1:5000").split(",")
-    if origin.strip()
+# a browser, so it is unaffected). The local development address and the portal's
+# Firebase Hosting addresses are always allowed; set CORS_ORIGINS="https://admin.example.com,..."
+# in backend/.env to add the address when the portal is hosted somewhere else.
+DEFAULT_CORS_ORIGINS = [
+    "http://localhost:5000",
+    "http://127.0.0.1:5000",
+    "https://uniguide1234.web.app",
+    "https://uniguide1234.firebaseapp.com",
 ]
+CORS_ORIGINS = list(dict.fromkeys(
+    DEFAULT_CORS_ORIGINS
+    + [origin.strip().rstrip("/") for origin in os.environ.get("CORS_ORIGINS", "").split(",") if origin.strip()]
+))
 
 app = FastAPI(
     title="UniGuide REST API",
@@ -107,7 +117,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=CORS_ORIGINS,
     allow_credentials=False,  # requests carry a bearer token in a header, never cookies
     allow_methods=["*"],
     allow_headers=["*"],
@@ -807,9 +817,10 @@ def list_all_programmes_for_admin(decoded: dict = Depends(require_admin)):
 def select_recommended_indices(
     proba: np.ndarray, classes: np.ndarray, grades: Dict[str, str], mean_grade: str
 ) -> tuple:
-    """Picks the three programmes to show: the best fit among the genuinely eligible
-    programmes first, then the best two the student can reach, falling
-    back to FALLBACK_ORDER when fewer than 3 are eligible. Returns
+    """Picks up to three programmes to show: the best fit among the genuinely eligible
+    programmes first, then the best two the student can reach. Only eligible
+    programmes are returned; with fewer than 3 eligible, fewer are returned
+    and with none eligible the list is empty. Returns
     (top_idx, eligible_mask). Factored out of get_recommendations so it's
     unit-testable (backend/tests/test_recommend_eligibility.py) without
     going through the HTTP layer, Firebase Auth, or Firestore persistence.
@@ -822,13 +833,9 @@ def select_recommended_indices(
     student cannot be admitted to at all, mislabeled only as "high risk"
     by eligibility_status() rather than "does not qualify". Filter to
     genuinely eligible programmes first, exactly mirroring how the
-    training data was generated. A student who doesn't meet the minimum
-    requirements for ANY trained programme still needs a useful answer,
-    not an empty one - fill remaining slots from the same low-barrier
-    fallback the training generator itself falls back to. Every result is
-    still explicitly marked (by the caller, via eligible_mask) with
-    whether it was a genuine eligible match or a fallback suggestion, so
-    the app can be honest about the difference.
+    training data was generated. Slots are never filled with programmes the
+    student cannot be admitted to; the caller reports an empty result with
+    a plain message instead.
     """
     n_classes = len(classes)
     active_mask = [CATALOG_BY_TITLE.get(c, {}).get("status") != "inactive" for c in classes]
@@ -838,9 +845,29 @@ def select_recommended_indices(
     ]
     eligible_idx = [i for i in range(n_classes) if eligible_mask[i]]
 
+    # Within the eligible programmes, prefer ones the student can realistically
+    # get into: compare their points with EACH university's own latest cutoff
+    # (cutoffs differ by university), then rank by model probability inside each
+    # tier. A programme the model barely considers (probability under the
+    # 1-in-53 chance level) never jumps ahead of one it does, whatever its tier.
+    agg = aggregate_points(grades, mean_grade)
+
+    def rank_key(i):
+        programme = CATALOG_BY_TITLE[classes[i]]
+        cwp = cluster_weighted_points(raw_cluster_points(grades, programme["clusterSubjects"], mean_grade), agg)
+        summary = university_cutoff_summary(cwp, programme.get("offeringUniversities"), programme.get("averageCutoff"))
+        tier = cutoff_tier(summary) + (3 if proba[i] < 0.02 else 0)
+        return (tier, -proba[i])
+
+    # The model's best fit is always shown first, even when it is a stretch (the app says so in
+    # plain words). The other two places go to the best programmes the student can reach. Ranking
+    # purely by reachability pushed good fits out of the three shown: on out-of-fold profiles the
+    # labelled programme was shown 73% of the time, against 92% with this rule (Experiment 9).
+    # Only eligible programmes are ever ranked; with fewer than 3 eligible, fewer are returned.
     top_idx = []
     if eligible_idx:
-        top_idx = sorted(eligible_idx, key=lambda i: proba[i], reverse=True)[:3]
+        best_fit = max(eligible_idx, key=lambda i: proba[i])
+        top_idx = [best_fit] + [i for i in sorted(eligible_idx, key=rank_key) if i != best_fit][:2]
     return top_idx, eligible_mask
 
 

@@ -1,0 +1,2706 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\fatma\AppData\Local\Programs\Python\Python312\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\fatma\Downloads\testing2\backend
+configfile: pytest.ini
+plugins: anyio-4.15.1
+collecting ... collected 181 items
+
+backend\tests\test_account_and_hardening.py::test_deleting_an_account_removes_everything_stored_about_the_student PASSED [  0%]
+backend\tests\test_account_and_hardening.py::test_deleting_one_account_leaves_other_students_alone PASSED [  1%]
+backend\tests\test_account_and_hardening.py::test_deletion_needs_the_explicit_confirmation_word PASSED [  1%]
+backend\tests\test_account_and_hardening.py::test_an_administrator_cannot_delete_their_account_here PASSED [  2%]
+backend\tests\test_account_and_hardening.py::test_the_audit_log_records_a_deletion_without_naming_the_student PASSED [  2%]
+backend\tests\test_account_and_hardening.py::test_requests_beyond_the_limit_are_refused_until_the_window_passes PASSED [  3%]
+backend\tests\test_account_and_hardening.py::test_one_users_requests_do_not_count_against_another PASSED [  3%]
+backend\tests\test_account_and_hardening.py::test_a_request_that_is_far_too_large_is_refused PASSED [  4%]
+backend\tests\test_account_and_hardening.py::test_the_same_profile_sent_twice_in_a_moment_is_one_duplicate PASSED [  4%]
+backend\tests\test_account_and_hardening.py::test_the_same_profile_sent_again_later_is_not_a_duplicate PASSED [  5%]
+backend\tests\test_account_and_hardening.py::test_a_changed_profile_is_not_a_duplicate PASSED [  6%]
+backend\tests\test_account_and_hardening.py::test_the_run_record_ties_a_model_to_its_code_data_and_libraries PASSED [  6%]
+backend\tests\test_account_and_hardening.py::test_the_dataset_fingerprint_changes_when_the_data_changes PASSED [  7%]
+backend\tests\test_account_and_hardening.py::test_a_model_without_a_recorded_version_still_reports_one PASSED [  7%]
+backend\tests\test_account_and_hardening.py::test_a_recorded_version_is_the_one_reported PASSED [  8%]
+backend\tests\test_admin_university_cutoffs.py::test_an_edit_changes_only_that_universitys_cutoffs PASSED [  8%]
+backend\tests\test_admin_university_cutoffs.py::test_the_edit_is_recorded_in_the_audit_log PASSED [  9%]
+backend\tests\test_admin_university_cutoffs.py::test_an_unknown_university_code_is_refused PASSED [  9%]
+backend\tests\test_admin_university_cutoffs.py::test_an_unknown_programme_is_refused PASSED [ 10%]
+backend\tests\test_admin_university_cutoffs.py::test_cutoffs_outside_the_kuccps_scale_are_rejected[0] PASSED [ 11%]
+backend\tests\test_admin_university_cutoffs.py::test_cutoffs_outside_the_kuccps_scale_are_rejected[-3] PASSED [ 11%]
+backend\tests\test_admin_university_cutoffs.py::test_cutoffs_outside_the_kuccps_scale_are_rejected[48.5] PASSED [ 12%]
+backend\tests\test_admin_university_cutoffs.py::test_cutoffs_outside_the_kuccps_scale_are_rejected[450] PASSED [ 12%]
+backend\tests\test_admin_university_cutoffs.py::test_the_in_memory_catalogue_is_not_changed_by_a_refused_edit PASSED [ 13%]
+backend\tests\test_analytics_overview.py::test_the_headline_counts PASSED [ 13%]
+backend\tests\test_analytics_overview.py::test_active_students_are_those_with_a_recommendation_in_the_window PASSED [ 14%]
+backend\tests\test_analytics_overview.py::test_the_average_rating_ignores_a_rating_outside_one_to_five PASSED [ 14%]
+backend\tests\test_analytics_overview.py::test_no_feedback_gives_no_average_rather_than_zero PASSED [ 15%]
+backend\tests\test_analytics_overview.py::test_growth_counts_earlier_students_in_the_running_total PASSED [ 16%]
+backend\tests\test_analytics_overview.py::test_the_journey_narrows_step_by_step PASSED [ 16%]
+backend\tests\test_analytics_overview.py::test_grades_are_counted_only_for_students_who_entered_them PASSED [ 17%]
+backend\tests\test_analytics_overview.py::test_undecided_students_are_counted_among_those_with_a_profile PASSED [ 17%]
+backend\tests\test_analytics_overview.py::test_recommended_programmes_are_grouped_by_whether_they_were_within_reach PASSED [ 18%]
+backend\tests\test_analytics_overview.py::test_the_most_saved_programmes_come_first_with_their_names PASSED [ 18%]
+backend\tests\test_analytics_overview.py::test_an_empty_system_gives_zeros_not_errors PASSED [ 19%]
+backend\tests\test_analytics_overview.py::test_a_programme_without_university_figures_falls_back_to_the_cutoff_gap PASSED [ 19%]
+backend\tests\test_career_note.py::test_a_grade_below_the_requirement_is_named_with_both_grades PASSED [ 20%]
+backend\tests\test_career_note.py::test_a_subject_that_was_not_sat_is_said_plainly PASSED [ 20%]
+backend\tests\test_career_note.py::test_nothing_is_reported_when_every_requirement_is_met PASSED [ 21%]
+backend\tests\test_career_note.py::test_a_student_short_of_medicine_is_told_which_grade_is_short PASSED [ 22%]
+backend\tests\test_career_note.py::test_a_student_who_qualifies_gets_no_note PASSED [ 22%]
+backend\tests\test_career_note.py::test_no_career_means_no_note PASSED   [ 23%]
+backend\tests\test_career_note.py::test_a_career_the_system_does_not_know_is_ignored PASSED [ 23%]
+backend\tests\test_career_note.py::test_a_deactivated_programme_is_not_mentioned PASSED [ 24%]
+backend\tests\test_catalogue_integrity.py::test_every_programme_lists_at_least_one_university PASSED [ 24%]
+backend\tests\test_catalogue_integrity.py::test_every_university_entry_has_a_kuccps_code PASSED [ 25%]
+backend\tests\test_catalogue_integrity.py::test_no_kuccps_code_is_shared_by_two_entries PASSED [ 25%]
+backend\tests\test_catalogue_integrity.py::test_cutoffs_are_real_positive_numbers PASSED [ 26%]
+backend\tests\test_cors.py::test_the_portals_own_address_is_allowed PASSED [ 27%]
+backend\tests\test_cors.py::test_some_other_website_is_not_allowed PASSED [ 27%]
+backend\tests\test_cors.py::test_the_wildcard_is_gone PASSED             [ 28%]
+backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[a mean grade in lower case] FAILED [ 28%]
+backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[all A, every subject] FAILED [ 29%]
+backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[all A-, compulsory only] FAILED [ 29%]
+backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[all C-, every subject] PASSED [ 30%]
+backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[all E] PASSED [ 30%]
+backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[business track] FAILED [ 31%]
+backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[career that clashes with the grades] FAILED [ 32%]
+backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[extra unfamiliar subject] FAILED [ 32%]
+backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[flat A] FAILED [ 33%]
+backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[flat A-] FAILED [ 33%]
+backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[flat B] FAILED [ 34%]
+backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[flat B+] FAILED [ 34%]
+backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[flat B-] FAILED [ 35%]
+backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[flat C] PASSED [ 35%]
+backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[flat C+] FAILED [ 36%]
+backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[flat C-] PASSED [ 37%]
+backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[flat D] PASSED [ 37%]
+backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[flat D+] PASSED [ 38%]
+backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[flat D-] PASSED [ 38%]
+backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[flat E] PASSED [ 39%]
+backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[lowest passing mean, high maths] FAILED [ 39%]
+backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[no career, no choices] FAILED [ 40%]
+backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[strong arts, weak maths] FAILED [ 40%]
+backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[strong sciences, weak English] FAILED [ 41%]
+backend\tests\test_filter_new.py::test_select_recommended_indices_returns_only_eligible_in_probability_order PASSED [ 41%]
+backend\tests\test_filter_new.py::test_select_recommended_indices_empty_when_student_fails_every_candidate PASSED [ 42%]
+backend\tests\test_filter_new.py::test_endpoint_never_returns_ineligible_mbchb FAILED [ 43%]
+backend\tests\test_kuccps.py::TestGradePointsRoundTrip::test_all_grades_round_trip PASSED [ 43%]
+backend\tests\test_kuccps.py::TestGradePointsRoundTrip::test_unknown_grade_falls_back_to_default PASSED [ 44%]
+backend\tests\test_kuccps.py::TestGradePointsRoundTrip::test_missing_grade_falls_back_to_given_default PASSED [ 44%]
+backend\tests\test_kuccps.py::TestGradePointsRoundTrip::test_case_and_whitespace_insensitive PASSED [ 45%]
+backend\tests\test_kuccps.py::TestAggregatePoints::test_seven_or_more_grades_takes_best_seven PASSED [ 45%]
+backend\tests\test_kuccps.py::TestAggregatePoints::test_fewer_than_seven_grades_scales_up PASSED [ 46%]
+backend\tests\test_kuccps.py::TestAggregatePoints::test_empty_grades_uses_mean_grade_times_seven PASSED [ 46%]
+backend\tests\test_kuccps.py::TestAggregatePoints::test_result_always_within_valid_bounds PASSED [ 47%]
+backend\tests\test_kuccps.py::TestRawClusterPoints::test_sums_required_subjects PASSED [ 48%]
+backend\tests\test_kuccps.py::TestRawClusterPoints::test_missing_subject_uses_mean_grade_default PASSED [ 48%]
+backend\tests\test_kuccps.py::TestRawClusterPoints::test_clamped_to_valid_range PASSED [ 49%]
+backend\tests\test_kuccps.py::TestClusterWeightedPoints::test_zero_inputs_return_zero PASSED [ 49%]
+backend\tests\test_kuccps.py::TestClusterWeightedPoints::test_perfect_score_gives_perfect_cwp PASSED [ 50%]
+backend\tests\test_kuccps.py::TestClusterWeightedPoints::test_higher_raw_points_never_decreases_cwp PASSED [ 50%]
+backend\tests\test_kuccps.py::TestMeetsMinimumRequirements::test_passes_when_all_subjects_clear_the_bar PASSED [ 51%]
+backend\tests\test_kuccps.py::TestMeetsMinimumRequirements::test_fails_when_one_subject_is_below_the_bar PASSED [ 51%]
+backend\tests\test_kuccps.py::TestMeetsMinimumRequirements::test_missing_subject_fails_the_requirement_whatever_the_mean_grade PASSED [ 52%]
+backend\tests\test_kuccps.py::TestMeetsMinimumRequirements::test_student_without_biology_fails_every_real_programme_that_needs_it PASSED [ 53%]
+backend\tests\test_kuccps.py::TestMeetsMinimumRequirements::test_no_requirements_always_passes PASSED [ 53%]
+backend\tests\test_kuccps.py::TestMeetsMinimumRequirements::test_real_world_c_minus_student_fails_every_common_bar PASSED [ 54%]
+backend\tests\test_kuccps.py::TestEligibilityStatus::test_meets_requirements_and_above_cutoff PASSED [ 54%]
+backend\tests\test_kuccps.py::TestEligibilityStatus::test_meets_requirements_and_borderline PASSED [ 55%]
+backend\tests\test_kuccps.py::TestEligibilityStatus::test_meets_requirements_and_far_below_cutoff PASSED [ 55%]
+backend\tests\test_kuccps.py::TestEligibilityStatus::test_does_not_meet_requirements_overrides_score_based_messaging PASSED [ 56%]
+backend\tests\test_kuccps.py::TestEligibilityStatus::test_default_meets_requirements_is_true_for_backwards_compatibility PASSED [ 56%]
+backend\tests\test_kuccps.py::TestUniversityCutoffs::test_counts_how_many_universities_are_met PASSED [ 57%]
+backend\tests\test_kuccps.py::TestUniversityCutoffs::test_status_names_how_many_universities_are_met PASSED [ 58%]
+backend\tests\test_kuccps.py::TestUniversityCutoffs::test_just_below_the_lowest_cutoff_is_a_close_call_not_a_match PASSED [ 58%]
+backend\tests\test_kuccps.py::TestUniversityCutoffs::test_far_below_is_a_reach PASSED [ 59%]
+backend\tests\test_kuccps.py::TestUniversityCutoffs::test_failing_minimum_subjects_still_overrides_everything PASSED [ 59%]
+backend\tests\test_kuccps.py::TestUniversityCutoffs::test_tiers_order_meets_then_close_then_reach PASSED [ 60%]
+backend\tests\test_kuccps.py::TestUniversityCutoffs::test_falls_back_to_the_programme_average_when_no_university_data PASSED [ 60%]
+backend\tests\test_kuccps.py::test_a_grade_typed_in_lower_case_is_read_like_the_capital_letter PASSED [ 61%]
+backend\tests\test_model_store_and_credentials.py::test_an_existing_model_file_is_left_alone PASSED [ 61%]
+backend\tests\test_model_store_and_credentials.py::test_a_model_whose_checksum_matches_is_kept PASSED [ 62%]
+backend\tests\test_model_store_and_credentials.py::test_a_model_whose_checksum_differs_is_discarded PASSED [ 62%]
+backend\tests\test_model_store_and_credentials.py::test_a_download_without_a_checksum_is_refused PASSED [ 63%]
+backend\tests\test_model_store_and_credentials.py::test_no_url_and_no_file_means_no_model PASSED [ 64%]
+backend\tests\test_model_store_and_credentials.py::test_the_firebase_key_can_come_from_an_environment_variable PASSED [ 64%]
+backend\tests\test_model_store_and_credentials.py::test_a_key_file_path_is_used_when_there_is_no_variable PASSED [ 65%]
+backend\tests\test_model_store_and_credentials.py::test_without_any_key_there_is_no_credential PASSED [ 65%]
+backend\tests\test_model_store_and_credentials.py::test_a_broken_variable_is_ignored_rather_than_crashing PASSED [ 66%]
+backend\tests\test_profile_validation.py::test_valid_payload_constructs_without_error PASSED [ 66%]
+backend\tests\test_profile_validation.py::test_rejects_invalid_mean_grade PASSED [ 67%]
+backend\tests\test_profile_validation.py::test_rejects_invalid_subject_grade PASSED [ 67%]
+backend\tests\test_profile_validation.py::test_rejects_below_c_plus_mean_grade PASSED [ 68%]
+backend\tests\test_profile_validation.py::test_rejects_below_c_plus_mean_points PASSED [ 69%]
+backend\tests\test_profile_validation.py::test_rejects_missing_compulsory_subject PASSED [ 69%]
+backend\tests\test_profile_validation.py::test_accepts_extra_non_compulsory_subjects PASSED [ 70%]
+backend\tests\test_profile_validation.py::test_error_message_is_a_clean_string_not_a_structured_list PASSED [ 70%]
+backend\tests\test_reasons_and_shortlist.py::test_a_selected_interest_becomes_a_plain_sentence PASSED [ 71%]
+backend\tests\test_reasons_and_shortlist.py::test_factors_that_pushed_the_result_down_are_never_listed PASSED [ 71%]
+backend\tests\test_reasons_and_shortlist.py::test_a_subject_the_student_did_not_sit_is_never_described_as_having_a_grade PASSED [ 72%]
+backend\tests\test_reasons_and_shortlist.py::test_a_subject_grade_that_meets_the_requirement_says_so PASSED [ 72%]
+backend\tests\test_reasons_and_shortlist.py::test_a_career_the_student_did_not_pick_is_never_mentioned PASSED [ 73%]
+backend\tests\test_reasons_and_shortlist.py::test_the_career_the_student_picked_is_mentioned PASSED [ 74%]
+backend\tests\test_reasons_and_shortlist.py::test_an_undecided_student_is_told_the_match_comes_from_their_grades_and_answers PASSED [ 74%]
+backend\tests\test_reasons_and_shortlist.py::test_at_most_three_reasons_are_given PASSED [ 75%]
+backend\tests\test_reasons_and_shortlist.py::test_no_career_picked_is_sent_to_the_model_as_not_sure_yet PASSED [ 75%]
+backend\tests\test_reasons_and_shortlist.py::test_a_student_with_no_career_still_gets_three_recommendations FAILED [ 76%]
+backend\tests\test_reasons_and_shortlist.py::test_training_data_includes_a_realistic_share_of_undecided_students PASSED [ 76%]
+backend\tests\test_reasons_and_shortlist.py::test_saved_programmes_come_back_in_the_order_they_were_saved PASSED [ 77%]
+backend\tests\test_reasons_and_shortlist.py::test_saving_the_same_programme_twice_keeps_one_copy PASSED [ 77%]
+backend\tests\test_reasons_and_shortlist.py::test_removing_a_programme_takes_it_off_the_shortlist PASSED [ 78%]
+backend\tests\test_reasons_and_shortlist.py::test_one_student_never_sees_anothers_shortlist PASSED [ 79%]
+backend\tests\test_reasons_and_shortlist.py::test_saving_an_unknown_programme_is_refused PASSED [ 79%]
+backend\tests\test_reasons_and_shortlist.py::test_a_deactivated_programme_cannot_be_saved_and_disappears_from_the_list PASSED [ 80%]
+backend\tests\test_reasons_and_shortlist.py::test_the_shortlist_has_a_size_limit PASSED [ 80%]
+backend\tests\test_recommend_eligibility.py::test_below_c_plus_student_is_rejected_before_recommendation PASSED [ 81%]
+backend\tests\test_recommend_eligibility.py::test_eligible_student_gets_only_eligible_top_picks FAILED [ 81%]
+backend\tests\test_recommend_eligibility.py::test_newly_trained_programme_is_reachable FAILED [ 82%]
+backend\tests\test_recommend_eligibility.py::test_live_catalogue_edit_is_reflected_in_eligibility PASSED [ 82%]
+backend\tests\test_recommend_eligibility.py::test_deactivated_programme_is_never_recommended FAILED [ 83%]
+backend\tests\test_recommend_eligibility.py::test_the_best_fit_is_shown_first_even_when_it_is_a_stretch PASSED [ 83%]
+backend\tests\test_recommend_eligibility.py::test_after_the_best_fit_a_programme_you_can_reach_outranks_a_stretch PASSED [ 84%]
+backend\tests\test_shap_explanations.py::test_describe_feature_marks_selected_aspiration_as_selected PASSED [ 85%]
+backend\tests\test_shap_explanations.py::test_describe_feature_marks_unselected_aspiration_as_not_selected PASSED [ 85%]
+backend\tests\test_shap_explanations.py::test_shap_values_use_approximate_mode_for_performance PASSED [ 86%]
+backend\tests\test_student_evaluation_tool.py::test_everyday_course_names_match_the_catalogue_titles PASSED [ 86%]
+backend\tests\test_student_evaluation_tool.py::test_normalising_drops_filler_words PASSED [ 87%]
+backend\tests\test_student_evaluation_tool.py::test_the_hit_rate_counts_only_students_placed_in_a_covered_programme PASSED [ 87%]
+backend\tests\test_student_evaluation_tool.py::test_completion_time_and_ratings_come_from_the_rows PASSED [ 88%]
+backend\tests\test_student_evaluation_tool.py::test_a_blank_rating_is_left_out_not_counted_as_zero PASSED [ 88%]
+backend\tests\test_student_evaluation_tool.py::test_the_description_states_the_counts_it_was_given PASSED [ 89%]
+backend\tests\test_synthetic_data_generator.py::test_all_53_catalogue_programmes_are_trained PASSED [ 90%]
+backend\tests\test_synthetic_data_generator.py::test_every_trained_programme_has_at_least_two_aspiration_options PASSED [ 90%]
+backend\tests\test_synthetic_data_generator.py::test_fallback_order_only_contains_trained_programmes PASSED [ 91%]
+backend\tests\test_synthetic_data_generator.py::test_fallback_order_is_nonempty PASSED [ 91%]
+backend\tests\test_synthetic_data_generator.py::test_assign_programme_label_returns_a_trained_programme PASSED [ 92%]
+backend\tests\test_synthetic_data_generator.py::test_assign_programme_label_never_picks_an_ineligible_programme PASSED [ 92%]
+backend\tests\test_synthetic_data_generator.py::test_generated_dataset_contains_only_degree_eligible_profiles PASSED [ 93%]
+backend\tests\test_whatif_and_activity.py::test_a_preview_request_saves_nothing FAILED [ 93%]
+backend\tests\test_whatif_and_activity.py::test_a_normal_request_is_still_saved FAILED [ 94%]
+backend\tests\test_whatif_and_activity.py::test_a_preview_gives_the_same_answer_as_a_real_request FAILED [ 95%]
+backend\tests\test_whatif_and_activity.py::test_activity_is_counted_per_day PASSED [ 95%]
+backend\tests\test_whatif_and_activity.py::test_the_window_has_one_entry_per_day_oldest_first PASSED [ 96%]
+backend\tests\test_whatif_and_activity.py::test_totals_include_activity_older_than_the_window PASSED [ 96%]
+backend\tests\test_whatif_and_activity.py::test_the_average_rating_is_empty_when_there_is_no_feedback PASSED [ 97%]
+backend\tests\test_whatif_and_activity.py::test_the_number_of_days_is_kept_in_a_sensible_range[1-7] PASSED [ 97%]
+backend\tests\test_whatif_and_activity.py::test_the_number_of_days_is_kept_in_a_sensible_range[3-7] PASSED [ 98%]
+backend\tests\test_whatif_and_activity.py::test_the_number_of_days_is_kept_in_a_sensible_range[30-30] PASSED [ 98%]
+backend\tests\test_whatif_and_activity.py::test_the_number_of_days_is_kept_in_a_sensible_range[500-90] PASSED [ 99%]
+backend\tests\test_whatif_and_activity.py::test_records_with_no_timestamp_do_not_break_the_counts PASSED [100%]
+
+================================== FAILURES ===================================
+_ test_an_unusual_profile_still_gets_three_honest_results[a mean grade in lower case] _
+
+name = 'a mean grade in lower case'
+
+    @pytest.mark.parametrize("name", sorted(PROFILES))
+    def test_an_unusual_profile_still_gets_three_honest_results(name):
+        profile = PROFILES[name]
+        if grade_to_points(profile["kcseMeanGrade"]) < GRADE_POINTS["C+"]:
+            # Degree programmes only: a mean below C+ is refused at the request boundary.
+            with pytest.raises(ValueError, match=r"minimum KCSE mean grade of C\+"):
+                main.StudentProfilePayload(**profile)
+            return
+    
+        payload = main.StudentProfilePayload(**profile)
+>       response = main.get_recommendations(payload, USER, preview=True)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_edge_profiles.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\main.py:887: in get_recommendations
+    proba = _pipeline.predict_proba(row_df)[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py:925: in predict_proba
+    Xt = transform.transform(Xt)
+         ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py:319: in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ColumnTransformer(transformers=[('num', 'passthrough',
+                                 ['math_score', 'eng_score', 'k...                                               sparse_output=False),
+                                 ['aspiration'])])
+X =    math_score  ...    aspiration
+0          10  ...  Not sure yet
+
+[1 rows x 114 columns]
+params = {}
+
+    def transform(self, X, **params):
+        """Transform X separately by each transformer, concatenate results.
+    
+        Parameters
+        ----------
+        X : {array-like, dataframe} of shape (n_samples, n_features)
+            The data to be transformed by subset.
+    
+        **params : dict, default=None
+            Parameters to be passed to the underlying transformers' ``transform``
+            method.
+    
+            You can only pass this if metadata routing is enabled, which you
+            can enable using ``sklearn.set_config(enable_metadata_routing=True)``.
+    
+            .. versionadded:: 1.4
+    
+        Returns
+        -------
+        X_t : {array-like, sparse matrix} of \
+                shape (n_samples, sum_n_components)
+            Horizontally stacked results of transformers. sum_n_components is the
+            sum of n_components (output dimension) over transformers. If
+            any result is a sparse matrix, everything will be converted to
+            sparse matrices.
+        """
+        _raise_for_params(params, self, "transform")
+        check_is_fitted(self)
+        X = _check_X(X)
+    
+        # If ColumnTransformer is fit using a dataframe, and now a dataframe is
+        # passed to be transformed, we select columns by name instead. This
+        # enables the user to pass X at transform time with extra columns which
+        # were not present in fit time, and the order of the columns doesn't
+        # matter.
+        fit_dataframe_and_transform_dataframe = hasattr(self, "feature_names_in_") and (
+            nw.dependencies.is_into_dataframe(X)
+        )
+    
+        n_samples = _num_samples(X)
+        column_names = _get_feature_names(X)
+    
+        if fit_dataframe_and_transform_dataframe:
+            named_transformers = self.named_transformers_
+            # check that all names seen in fit are in transform, unless
+            # they were dropped
+            non_dropped_indices = [
+                ind
+                for name, ind in self._transformer_to_input_indices.items()
+                if name in named_transformers and named_transformers[name] != "drop"
+            ]
+    
+            all_indices = set(chain(*non_dropped_indices))
+            all_names = set(self.feature_names_in_[ind] for ind in all_indices)
+    
+            diff = all_names - set(column_names)
+            if diff:
+>               raise ValueError(f"columns are missing: {diff}")
+E               ValueError: columns are missing: {'skl_recruitment_employee_relations', 'skl_political_analysis_policy_research', 'skl_supply_chain_analysis_contract_negotiation', 'skl_scientific_laboratory_research', 'skl_criminal_justice_analysis_investigation', 'skl_medical_device_design_signal_processing', 'skl_cost_estimation_construction_economics', 'skl_attention_to_detail', 'skl_environmental_monitoring_impact_assessment', 'skl_cad_modeling_spatial_engineering', 'skl_financial_modeling_accounting', 'skl_critical_thinking_persuasive_debate', 'skl_clinical_diagnostics_health_care', 'skl_problem_solving_analytical_logic', 'skl_chemical_analysis_process_optimization', 'skl_land_use_planning_gis_mapping', 'skl_forest_resource_assessment_conservation_planning', 'skl_pedagogy_classroom_management', 'skl_case_management_counseling_ethics', 'skl_python_software_programming', 'skl_guest_relations_hospitality_service_standards', 'skl_microbial_culturing_laboratory_research', 'skl_team_collaboration_leadership', 'skl_property_valuation_market_analysis', 'skl_mathematical_quantitative_analysis', 'skl_news_writing_media_research', 'skl_statistical_modeling_programming_r_python', 'skl_active_listening_psychological_assessment', 'skl_patient_assessment_rehabilitation_technique', 'skl_epidemiological_surveillance_health_education', 'skl_gis_software_remote_sensing', 'skl_social_research_methods_community_engagement', 'skl_destination_marketing_itinerary_planning', 'skl_agricultural_environmental_science', 'skl_cross_cultural_trade_market_entry_strategy'}
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py:1068: ValueError
+_ test_an_unusual_profile_still_gets_three_honest_results[all A, every subject] _
+
+name = 'all A, every subject'
+
+    @pytest.mark.parametrize("name", sorted(PROFILES))
+    def test_an_unusual_profile_still_gets_three_honest_results(name):
+        profile = PROFILES[name]
+        if grade_to_points(profile["kcseMeanGrade"]) < GRADE_POINTS["C+"]:
+            # Degree programmes only: a mean below C+ is refused at the request boundary.
+            with pytest.raises(ValueError, match=r"minimum KCSE mean grade of C\+"):
+                main.StudentProfilePayload(**profile)
+            return
+    
+        payload = main.StudentProfilePayload(**profile)
+>       response = main.get_recommendations(payload, USER, preview=True)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_edge_profiles.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\main.py:887: in get_recommendations
+    proba = _pipeline.predict_proba(row_df)[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py:925: in predict_proba
+    Xt = transform.transform(Xt)
+         ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py:319: in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ColumnTransformer(transformers=[('num', 'passthrough',
+                                 ['math_score', 'eng_score', 'k...                                               sparse_output=False),
+                                 ['aspiration'])])
+X =    math_score  ...    aspiration
+0          12  ...  Not sure yet
+
+[1 rows x 114 columns]
+params = {}
+
+    def transform(self, X, **params):
+        """Transform X separately by each transformer, concatenate results.
+    
+        Parameters
+        ----------
+        X : {array-like, dataframe} of shape (n_samples, n_features)
+            The data to be transformed by subset.
+    
+        **params : dict, default=None
+            Parameters to be passed to the underlying transformers' ``transform``
+            method.
+    
+            You can only pass this if metadata routing is enabled, which you
+            can enable using ``sklearn.set_config(enable_metadata_routing=True)``.
+    
+            .. versionadded:: 1.4
+    
+        Returns
+        -------
+        X_t : {array-like, sparse matrix} of \
+                shape (n_samples, sum_n_components)
+            Horizontally stacked results of transformers. sum_n_components is the
+            sum of n_components (output dimension) over transformers. If
+            any result is a sparse matrix, everything will be converted to
+            sparse matrices.
+        """
+        _raise_for_params(params, self, "transform")
+        check_is_fitted(self)
+        X = _check_X(X)
+    
+        # If ColumnTransformer is fit using a dataframe, and now a dataframe is
+        # passed to be transformed, we select columns by name instead. This
+        # enables the user to pass X at transform time with extra columns which
+        # were not present in fit time, and the order of the columns doesn't
+        # matter.
+        fit_dataframe_and_transform_dataframe = hasattr(self, "feature_names_in_") and (
+            nw.dependencies.is_into_dataframe(X)
+        )
+    
+        n_samples = _num_samples(X)
+        column_names = _get_feature_names(X)
+    
+        if fit_dataframe_and_transform_dataframe:
+            named_transformers = self.named_transformers_
+            # check that all names seen in fit are in transform, unless
+            # they were dropped
+            non_dropped_indices = [
+                ind
+                for name, ind in self._transformer_to_input_indices.items()
+                if name in named_transformers and named_transformers[name] != "drop"
+            ]
+    
+            all_indices = set(chain(*non_dropped_indices))
+            all_names = set(self.feature_names_in_[ind] for ind in all_indices)
+    
+            diff = all_names - set(column_names)
+            if diff:
+>               raise ValueError(f"columns are missing: {diff}")
+E               ValueError: columns are missing: {'skl_recruitment_employee_relations', 'skl_political_analysis_policy_research', 'skl_supply_chain_analysis_contract_negotiation', 'skl_scientific_laboratory_research', 'skl_criminal_justice_analysis_investigation', 'skl_medical_device_design_signal_processing', 'skl_cost_estimation_construction_economics', 'skl_attention_to_detail', 'skl_environmental_monitoring_impact_assessment', 'skl_cad_modeling_spatial_engineering', 'skl_financial_modeling_accounting', 'skl_critical_thinking_persuasive_debate', 'skl_clinical_diagnostics_health_care', 'skl_problem_solving_analytical_logic', 'skl_chemical_analysis_process_optimization', 'skl_land_use_planning_gis_mapping', 'skl_forest_resource_assessment_conservation_planning', 'skl_pedagogy_classroom_management', 'skl_case_management_counseling_ethics', 'skl_python_software_programming', 'skl_guest_relations_hospitality_service_standards', 'skl_microbial_culturing_laboratory_research', 'skl_team_collaboration_leadership', 'skl_property_valuation_market_analysis', 'skl_mathematical_quantitative_analysis', 'skl_news_writing_media_research', 'skl_statistical_modeling_programming_r_python', 'skl_active_listening_psychological_assessment', 'skl_patient_assessment_rehabilitation_technique', 'skl_epidemiological_surveillance_health_education', 'skl_gis_software_remote_sensing', 'skl_social_research_methods_community_engagement', 'skl_destination_marketing_itinerary_planning', 'skl_agricultural_environmental_science', 'skl_cross_cultural_trade_market_entry_strategy'}
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py:1068: ValueError
+_ test_an_unusual_profile_still_gets_three_honest_results[all A-, compulsory only] _
+
+name = 'all A-, compulsory only'
+
+    @pytest.mark.parametrize("name", sorted(PROFILES))
+    def test_an_unusual_profile_still_gets_three_honest_results(name):
+        profile = PROFILES[name]
+        if grade_to_points(profile["kcseMeanGrade"]) < GRADE_POINTS["C+"]:
+            # Degree programmes only: a mean below C+ is refused at the request boundary.
+            with pytest.raises(ValueError, match=r"minimum KCSE mean grade of C\+"):
+                main.StudentProfilePayload(**profile)
+            return
+    
+        payload = main.StudentProfilePayload(**profile)
+>       response = main.get_recommendations(payload, USER, preview=True)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_edge_profiles.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\main.py:887: in get_recommendations
+    proba = _pipeline.predict_proba(row_df)[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py:925: in predict_proba
+    Xt = transform.transform(Xt)
+         ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py:319: in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ColumnTransformer(transformers=[('num', 'passthrough',
+                                 ['math_score', 'eng_score', 'k...                                               sparse_output=False),
+                                 ['aspiration'])])
+X =    math_score  ...    aspiration
+0          11  ...  Not sure yet
+
+[1 rows x 114 columns]
+params = {}
+
+    def transform(self, X, **params):
+        """Transform X separately by each transformer, concatenate results.
+    
+        Parameters
+        ----------
+        X : {array-like, dataframe} of shape (n_samples, n_features)
+            The data to be transformed by subset.
+    
+        **params : dict, default=None
+            Parameters to be passed to the underlying transformers' ``transform``
+            method.
+    
+            You can only pass this if metadata routing is enabled, which you
+            can enable using ``sklearn.set_config(enable_metadata_routing=True)``.
+    
+            .. versionadded:: 1.4
+    
+        Returns
+        -------
+        X_t : {array-like, sparse matrix} of \
+                shape (n_samples, sum_n_components)
+            Horizontally stacked results of transformers. sum_n_components is the
+            sum of n_components (output dimension) over transformers. If
+            any result is a sparse matrix, everything will be converted to
+            sparse matrices.
+        """
+        _raise_for_params(params, self, "transform")
+        check_is_fitted(self)
+        X = _check_X(X)
+    
+        # If ColumnTransformer is fit using a dataframe, and now a dataframe is
+        # passed to be transformed, we select columns by name instead. This
+        # enables the user to pass X at transform time with extra columns which
+        # were not present in fit time, and the order of the columns doesn't
+        # matter.
+        fit_dataframe_and_transform_dataframe = hasattr(self, "feature_names_in_") and (
+            nw.dependencies.is_into_dataframe(X)
+        )
+    
+        n_samples = _num_samples(X)
+        column_names = _get_feature_names(X)
+    
+        if fit_dataframe_and_transform_dataframe:
+            named_transformers = self.named_transformers_
+            # check that all names seen in fit are in transform, unless
+            # they were dropped
+            non_dropped_indices = [
+                ind
+                for name, ind in self._transformer_to_input_indices.items()
+                if name in named_transformers and named_transformers[name] != "drop"
+            ]
+    
+            all_indices = set(chain(*non_dropped_indices))
+            all_names = set(self.feature_names_in_[ind] for ind in all_indices)
+    
+            diff = all_names - set(column_names)
+            if diff:
+>               raise ValueError(f"columns are missing: {diff}")
+E               ValueError: columns are missing: {'skl_recruitment_employee_relations', 'skl_political_analysis_policy_research', 'skl_supply_chain_analysis_contract_negotiation', 'skl_scientific_laboratory_research', 'skl_criminal_justice_analysis_investigation', 'skl_medical_device_design_signal_processing', 'skl_cost_estimation_construction_economics', 'skl_attention_to_detail', 'skl_environmental_monitoring_impact_assessment', 'skl_cad_modeling_spatial_engineering', 'skl_financial_modeling_accounting', 'skl_critical_thinking_persuasive_debate', 'skl_clinical_diagnostics_health_care', 'skl_problem_solving_analytical_logic', 'skl_chemical_analysis_process_optimization', 'skl_land_use_planning_gis_mapping', 'skl_forest_resource_assessment_conservation_planning', 'skl_pedagogy_classroom_management', 'skl_case_management_counseling_ethics', 'skl_python_software_programming', 'skl_guest_relations_hospitality_service_standards', 'skl_microbial_culturing_laboratory_research', 'skl_team_collaboration_leadership', 'skl_property_valuation_market_analysis', 'skl_mathematical_quantitative_analysis', 'skl_news_writing_media_research', 'skl_statistical_modeling_programming_r_python', 'skl_active_listening_psychological_assessment', 'skl_patient_assessment_rehabilitation_technique', 'skl_epidemiological_surveillance_health_education', 'skl_gis_software_remote_sensing', 'skl_social_research_methods_community_engagement', 'skl_destination_marketing_itinerary_planning', 'skl_agricultural_environmental_science', 'skl_cross_cultural_trade_market_entry_strategy'}
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py:1068: ValueError
+___ test_an_unusual_profile_still_gets_three_honest_results[business track] ___
+
+name = 'business track'
+
+    @pytest.mark.parametrize("name", sorted(PROFILES))
+    def test_an_unusual_profile_still_gets_three_honest_results(name):
+        profile = PROFILES[name]
+        if grade_to_points(profile["kcseMeanGrade"]) < GRADE_POINTS["C+"]:
+            # Degree programmes only: a mean below C+ is refused at the request boundary.
+            with pytest.raises(ValueError, match=r"minimum KCSE mean grade of C\+"):
+                main.StudentProfilePayload(**profile)
+            return
+    
+        payload = main.StudentProfilePayload(**profile)
+>       response = main.get_recommendations(payload, USER, preview=True)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_edge_profiles.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\main.py:887: in get_recommendations
+    proba = _pipeline.predict_proba(row_df)[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py:925: in predict_proba
+    Xt = transform.transform(Xt)
+         ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py:319: in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ColumnTransformer(transformers=[('num', 'passthrough',
+                                 ['math_score', 'eng_score', 'k...                                               sparse_output=False),
+                                 ['aspiration'])])
+X =    math_score  ...    aspiration
+0          10  ...  Not sure yet
+
+[1 rows x 114 columns]
+params = {}
+
+    def transform(self, X, **params):
+        """Transform X separately by each transformer, concatenate results.
+    
+        Parameters
+        ----------
+        X : {array-like, dataframe} of shape (n_samples, n_features)
+            The data to be transformed by subset.
+    
+        **params : dict, default=None
+            Parameters to be passed to the underlying transformers' ``transform``
+            method.
+    
+            You can only pass this if metadata routing is enabled, which you
+            can enable using ``sklearn.set_config(enable_metadata_routing=True)``.
+    
+            .. versionadded:: 1.4
+    
+        Returns
+        -------
+        X_t : {array-like, sparse matrix} of \
+                shape (n_samples, sum_n_components)
+            Horizontally stacked results of transformers. sum_n_components is the
+            sum of n_components (output dimension) over transformers. If
+            any result is a sparse matrix, everything will be converted to
+            sparse matrices.
+        """
+        _raise_for_params(params, self, "transform")
+        check_is_fitted(self)
+        X = _check_X(X)
+    
+        # If ColumnTransformer is fit using a dataframe, and now a dataframe is
+        # passed to be transformed, we select columns by name instead. This
+        # enables the user to pass X at transform time with extra columns which
+        # were not present in fit time, and the order of the columns doesn't
+        # matter.
+        fit_dataframe_and_transform_dataframe = hasattr(self, "feature_names_in_") and (
+            nw.dependencies.is_into_dataframe(X)
+        )
+    
+        n_samples = _num_samples(X)
+        column_names = _get_feature_names(X)
+    
+        if fit_dataframe_and_transform_dataframe:
+            named_transformers = self.named_transformers_
+            # check that all names seen in fit are in transform, unless
+            # they were dropped
+            non_dropped_indices = [
+                ind
+                for name, ind in self._transformer_to_input_indices.items()
+                if name in named_transformers and named_transformers[name] != "drop"
+            ]
+    
+            all_indices = set(chain(*non_dropped_indices))
+            all_names = set(self.feature_names_in_[ind] for ind in all_indices)
+    
+            diff = all_names - set(column_names)
+            if diff:
+>               raise ValueError(f"columns are missing: {diff}")
+E               ValueError: columns are missing: {'skl_recruitment_employee_relations', 'skl_political_analysis_policy_research', 'skl_supply_chain_analysis_contract_negotiation', 'skl_scientific_laboratory_research', 'skl_criminal_justice_analysis_investigation', 'skl_medical_device_design_signal_processing', 'skl_cost_estimation_construction_economics', 'skl_attention_to_detail', 'skl_environmental_monitoring_impact_assessment', 'skl_cad_modeling_spatial_engineering', 'skl_financial_modeling_accounting', 'skl_critical_thinking_persuasive_debate', 'skl_clinical_diagnostics_health_care', 'skl_problem_solving_analytical_logic', 'skl_chemical_analysis_process_optimization', 'skl_land_use_planning_gis_mapping', 'skl_forest_resource_assessment_conservation_planning', 'skl_pedagogy_classroom_management', 'skl_case_management_counseling_ethics', 'skl_python_software_programming', 'skl_guest_relations_hospitality_service_standards', 'skl_microbial_culturing_laboratory_research', 'skl_team_collaboration_leadership', 'skl_property_valuation_market_analysis', 'skl_mathematical_quantitative_analysis', 'skl_news_writing_media_research', 'skl_statistical_modeling_programming_r_python', 'skl_active_listening_psychological_assessment', 'skl_patient_assessment_rehabilitation_technique', 'skl_epidemiological_surveillance_health_education', 'skl_gis_software_remote_sensing', 'skl_social_research_methods_community_engagement', 'skl_destination_marketing_itinerary_planning', 'skl_agricultural_environmental_science', 'skl_cross_cultural_trade_market_entry_strategy'}
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py:1068: ValueError
+_ test_an_unusual_profile_still_gets_three_honest_results[career that clashes with the grades] _
+
+name = 'career that clashes with the grades'
+
+    @pytest.mark.parametrize("name", sorted(PROFILES))
+    def test_an_unusual_profile_still_gets_three_honest_results(name):
+        profile = PROFILES[name]
+        if grade_to_points(profile["kcseMeanGrade"]) < GRADE_POINTS["C+"]:
+            # Degree programmes only: a mean below C+ is refused at the request boundary.
+            with pytest.raises(ValueError, match=r"minimum KCSE mean grade of C\+"):
+                main.StudentProfilePayload(**profile)
+            return
+    
+        payload = main.StudentProfilePayload(**profile)
+>       response = main.get_recommendations(payload, USER, preview=True)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_edge_profiles.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\main.py:887: in get_recommendations
+    proba = _pipeline.predict_proba(row_df)[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py:925: in predict_proba
+    Xt = transform.transform(Xt)
+         ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py:319: in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ColumnTransformer(transformers=[('num', 'passthrough',
+                                 ['math_score', 'eng_score', 'k...                                               sparse_output=False),
+                                 ['aspiration'])])
+X =    math_score  ...  aspiration
+0           7  ...     Surgeon
+
+[1 rows x 114 columns]
+params = {}
+
+    def transform(self, X, **params):
+        """Transform X separately by each transformer, concatenate results.
+    
+        Parameters
+        ----------
+        X : {array-like, dataframe} of shape (n_samples, n_features)
+            The data to be transformed by subset.
+    
+        **params : dict, default=None
+            Parameters to be passed to the underlying transformers' ``transform``
+            method.
+    
+            You can only pass this if metadata routing is enabled, which you
+            can enable using ``sklearn.set_config(enable_metadata_routing=True)``.
+    
+            .. versionadded:: 1.4
+    
+        Returns
+        -------
+        X_t : {array-like, sparse matrix} of \
+                shape (n_samples, sum_n_components)
+            Horizontally stacked results of transformers. sum_n_components is the
+            sum of n_components (output dimension) over transformers. If
+            any result is a sparse matrix, everything will be converted to
+            sparse matrices.
+        """
+        _raise_for_params(params, self, "transform")
+        check_is_fitted(self)
+        X = _check_X(X)
+    
+        # If ColumnTransformer is fit using a dataframe, and now a dataframe is
+        # passed to be transformed, we select columns by name instead. This
+        # enables the user to pass X at transform time with extra columns which
+        # were not present in fit time, and the order of the columns doesn't
+        # matter.
+        fit_dataframe_and_transform_dataframe = hasattr(self, "feature_names_in_") and (
+            nw.dependencies.is_into_dataframe(X)
+        )
+    
+        n_samples = _num_samples(X)
+        column_names = _get_feature_names(X)
+    
+        if fit_dataframe_and_transform_dataframe:
+            named_transformers = self.named_transformers_
+            # check that all names seen in fit are in transform, unless
+            # they were dropped
+            non_dropped_indices = [
+                ind
+                for name, ind in self._transformer_to_input_indices.items()
+                if name in named_transformers and named_transformers[name] != "drop"
+            ]
+    
+            all_indices = set(chain(*non_dropped_indices))
+            all_names = set(self.feature_names_in_[ind] for ind in all_indices)
+    
+            diff = all_names - set(column_names)
+            if diff:
+>               raise ValueError(f"columns are missing: {diff}")
+E               ValueError: columns are missing: {'skl_recruitment_employee_relations', 'skl_political_analysis_policy_research', 'skl_supply_chain_analysis_contract_negotiation', 'skl_scientific_laboratory_research', 'skl_criminal_justice_analysis_investigation', 'skl_medical_device_design_signal_processing', 'skl_cost_estimation_construction_economics', 'skl_attention_to_detail', 'skl_environmental_monitoring_impact_assessment', 'skl_cad_modeling_spatial_engineering', 'skl_financial_modeling_accounting', 'skl_critical_thinking_persuasive_debate', 'skl_clinical_diagnostics_health_care', 'skl_problem_solving_analytical_logic', 'skl_chemical_analysis_process_optimization', 'skl_land_use_planning_gis_mapping', 'skl_forest_resource_assessment_conservation_planning', 'skl_pedagogy_classroom_management', 'skl_case_management_counseling_ethics', 'skl_python_software_programming', 'skl_guest_relations_hospitality_service_standards', 'skl_microbial_culturing_laboratory_research', 'skl_team_collaboration_leadership', 'skl_property_valuation_market_analysis', 'skl_mathematical_quantitative_analysis', 'skl_news_writing_media_research', 'skl_statistical_modeling_programming_r_python', 'skl_active_listening_psychological_assessment', 'skl_patient_assessment_rehabilitation_technique', 'skl_epidemiological_surveillance_health_education', 'skl_gis_software_remote_sensing', 'skl_social_research_methods_community_engagement', 'skl_destination_marketing_itinerary_planning', 'skl_agricultural_environmental_science', 'skl_cross_cultural_trade_market_entry_strategy'}
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py:1068: ValueError
+_ test_an_unusual_profile_still_gets_three_honest_results[extra unfamiliar subject] _
+
+name = 'extra unfamiliar subject'
+
+    @pytest.mark.parametrize("name", sorted(PROFILES))
+    def test_an_unusual_profile_still_gets_three_honest_results(name):
+        profile = PROFILES[name]
+        if grade_to_points(profile["kcseMeanGrade"]) < GRADE_POINTS["C+"]:
+            # Degree programmes only: a mean below C+ is refused at the request boundary.
+            with pytest.raises(ValueError, match=r"minimum KCSE mean grade of C\+"):
+                main.StudentProfilePayload(**profile)
+            return
+    
+        payload = main.StudentProfilePayload(**profile)
+>       response = main.get_recommendations(payload, USER, preview=True)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_edge_profiles.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\main.py:887: in get_recommendations
+    proba = _pipeline.predict_proba(row_df)[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py:925: in predict_proba
+    Xt = transform.transform(Xt)
+         ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py:319: in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ColumnTransformer(transformers=[('num', 'passthrough',
+                                 ['math_score', 'eng_score', 'k...                                               sparse_output=False),
+                                 ['aspiration'])])
+X =    math_score  ...    aspiration
+0           9  ...  Not sure yet
+
+[1 rows x 114 columns]
+params = {}
+
+    def transform(self, X, **params):
+        """Transform X separately by each transformer, concatenate results.
+    
+        Parameters
+        ----------
+        X : {array-like, dataframe} of shape (n_samples, n_features)
+            The data to be transformed by subset.
+    
+        **params : dict, default=None
+            Parameters to be passed to the underlying transformers' ``transform``
+            method.
+    
+            You can only pass this if metadata routing is enabled, which you
+            can enable using ``sklearn.set_config(enable_metadata_routing=True)``.
+    
+            .. versionadded:: 1.4
+    
+        Returns
+        -------
+        X_t : {array-like, sparse matrix} of \
+                shape (n_samples, sum_n_components)
+            Horizontally stacked results of transformers. sum_n_components is the
+            sum of n_components (output dimension) over transformers. If
+            any result is a sparse matrix, everything will be converted to
+            sparse matrices.
+        """
+        _raise_for_params(params, self, "transform")
+        check_is_fitted(self)
+        X = _check_X(X)
+    
+        # If ColumnTransformer is fit using a dataframe, and now a dataframe is
+        # passed to be transformed, we select columns by name instead. This
+        # enables the user to pass X at transform time with extra columns which
+        # were not present in fit time, and the order of the columns doesn't
+        # matter.
+        fit_dataframe_and_transform_dataframe = hasattr(self, "feature_names_in_") and (
+            nw.dependencies.is_into_dataframe(X)
+        )
+    
+        n_samples = _num_samples(X)
+        column_names = _get_feature_names(X)
+    
+        if fit_dataframe_and_transform_dataframe:
+            named_transformers = self.named_transformers_
+            # check that all names seen in fit are in transform, unless
+            # they were dropped
+            non_dropped_indices = [
+                ind
+                for name, ind in self._transformer_to_input_indices.items()
+                if name in named_transformers and named_transformers[name] != "drop"
+            ]
+    
+            all_indices = set(chain(*non_dropped_indices))
+            all_names = set(self.feature_names_in_[ind] for ind in all_indices)
+    
+            diff = all_names - set(column_names)
+            if diff:
+>               raise ValueError(f"columns are missing: {diff}")
+E               ValueError: columns are missing: {'skl_recruitment_employee_relations', 'skl_political_analysis_policy_research', 'skl_supply_chain_analysis_contract_negotiation', 'skl_scientific_laboratory_research', 'skl_criminal_justice_analysis_investigation', 'skl_medical_device_design_signal_processing', 'skl_cost_estimation_construction_economics', 'skl_attention_to_detail', 'skl_environmental_monitoring_impact_assessment', 'skl_cad_modeling_spatial_engineering', 'skl_financial_modeling_accounting', 'skl_critical_thinking_persuasive_debate', 'skl_clinical_diagnostics_health_care', 'skl_problem_solving_analytical_logic', 'skl_chemical_analysis_process_optimization', 'skl_land_use_planning_gis_mapping', 'skl_forest_resource_assessment_conservation_planning', 'skl_pedagogy_classroom_management', 'skl_case_management_counseling_ethics', 'skl_python_software_programming', 'skl_guest_relations_hospitality_service_standards', 'skl_microbial_culturing_laboratory_research', 'skl_team_collaboration_leadership', 'skl_property_valuation_market_analysis', 'skl_mathematical_quantitative_analysis', 'skl_news_writing_media_research', 'skl_statistical_modeling_programming_r_python', 'skl_active_listening_psychological_assessment', 'skl_patient_assessment_rehabilitation_technique', 'skl_epidemiological_surveillance_health_education', 'skl_gis_software_remote_sensing', 'skl_social_research_methods_community_engagement', 'skl_destination_marketing_itinerary_planning', 'skl_agricultural_environmental_science', 'skl_cross_cultural_trade_market_entry_strategy'}
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py:1068: ValueError
+_______ test_an_unusual_profile_still_gets_three_honest_results[flat A] _______
+
+name = 'flat A'
+
+    @pytest.mark.parametrize("name", sorted(PROFILES))
+    def test_an_unusual_profile_still_gets_three_honest_results(name):
+        profile = PROFILES[name]
+        if grade_to_points(profile["kcseMeanGrade"]) < GRADE_POINTS["C+"]:
+            # Degree programmes only: a mean below C+ is refused at the request boundary.
+            with pytest.raises(ValueError, match=r"minimum KCSE mean grade of C\+"):
+                main.StudentProfilePayload(**profile)
+            return
+    
+        payload = main.StudentProfilePayload(**profile)
+>       response = main.get_recommendations(payload, USER, preview=True)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_edge_profiles.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\main.py:887: in get_recommendations
+    proba = _pipeline.predict_proba(row_df)[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py:925: in predict_proba
+    Xt = transform.transform(Xt)
+         ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py:319: in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ColumnTransformer(transformers=[('num', 'passthrough',
+                                 ['math_score', 'eng_score', 'k...                                               sparse_output=False),
+                                 ['aspiration'])])
+X =    math_score  ...    aspiration
+0          12  ...  Not sure yet
+
+[1 rows x 114 columns]
+params = {}
+
+    def transform(self, X, **params):
+        """Transform X separately by each transformer, concatenate results.
+    
+        Parameters
+        ----------
+        X : {array-like, dataframe} of shape (n_samples, n_features)
+            The data to be transformed by subset.
+    
+        **params : dict, default=None
+            Parameters to be passed to the underlying transformers' ``transform``
+            method.
+    
+            You can only pass this if metadata routing is enabled, which you
+            can enable using ``sklearn.set_config(enable_metadata_routing=True)``.
+    
+            .. versionadded:: 1.4
+    
+        Returns
+        -------
+        X_t : {array-like, sparse matrix} of \
+                shape (n_samples, sum_n_components)
+            Horizontally stacked results of transformers. sum_n_components is the
+            sum of n_components (output dimension) over transformers. If
+            any result is a sparse matrix, everything will be converted to
+            sparse matrices.
+        """
+        _raise_for_params(params, self, "transform")
+        check_is_fitted(self)
+        X = _check_X(X)
+    
+        # If ColumnTransformer is fit using a dataframe, and now a dataframe is
+        # passed to be transformed, we select columns by name instead. This
+        # enables the user to pass X at transform time with extra columns which
+        # were not present in fit time, and the order of the columns doesn't
+        # matter.
+        fit_dataframe_and_transform_dataframe = hasattr(self, "feature_names_in_") and (
+            nw.dependencies.is_into_dataframe(X)
+        )
+    
+        n_samples = _num_samples(X)
+        column_names = _get_feature_names(X)
+    
+        if fit_dataframe_and_transform_dataframe:
+            named_transformers = self.named_transformers_
+            # check that all names seen in fit are in transform, unless
+            # they were dropped
+            non_dropped_indices = [
+                ind
+                for name, ind in self._transformer_to_input_indices.items()
+                if name in named_transformers and named_transformers[name] != "drop"
+            ]
+    
+            all_indices = set(chain(*non_dropped_indices))
+            all_names = set(self.feature_names_in_[ind] for ind in all_indices)
+    
+            diff = all_names - set(column_names)
+            if diff:
+>               raise ValueError(f"columns are missing: {diff}")
+E               ValueError: columns are missing: {'skl_recruitment_employee_relations', 'skl_political_analysis_policy_research', 'skl_supply_chain_analysis_contract_negotiation', 'skl_scientific_laboratory_research', 'skl_criminal_justice_analysis_investigation', 'skl_medical_device_design_signal_processing', 'skl_cost_estimation_construction_economics', 'skl_attention_to_detail', 'skl_environmental_monitoring_impact_assessment', 'skl_cad_modeling_spatial_engineering', 'skl_financial_modeling_accounting', 'skl_critical_thinking_persuasive_debate', 'skl_clinical_diagnostics_health_care', 'skl_problem_solving_analytical_logic', 'skl_chemical_analysis_process_optimization', 'skl_land_use_planning_gis_mapping', 'skl_forest_resource_assessment_conservation_planning', 'skl_pedagogy_classroom_management', 'skl_case_management_counseling_ethics', 'skl_python_software_programming', 'skl_guest_relations_hospitality_service_standards', 'skl_microbial_culturing_laboratory_research', 'skl_team_collaboration_leadership', 'skl_property_valuation_market_analysis', 'skl_mathematical_quantitative_analysis', 'skl_news_writing_media_research', 'skl_statistical_modeling_programming_r_python', 'skl_active_listening_psychological_assessment', 'skl_patient_assessment_rehabilitation_technique', 'skl_epidemiological_surveillance_health_education', 'skl_gis_software_remote_sensing', 'skl_social_research_methods_community_engagement', 'skl_destination_marketing_itinerary_planning', 'skl_agricultural_environmental_science', 'skl_cross_cultural_trade_market_entry_strategy'}
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py:1068: ValueError
+______ test_an_unusual_profile_still_gets_three_honest_results[flat A-] _______
+
+name = 'flat A-'
+
+    @pytest.mark.parametrize("name", sorted(PROFILES))
+    def test_an_unusual_profile_still_gets_three_honest_results(name):
+        profile = PROFILES[name]
+        if grade_to_points(profile["kcseMeanGrade"]) < GRADE_POINTS["C+"]:
+            # Degree programmes only: a mean below C+ is refused at the request boundary.
+            with pytest.raises(ValueError, match=r"minimum KCSE mean grade of C\+"):
+                main.StudentProfilePayload(**profile)
+            return
+    
+        payload = main.StudentProfilePayload(**profile)
+>       response = main.get_recommendations(payload, USER, preview=True)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_edge_profiles.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\main.py:887: in get_recommendations
+    proba = _pipeline.predict_proba(row_df)[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py:925: in predict_proba
+    Xt = transform.transform(Xt)
+         ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py:319: in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ColumnTransformer(transformers=[('num', 'passthrough',
+                                 ['math_score', 'eng_score', 'k...                                               sparse_output=False),
+                                 ['aspiration'])])
+X =    math_score  ...    aspiration
+0          11  ...  Not sure yet
+
+[1 rows x 114 columns]
+params = {}
+
+    def transform(self, X, **params):
+        """Transform X separately by each transformer, concatenate results.
+    
+        Parameters
+        ----------
+        X : {array-like, dataframe} of shape (n_samples, n_features)
+            The data to be transformed by subset.
+    
+        **params : dict, default=None
+            Parameters to be passed to the underlying transformers' ``transform``
+            method.
+    
+            You can only pass this if metadata routing is enabled, which you
+            can enable using ``sklearn.set_config(enable_metadata_routing=True)``.
+    
+            .. versionadded:: 1.4
+    
+        Returns
+        -------
+        X_t : {array-like, sparse matrix} of \
+                shape (n_samples, sum_n_components)
+            Horizontally stacked results of transformers. sum_n_components is the
+            sum of n_components (output dimension) over transformers. If
+            any result is a sparse matrix, everything will be converted to
+            sparse matrices.
+        """
+        _raise_for_params(params, self, "transform")
+        check_is_fitted(self)
+        X = _check_X(X)
+    
+        # If ColumnTransformer is fit using a dataframe, and now a dataframe is
+        # passed to be transformed, we select columns by name instead. This
+        # enables the user to pass X at transform time with extra columns which
+        # were not present in fit time, and the order of the columns doesn't
+        # matter.
+        fit_dataframe_and_transform_dataframe = hasattr(self, "feature_names_in_") and (
+            nw.dependencies.is_into_dataframe(X)
+        )
+    
+        n_samples = _num_samples(X)
+        column_names = _get_feature_names(X)
+    
+        if fit_dataframe_and_transform_dataframe:
+            named_transformers = self.named_transformers_
+            # check that all names seen in fit are in transform, unless
+            # they were dropped
+            non_dropped_indices = [
+                ind
+                for name, ind in self._transformer_to_input_indices.items()
+                if name in named_transformers and named_transformers[name] != "drop"
+            ]
+    
+            all_indices = set(chain(*non_dropped_indices))
+            all_names = set(self.feature_names_in_[ind] for ind in all_indices)
+    
+            diff = all_names - set(column_names)
+            if diff:
+>               raise ValueError(f"columns are missing: {diff}")
+E               ValueError: columns are missing: {'skl_recruitment_employee_relations', 'skl_political_analysis_policy_research', 'skl_supply_chain_analysis_contract_negotiation', 'skl_scientific_laboratory_research', 'skl_criminal_justice_analysis_investigation', 'skl_medical_device_design_signal_processing', 'skl_cost_estimation_construction_economics', 'skl_attention_to_detail', 'skl_environmental_monitoring_impact_assessment', 'skl_cad_modeling_spatial_engineering', 'skl_financial_modeling_accounting', 'skl_critical_thinking_persuasive_debate', 'skl_clinical_diagnostics_health_care', 'skl_problem_solving_analytical_logic', 'skl_chemical_analysis_process_optimization', 'skl_land_use_planning_gis_mapping', 'skl_forest_resource_assessment_conservation_planning', 'skl_pedagogy_classroom_management', 'skl_case_management_counseling_ethics', 'skl_python_software_programming', 'skl_guest_relations_hospitality_service_standards', 'skl_microbial_culturing_laboratory_research', 'skl_team_collaboration_leadership', 'skl_property_valuation_market_analysis', 'skl_mathematical_quantitative_analysis', 'skl_news_writing_media_research', 'skl_statistical_modeling_programming_r_python', 'skl_active_listening_psychological_assessment', 'skl_patient_assessment_rehabilitation_technique', 'skl_epidemiological_surveillance_health_education', 'skl_gis_software_remote_sensing', 'skl_social_research_methods_community_engagement', 'skl_destination_marketing_itinerary_planning', 'skl_agricultural_environmental_science', 'skl_cross_cultural_trade_market_entry_strategy'}
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py:1068: ValueError
+_______ test_an_unusual_profile_still_gets_three_honest_results[flat B] _______
+
+name = 'flat B'
+
+    @pytest.mark.parametrize("name", sorted(PROFILES))
+    def test_an_unusual_profile_still_gets_three_honest_results(name):
+        profile = PROFILES[name]
+        if grade_to_points(profile["kcseMeanGrade"]) < GRADE_POINTS["C+"]:
+            # Degree programmes only: a mean below C+ is refused at the request boundary.
+            with pytest.raises(ValueError, match=r"minimum KCSE mean grade of C\+"):
+                main.StudentProfilePayload(**profile)
+            return
+    
+        payload = main.StudentProfilePayload(**profile)
+>       response = main.get_recommendations(payload, USER, preview=True)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_edge_profiles.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\main.py:887: in get_recommendations
+    proba = _pipeline.predict_proba(row_df)[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py:925: in predict_proba
+    Xt = transform.transform(Xt)
+         ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py:319: in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ColumnTransformer(transformers=[('num', 'passthrough',
+                                 ['math_score', 'eng_score', 'k...                                               sparse_output=False),
+                                 ['aspiration'])])
+X =    math_score  ...    aspiration
+0           9  ...  Not sure yet
+
+[1 rows x 114 columns]
+params = {}
+
+    def transform(self, X, **params):
+        """Transform X separately by each transformer, concatenate results.
+    
+        Parameters
+        ----------
+        X : {array-like, dataframe} of shape (n_samples, n_features)
+            The data to be transformed by subset.
+    
+        **params : dict, default=None
+            Parameters to be passed to the underlying transformers' ``transform``
+            method.
+    
+            You can only pass this if metadata routing is enabled, which you
+            can enable using ``sklearn.set_config(enable_metadata_routing=True)``.
+    
+            .. versionadded:: 1.4
+    
+        Returns
+        -------
+        X_t : {array-like, sparse matrix} of \
+                shape (n_samples, sum_n_components)
+            Horizontally stacked results of transformers. sum_n_components is the
+            sum of n_components (output dimension) over transformers. If
+            any result is a sparse matrix, everything will be converted to
+            sparse matrices.
+        """
+        _raise_for_params(params, self, "transform")
+        check_is_fitted(self)
+        X = _check_X(X)
+    
+        # If ColumnTransformer is fit using a dataframe, and now a dataframe is
+        # passed to be transformed, we select columns by name instead. This
+        # enables the user to pass X at transform time with extra columns which
+        # were not present in fit time, and the order of the columns doesn't
+        # matter.
+        fit_dataframe_and_transform_dataframe = hasattr(self, "feature_names_in_") and (
+            nw.dependencies.is_into_dataframe(X)
+        )
+    
+        n_samples = _num_samples(X)
+        column_names = _get_feature_names(X)
+    
+        if fit_dataframe_and_transform_dataframe:
+            named_transformers = self.named_transformers_
+            # check that all names seen in fit are in transform, unless
+            # they were dropped
+            non_dropped_indices = [
+                ind
+                for name, ind in self._transformer_to_input_indices.items()
+                if name in named_transformers and named_transformers[name] != "drop"
+            ]
+    
+            all_indices = set(chain(*non_dropped_indices))
+            all_names = set(self.feature_names_in_[ind] for ind in all_indices)
+    
+            diff = all_names - set(column_names)
+            if diff:
+>               raise ValueError(f"columns are missing: {diff}")
+E               ValueError: columns are missing: {'skl_recruitment_employee_relations', 'skl_political_analysis_policy_research', 'skl_supply_chain_analysis_contract_negotiation', 'skl_scientific_laboratory_research', 'skl_criminal_justice_analysis_investigation', 'skl_medical_device_design_signal_processing', 'skl_cost_estimation_construction_economics', 'skl_attention_to_detail', 'skl_environmental_monitoring_impact_assessment', 'skl_cad_modeling_spatial_engineering', 'skl_financial_modeling_accounting', 'skl_critical_thinking_persuasive_debate', 'skl_clinical_diagnostics_health_care', 'skl_problem_solving_analytical_logic', 'skl_chemical_analysis_process_optimization', 'skl_land_use_planning_gis_mapping', 'skl_forest_resource_assessment_conservation_planning', 'skl_pedagogy_classroom_management', 'skl_case_management_counseling_ethics', 'skl_python_software_programming', 'skl_guest_relations_hospitality_service_standards', 'skl_microbial_culturing_laboratory_research', 'skl_team_collaboration_leadership', 'skl_property_valuation_market_analysis', 'skl_mathematical_quantitative_analysis', 'skl_news_writing_media_research', 'skl_statistical_modeling_programming_r_python', 'skl_active_listening_psychological_assessment', 'skl_patient_assessment_rehabilitation_technique', 'skl_epidemiological_surveillance_health_education', 'skl_gis_software_remote_sensing', 'skl_social_research_methods_community_engagement', 'skl_destination_marketing_itinerary_planning', 'skl_agricultural_environmental_science', 'skl_cross_cultural_trade_market_entry_strategy'}
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py:1068: ValueError
+______ test_an_unusual_profile_still_gets_three_honest_results[flat B+] _______
+
+name = 'flat B+'
+
+    @pytest.mark.parametrize("name", sorted(PROFILES))
+    def test_an_unusual_profile_still_gets_three_honest_results(name):
+        profile = PROFILES[name]
+        if grade_to_points(profile["kcseMeanGrade"]) < GRADE_POINTS["C+"]:
+            # Degree programmes only: a mean below C+ is refused at the request boundary.
+            with pytest.raises(ValueError, match=r"minimum KCSE mean grade of C\+"):
+                main.StudentProfilePayload(**profile)
+            return
+    
+        payload = main.StudentProfilePayload(**profile)
+>       response = main.get_recommendations(payload, USER, preview=True)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_edge_profiles.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\main.py:887: in get_recommendations
+    proba = _pipeline.predict_proba(row_df)[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py:925: in predict_proba
+    Xt = transform.transform(Xt)
+         ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py:319: in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ColumnTransformer(transformers=[('num', 'passthrough',
+                                 ['math_score', 'eng_score', 'k...                                               sparse_output=False),
+                                 ['aspiration'])])
+X =    math_score  ...    aspiration
+0          10  ...  Not sure yet
+
+[1 rows x 114 columns]
+params = {}
+
+    def transform(self, X, **params):
+        """Transform X separately by each transformer, concatenate results.
+    
+        Parameters
+        ----------
+        X : {array-like, dataframe} of shape (n_samples, n_features)
+            The data to be transformed by subset.
+    
+        **params : dict, default=None
+            Parameters to be passed to the underlying transformers' ``transform``
+            method.
+    
+            You can only pass this if metadata routing is enabled, which you
+            can enable using ``sklearn.set_config(enable_metadata_routing=True)``.
+    
+            .. versionadded:: 1.4
+    
+        Returns
+        -------
+        X_t : {array-like, sparse matrix} of \
+                shape (n_samples, sum_n_components)
+            Horizontally stacked results of transformers. sum_n_components is the
+            sum of n_components (output dimension) over transformers. If
+            any result is a sparse matrix, everything will be converted to
+            sparse matrices.
+        """
+        _raise_for_params(params, self, "transform")
+        check_is_fitted(self)
+        X = _check_X(X)
+    
+        # If ColumnTransformer is fit using a dataframe, and now a dataframe is
+        # passed to be transformed, we select columns by name instead. This
+        # enables the user to pass X at transform time with extra columns which
+        # were not present in fit time, and the order of the columns doesn't
+        # matter.
+        fit_dataframe_and_transform_dataframe = hasattr(self, "feature_names_in_") and (
+            nw.dependencies.is_into_dataframe(X)
+        )
+    
+        n_samples = _num_samples(X)
+        column_names = _get_feature_names(X)
+    
+        if fit_dataframe_and_transform_dataframe:
+            named_transformers = self.named_transformers_
+            # check that all names seen in fit are in transform, unless
+            # they were dropped
+            non_dropped_indices = [
+                ind
+                for name, ind in self._transformer_to_input_indices.items()
+                if name in named_transformers and named_transformers[name] != "drop"
+            ]
+    
+            all_indices = set(chain(*non_dropped_indices))
+            all_names = set(self.feature_names_in_[ind] for ind in all_indices)
+    
+            diff = all_names - set(column_names)
+            if diff:
+>               raise ValueError(f"columns are missing: {diff}")
+E               ValueError: columns are missing: {'skl_recruitment_employee_relations', 'skl_political_analysis_policy_research', 'skl_supply_chain_analysis_contract_negotiation', 'skl_scientific_laboratory_research', 'skl_criminal_justice_analysis_investigation', 'skl_medical_device_design_signal_processing', 'skl_cost_estimation_construction_economics', 'skl_attention_to_detail', 'skl_environmental_monitoring_impact_assessment', 'skl_cad_modeling_spatial_engineering', 'skl_financial_modeling_accounting', 'skl_critical_thinking_persuasive_debate', 'skl_clinical_diagnostics_health_care', 'skl_problem_solving_analytical_logic', 'skl_chemical_analysis_process_optimization', 'skl_land_use_planning_gis_mapping', 'skl_forest_resource_assessment_conservation_planning', 'skl_pedagogy_classroom_management', 'skl_case_management_counseling_ethics', 'skl_python_software_programming', 'skl_guest_relations_hospitality_service_standards', 'skl_microbial_culturing_laboratory_research', 'skl_team_collaboration_leadership', 'skl_property_valuation_market_analysis', 'skl_mathematical_quantitative_analysis', 'skl_news_writing_media_research', 'skl_statistical_modeling_programming_r_python', 'skl_active_listening_psychological_assessment', 'skl_patient_assessment_rehabilitation_technique', 'skl_epidemiological_surveillance_health_education', 'skl_gis_software_remote_sensing', 'skl_social_research_methods_community_engagement', 'skl_destination_marketing_itinerary_planning', 'skl_agricultural_environmental_science', 'skl_cross_cultural_trade_market_entry_strategy'}
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py:1068: ValueError
+______ test_an_unusual_profile_still_gets_three_honest_results[flat B-] _______
+
+name = 'flat B-'
+
+    @pytest.mark.parametrize("name", sorted(PROFILES))
+    def test_an_unusual_profile_still_gets_three_honest_results(name):
+        profile = PROFILES[name]
+        if grade_to_points(profile["kcseMeanGrade"]) < GRADE_POINTS["C+"]:
+            # Degree programmes only: a mean below C+ is refused at the request boundary.
+            with pytest.raises(ValueError, match=r"minimum KCSE mean grade of C\+"):
+                main.StudentProfilePayload(**profile)
+            return
+    
+        payload = main.StudentProfilePayload(**profile)
+>       response = main.get_recommendations(payload, USER, preview=True)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_edge_profiles.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\main.py:887: in get_recommendations
+    proba = _pipeline.predict_proba(row_df)[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py:925: in predict_proba
+    Xt = transform.transform(Xt)
+         ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py:319: in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ColumnTransformer(transformers=[('num', 'passthrough',
+                                 ['math_score', 'eng_score', 'k...                                               sparse_output=False),
+                                 ['aspiration'])])
+X =    math_score  ...    aspiration
+0           8  ...  Not sure yet
+
+[1 rows x 114 columns]
+params = {}
+
+    def transform(self, X, **params):
+        """Transform X separately by each transformer, concatenate results.
+    
+        Parameters
+        ----------
+        X : {array-like, dataframe} of shape (n_samples, n_features)
+            The data to be transformed by subset.
+    
+        **params : dict, default=None
+            Parameters to be passed to the underlying transformers' ``transform``
+            method.
+    
+            You can only pass this if metadata routing is enabled, which you
+            can enable using ``sklearn.set_config(enable_metadata_routing=True)``.
+    
+            .. versionadded:: 1.4
+    
+        Returns
+        -------
+        X_t : {array-like, sparse matrix} of \
+                shape (n_samples, sum_n_components)
+            Horizontally stacked results of transformers. sum_n_components is the
+            sum of n_components (output dimension) over transformers. If
+            any result is a sparse matrix, everything will be converted to
+            sparse matrices.
+        """
+        _raise_for_params(params, self, "transform")
+        check_is_fitted(self)
+        X = _check_X(X)
+    
+        # If ColumnTransformer is fit using a dataframe, and now a dataframe is
+        # passed to be transformed, we select columns by name instead. This
+        # enables the user to pass X at transform time with extra columns which
+        # were not present in fit time, and the order of the columns doesn't
+        # matter.
+        fit_dataframe_and_transform_dataframe = hasattr(self, "feature_names_in_") and (
+            nw.dependencies.is_into_dataframe(X)
+        )
+    
+        n_samples = _num_samples(X)
+        column_names = _get_feature_names(X)
+    
+        if fit_dataframe_and_transform_dataframe:
+            named_transformers = self.named_transformers_
+            # check that all names seen in fit are in transform, unless
+            # they were dropped
+            non_dropped_indices = [
+                ind
+                for name, ind in self._transformer_to_input_indices.items()
+                if name in named_transformers and named_transformers[name] != "drop"
+            ]
+    
+            all_indices = set(chain(*non_dropped_indices))
+            all_names = set(self.feature_names_in_[ind] for ind in all_indices)
+    
+            diff = all_names - set(column_names)
+            if diff:
+>               raise ValueError(f"columns are missing: {diff}")
+E               ValueError: columns are missing: {'skl_recruitment_employee_relations', 'skl_political_analysis_policy_research', 'skl_supply_chain_analysis_contract_negotiation', 'skl_scientific_laboratory_research', 'skl_criminal_justice_analysis_investigation', 'skl_medical_device_design_signal_processing', 'skl_cost_estimation_construction_economics', 'skl_attention_to_detail', 'skl_environmental_monitoring_impact_assessment', 'skl_cad_modeling_spatial_engineering', 'skl_financial_modeling_accounting', 'skl_critical_thinking_persuasive_debate', 'skl_clinical_diagnostics_health_care', 'skl_problem_solving_analytical_logic', 'skl_chemical_analysis_process_optimization', 'skl_land_use_planning_gis_mapping', 'skl_forest_resource_assessment_conservation_planning', 'skl_pedagogy_classroom_management', 'skl_case_management_counseling_ethics', 'skl_python_software_programming', 'skl_guest_relations_hospitality_service_standards', 'skl_microbial_culturing_laboratory_research', 'skl_team_collaboration_leadership', 'skl_property_valuation_market_analysis', 'skl_mathematical_quantitative_analysis', 'skl_news_writing_media_research', 'skl_statistical_modeling_programming_r_python', 'skl_active_listening_psychological_assessment', 'skl_patient_assessment_rehabilitation_technique', 'skl_epidemiological_surveillance_health_education', 'skl_gis_software_remote_sensing', 'skl_social_research_methods_community_engagement', 'skl_destination_marketing_itinerary_planning', 'skl_agricultural_environmental_science', 'skl_cross_cultural_trade_market_entry_strategy'}
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py:1068: ValueError
+______ test_an_unusual_profile_still_gets_three_honest_results[flat C+] _______
+
+name = 'flat C+'
+
+    @pytest.mark.parametrize("name", sorted(PROFILES))
+    def test_an_unusual_profile_still_gets_three_honest_results(name):
+        profile = PROFILES[name]
+        if grade_to_points(profile["kcseMeanGrade"]) < GRADE_POINTS["C+"]:
+            # Degree programmes only: a mean below C+ is refused at the request boundary.
+            with pytest.raises(ValueError, match=r"minimum KCSE mean grade of C\+"):
+                main.StudentProfilePayload(**profile)
+            return
+    
+        payload = main.StudentProfilePayload(**profile)
+>       response = main.get_recommendations(payload, USER, preview=True)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_edge_profiles.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\main.py:887: in get_recommendations
+    proba = _pipeline.predict_proba(row_df)[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py:925: in predict_proba
+    Xt = transform.transform(Xt)
+         ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py:319: in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ColumnTransformer(transformers=[('num', 'passthrough',
+                                 ['math_score', 'eng_score', 'k...                                               sparse_output=False),
+                                 ['aspiration'])])
+X =    math_score  ...    aspiration
+0           7  ...  Not sure yet
+
+[1 rows x 114 columns]
+params = {}
+
+    def transform(self, X, **params):
+        """Transform X separately by each transformer, concatenate results.
+    
+        Parameters
+        ----------
+        X : {array-like, dataframe} of shape (n_samples, n_features)
+            The data to be transformed by subset.
+    
+        **params : dict, default=None
+            Parameters to be passed to the underlying transformers' ``transform``
+            method.
+    
+            You can only pass this if metadata routing is enabled, which you
+            can enable using ``sklearn.set_config(enable_metadata_routing=True)``.
+    
+            .. versionadded:: 1.4
+    
+        Returns
+        -------
+        X_t : {array-like, sparse matrix} of \
+                shape (n_samples, sum_n_components)
+            Horizontally stacked results of transformers. sum_n_components is the
+            sum of n_components (output dimension) over transformers. If
+            any result is a sparse matrix, everything will be converted to
+            sparse matrices.
+        """
+        _raise_for_params(params, self, "transform")
+        check_is_fitted(self)
+        X = _check_X(X)
+    
+        # If ColumnTransformer is fit using a dataframe, and now a dataframe is
+        # passed to be transformed, we select columns by name instead. This
+        # enables the user to pass X at transform time with extra columns which
+        # were not present in fit time, and the order of the columns doesn't
+        # matter.
+        fit_dataframe_and_transform_dataframe = hasattr(self, "feature_names_in_") and (
+            nw.dependencies.is_into_dataframe(X)
+        )
+    
+        n_samples = _num_samples(X)
+        column_names = _get_feature_names(X)
+    
+        if fit_dataframe_and_transform_dataframe:
+            named_transformers = self.named_transformers_
+            # check that all names seen in fit are in transform, unless
+            # they were dropped
+            non_dropped_indices = [
+                ind
+                for name, ind in self._transformer_to_input_indices.items()
+                if name in named_transformers and named_transformers[name] != "drop"
+            ]
+    
+            all_indices = set(chain(*non_dropped_indices))
+            all_names = set(self.feature_names_in_[ind] for ind in all_indices)
+    
+            diff = all_names - set(column_names)
+            if diff:
+>               raise ValueError(f"columns are missing: {diff}")
+E               ValueError: columns are missing: {'skl_recruitment_employee_relations', 'skl_political_analysis_policy_research', 'skl_supply_chain_analysis_contract_negotiation', 'skl_scientific_laboratory_research', 'skl_criminal_justice_analysis_investigation', 'skl_medical_device_design_signal_processing', 'skl_cost_estimation_construction_economics', 'skl_attention_to_detail', 'skl_environmental_monitoring_impact_assessment', 'skl_cad_modeling_spatial_engineering', 'skl_financial_modeling_accounting', 'skl_critical_thinking_persuasive_debate', 'skl_clinical_diagnostics_health_care', 'skl_problem_solving_analytical_logic', 'skl_chemical_analysis_process_optimization', 'skl_land_use_planning_gis_mapping', 'skl_forest_resource_assessment_conservation_planning', 'skl_pedagogy_classroom_management', 'skl_case_management_counseling_ethics', 'skl_python_software_programming', 'skl_guest_relations_hospitality_service_standards', 'skl_microbial_culturing_laboratory_research', 'skl_team_collaboration_leadership', 'skl_property_valuation_market_analysis', 'skl_mathematical_quantitative_analysis', 'skl_news_writing_media_research', 'skl_statistical_modeling_programming_r_python', 'skl_active_listening_psychological_assessment', 'skl_patient_assessment_rehabilitation_technique', 'skl_epidemiological_surveillance_health_education', 'skl_gis_software_remote_sensing', 'skl_social_research_methods_community_engagement', 'skl_destination_marketing_itinerary_planning', 'skl_agricultural_environmental_science', 'skl_cross_cultural_trade_market_entry_strategy'}
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py:1068: ValueError
+_ test_an_unusual_profile_still_gets_three_honest_results[lowest passing mean, high maths] _
+
+name = 'lowest passing mean, high maths'
+
+    @pytest.mark.parametrize("name", sorted(PROFILES))
+    def test_an_unusual_profile_still_gets_three_honest_results(name):
+        profile = PROFILES[name]
+        if grade_to_points(profile["kcseMeanGrade"]) < GRADE_POINTS["C+"]:
+            # Degree programmes only: a mean below C+ is refused at the request boundary.
+            with pytest.raises(ValueError, match=r"minimum KCSE mean grade of C\+"):
+                main.StudentProfilePayload(**profile)
+            return
+    
+        payload = main.StudentProfilePayload(**profile)
+>       response = main.get_recommendations(payload, USER, preview=True)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_edge_profiles.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\main.py:887: in get_recommendations
+    proba = _pipeline.predict_proba(row_df)[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py:925: in predict_proba
+    Xt = transform.transform(Xt)
+         ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py:319: in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ColumnTransformer(transformers=[('num', 'passthrough',
+                                 ['math_score', 'eng_score', 'k...                                               sparse_output=False),
+                                 ['aspiration'])])
+X =    math_score  ...    aspiration
+0          12  ...  Not sure yet
+
+[1 rows x 114 columns]
+params = {}
+
+    def transform(self, X, **params):
+        """Transform X separately by each transformer, concatenate results.
+    
+        Parameters
+        ----------
+        X : {array-like, dataframe} of shape (n_samples, n_features)
+            The data to be transformed by subset.
+    
+        **params : dict, default=None
+            Parameters to be passed to the underlying transformers' ``transform``
+            method.
+    
+            You can only pass this if metadata routing is enabled, which you
+            can enable using ``sklearn.set_config(enable_metadata_routing=True)``.
+    
+            .. versionadded:: 1.4
+    
+        Returns
+        -------
+        X_t : {array-like, sparse matrix} of \
+                shape (n_samples, sum_n_components)
+            Horizontally stacked results of transformers. sum_n_components is the
+            sum of n_components (output dimension) over transformers. If
+            any result is a sparse matrix, everything will be converted to
+            sparse matrices.
+        """
+        _raise_for_params(params, self, "transform")
+        check_is_fitted(self)
+        X = _check_X(X)
+    
+        # If ColumnTransformer is fit using a dataframe, and now a dataframe is
+        # passed to be transformed, we select columns by name instead. This
+        # enables the user to pass X at transform time with extra columns which
+        # were not present in fit time, and the order of the columns doesn't
+        # matter.
+        fit_dataframe_and_transform_dataframe = hasattr(self, "feature_names_in_") and (
+            nw.dependencies.is_into_dataframe(X)
+        )
+    
+        n_samples = _num_samples(X)
+        column_names = _get_feature_names(X)
+    
+        if fit_dataframe_and_transform_dataframe:
+            named_transformers = self.named_transformers_
+            # check that all names seen in fit are in transform, unless
+            # they were dropped
+            non_dropped_indices = [
+                ind
+                for name, ind in self._transformer_to_input_indices.items()
+                if name in named_transformers and named_transformers[name] != "drop"
+            ]
+    
+            all_indices = set(chain(*non_dropped_indices))
+            all_names = set(self.feature_names_in_[ind] for ind in all_indices)
+    
+            diff = all_names - set(column_names)
+            if diff:
+>               raise ValueError(f"columns are missing: {diff}")
+E               ValueError: columns are missing: {'skl_recruitment_employee_relations', 'skl_political_analysis_policy_research', 'skl_supply_chain_analysis_contract_negotiation', 'skl_scientific_laboratory_research', 'skl_criminal_justice_analysis_investigation', 'skl_medical_device_design_signal_processing', 'skl_cost_estimation_construction_economics', 'skl_attention_to_detail', 'skl_environmental_monitoring_impact_assessment', 'skl_cad_modeling_spatial_engineering', 'skl_financial_modeling_accounting', 'skl_critical_thinking_persuasive_debate', 'skl_clinical_diagnostics_health_care', 'skl_problem_solving_analytical_logic', 'skl_chemical_analysis_process_optimization', 'skl_land_use_planning_gis_mapping', 'skl_forest_resource_assessment_conservation_planning', 'skl_pedagogy_classroom_management', 'skl_case_management_counseling_ethics', 'skl_python_software_programming', 'skl_guest_relations_hospitality_service_standards', 'skl_microbial_culturing_laboratory_research', 'skl_team_collaboration_leadership', 'skl_property_valuation_market_analysis', 'skl_mathematical_quantitative_analysis', 'skl_news_writing_media_research', 'skl_statistical_modeling_programming_r_python', 'skl_active_listening_psychological_assessment', 'skl_patient_assessment_rehabilitation_technique', 'skl_epidemiological_surveillance_health_education', 'skl_gis_software_remote_sensing', 'skl_social_research_methods_community_engagement', 'skl_destination_marketing_itinerary_planning', 'skl_agricultural_environmental_science', 'skl_cross_cultural_trade_market_entry_strategy'}
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py:1068: ValueError
+_ test_an_unusual_profile_still_gets_three_honest_results[no career, no choices] _
+
+name = 'no career, no choices'
+
+    @pytest.mark.parametrize("name", sorted(PROFILES))
+    def test_an_unusual_profile_still_gets_three_honest_results(name):
+        profile = PROFILES[name]
+        if grade_to_points(profile["kcseMeanGrade"]) < GRADE_POINTS["C+"]:
+            # Degree programmes only: a mean below C+ is refused at the request boundary.
+            with pytest.raises(ValueError, match=r"minimum KCSE mean grade of C\+"):
+                main.StudentProfilePayload(**profile)
+            return
+    
+        payload = main.StudentProfilePayload(**profile)
+>       response = main.get_recommendations(payload, USER, preview=True)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_edge_profiles.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\main.py:887: in get_recommendations
+    proba = _pipeline.predict_proba(row_df)[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py:925: in predict_proba
+    Xt = transform.transform(Xt)
+         ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py:319: in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ColumnTransformer(transformers=[('num', 'passthrough',
+                                 ['math_score', 'eng_score', 'k...                                               sparse_output=False),
+                                 ['aspiration'])])
+X =    math_score  ...    aspiration
+0           7  ...  Not sure yet
+
+[1 rows x 114 columns]
+params = {}
+
+    def transform(self, X, **params):
+        """Transform X separately by each transformer, concatenate results.
+    
+        Parameters
+        ----------
+        X : {array-like, dataframe} of shape (n_samples, n_features)
+            The data to be transformed by subset.
+    
+        **params : dict, default=None
+            Parameters to be passed to the underlying transformers' ``transform``
+            method.
+    
+            You can only pass this if metadata routing is enabled, which you
+            can enable using ``sklearn.set_config(enable_metadata_routing=True)``.
+    
+            .. versionadded:: 1.4
+    
+        Returns
+        -------
+        X_t : {array-like, sparse matrix} of \
+                shape (n_samples, sum_n_components)
+            Horizontally stacked results of transformers. sum_n_components is the
+            sum of n_components (output dimension) over transformers. If
+            any result is a sparse matrix, everything will be converted to
+            sparse matrices.
+        """
+        _raise_for_params(params, self, "transform")
+        check_is_fitted(self)
+        X = _check_X(X)
+    
+        # If ColumnTransformer is fit using a dataframe, and now a dataframe is
+        # passed to be transformed, we select columns by name instead. This
+        # enables the user to pass X at transform time with extra columns which
+        # were not present in fit time, and the order of the columns doesn't
+        # matter.
+        fit_dataframe_and_transform_dataframe = hasattr(self, "feature_names_in_") and (
+            nw.dependencies.is_into_dataframe(X)
+        )
+    
+        n_samples = _num_samples(X)
+        column_names = _get_feature_names(X)
+    
+        if fit_dataframe_and_transform_dataframe:
+            named_transformers = self.named_transformers_
+            # check that all names seen in fit are in transform, unless
+            # they were dropped
+            non_dropped_indices = [
+                ind
+                for name, ind in self._transformer_to_input_indices.items()
+                if name in named_transformers and named_transformers[name] != "drop"
+            ]
+    
+            all_indices = set(chain(*non_dropped_indices))
+            all_names = set(self.feature_names_in_[ind] for ind in all_indices)
+    
+            diff = all_names - set(column_names)
+            if diff:
+>               raise ValueError(f"columns are missing: {diff}")
+E               ValueError: columns are missing: {'skl_recruitment_employee_relations', 'skl_political_analysis_policy_research', 'skl_supply_chain_analysis_contract_negotiation', 'skl_scientific_laboratory_research', 'skl_criminal_justice_analysis_investigation', 'skl_medical_device_design_signal_processing', 'skl_cost_estimation_construction_economics', 'skl_attention_to_detail', 'skl_environmental_monitoring_impact_assessment', 'skl_cad_modeling_spatial_engineering', 'skl_financial_modeling_accounting', 'skl_critical_thinking_persuasive_debate', 'skl_clinical_diagnostics_health_care', 'skl_problem_solving_analytical_logic', 'skl_chemical_analysis_process_optimization', 'skl_land_use_planning_gis_mapping', 'skl_forest_resource_assessment_conservation_planning', 'skl_pedagogy_classroom_management', 'skl_case_management_counseling_ethics', 'skl_python_software_programming', 'skl_guest_relations_hospitality_service_standards', 'skl_microbial_culturing_laboratory_research', 'skl_team_collaboration_leadership', 'skl_property_valuation_market_analysis', 'skl_mathematical_quantitative_analysis', 'skl_news_writing_media_research', 'skl_statistical_modeling_programming_r_python', 'skl_active_listening_psychological_assessment', 'skl_patient_assessment_rehabilitation_technique', 'skl_epidemiological_surveillance_health_education', 'skl_gis_software_remote_sensing', 'skl_social_research_methods_community_engagement', 'skl_destination_marketing_itinerary_planning', 'skl_agricultural_environmental_science', 'skl_cross_cultural_trade_market_entry_strategy'}
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py:1068: ValueError
+_ test_an_unusual_profile_still_gets_three_honest_results[strong arts, weak maths] _
+
+name = 'strong arts, weak maths'
+
+    @pytest.mark.parametrize("name", sorted(PROFILES))
+    def test_an_unusual_profile_still_gets_three_honest_results(name):
+        profile = PROFILES[name]
+        if grade_to_points(profile["kcseMeanGrade"]) < GRADE_POINTS["C+"]:
+            # Degree programmes only: a mean below C+ is refused at the request boundary.
+            with pytest.raises(ValueError, match=r"minimum KCSE mean grade of C\+"):
+                main.StudentProfilePayload(**profile)
+            return
+    
+        payload = main.StudentProfilePayload(**profile)
+>       response = main.get_recommendations(payload, USER, preview=True)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_edge_profiles.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\main.py:887: in get_recommendations
+    proba = _pipeline.predict_proba(row_df)[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py:925: in predict_proba
+    Xt = transform.transform(Xt)
+         ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py:319: in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ColumnTransformer(transformers=[('num', 'passthrough',
+                                 ['math_score', 'eng_score', 'k...                                               sparse_output=False),
+                                 ['aspiration'])])
+X =    math_score  ...    aspiration
+0           3  ...  Not sure yet
+
+[1 rows x 114 columns]
+params = {}
+
+    def transform(self, X, **params):
+        """Transform X separately by each transformer, concatenate results.
+    
+        Parameters
+        ----------
+        X : {array-like, dataframe} of shape (n_samples, n_features)
+            The data to be transformed by subset.
+    
+        **params : dict, default=None
+            Parameters to be passed to the underlying transformers' ``transform``
+            method.
+    
+            You can only pass this if metadata routing is enabled, which you
+            can enable using ``sklearn.set_config(enable_metadata_routing=True)``.
+    
+            .. versionadded:: 1.4
+    
+        Returns
+        -------
+        X_t : {array-like, sparse matrix} of \
+                shape (n_samples, sum_n_components)
+            Horizontally stacked results of transformers. sum_n_components is the
+            sum of n_components (output dimension) over transformers. If
+            any result is a sparse matrix, everything will be converted to
+            sparse matrices.
+        """
+        _raise_for_params(params, self, "transform")
+        check_is_fitted(self)
+        X = _check_X(X)
+    
+        # If ColumnTransformer is fit using a dataframe, and now a dataframe is
+        # passed to be transformed, we select columns by name instead. This
+        # enables the user to pass X at transform time with extra columns which
+        # were not present in fit time, and the order of the columns doesn't
+        # matter.
+        fit_dataframe_and_transform_dataframe = hasattr(self, "feature_names_in_") and (
+            nw.dependencies.is_into_dataframe(X)
+        )
+    
+        n_samples = _num_samples(X)
+        column_names = _get_feature_names(X)
+    
+        if fit_dataframe_and_transform_dataframe:
+            named_transformers = self.named_transformers_
+            # check that all names seen in fit are in transform, unless
+            # they were dropped
+            non_dropped_indices = [
+                ind
+                for name, ind in self._transformer_to_input_indices.items()
+                if name in named_transformers and named_transformers[name] != "drop"
+            ]
+    
+            all_indices = set(chain(*non_dropped_indices))
+            all_names = set(self.feature_names_in_[ind] for ind in all_indices)
+    
+            diff = all_names - set(column_names)
+            if diff:
+>               raise ValueError(f"columns are missing: {diff}")
+E               ValueError: columns are missing: {'skl_recruitment_employee_relations', 'skl_political_analysis_policy_research', 'skl_supply_chain_analysis_contract_negotiation', 'skl_scientific_laboratory_research', 'skl_criminal_justice_analysis_investigation', 'skl_medical_device_design_signal_processing', 'skl_cost_estimation_construction_economics', 'skl_attention_to_detail', 'skl_environmental_monitoring_impact_assessment', 'skl_cad_modeling_spatial_engineering', 'skl_financial_modeling_accounting', 'skl_critical_thinking_persuasive_debate', 'skl_clinical_diagnostics_health_care', 'skl_problem_solving_analytical_logic', 'skl_chemical_analysis_process_optimization', 'skl_land_use_planning_gis_mapping', 'skl_forest_resource_assessment_conservation_planning', 'skl_pedagogy_classroom_management', 'skl_case_management_counseling_ethics', 'skl_python_software_programming', 'skl_guest_relations_hospitality_service_standards', 'skl_microbial_culturing_laboratory_research', 'skl_team_collaboration_leadership', 'skl_property_valuation_market_analysis', 'skl_mathematical_quantitative_analysis', 'skl_news_writing_media_research', 'skl_statistical_modeling_programming_r_python', 'skl_active_listening_psychological_assessment', 'skl_patient_assessment_rehabilitation_technique', 'skl_epidemiological_surveillance_health_education', 'skl_gis_software_remote_sensing', 'skl_social_research_methods_community_engagement', 'skl_destination_marketing_itinerary_planning', 'skl_agricultural_environmental_science', 'skl_cross_cultural_trade_market_entry_strategy'}
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py:1068: ValueError
+_ test_an_unusual_profile_still_gets_three_honest_results[strong sciences, weak English] _
+
+name = 'strong sciences, weak English'
+
+    @pytest.mark.parametrize("name", sorted(PROFILES))
+    def test_an_unusual_profile_still_gets_three_honest_results(name):
+        profile = PROFILES[name]
+        if grade_to_points(profile["kcseMeanGrade"]) < GRADE_POINTS["C+"]:
+            # Degree programmes only: a mean below C+ is refused at the request boundary.
+            with pytest.raises(ValueError, match=r"minimum KCSE mean grade of C\+"):
+                main.StudentProfilePayload(**profile)
+            return
+    
+        payload = main.StudentProfilePayload(**profile)
+>       response = main.get_recommendations(payload, USER, preview=True)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_edge_profiles.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\main.py:887: in get_recommendations
+    proba = _pipeline.predict_proba(row_df)[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py:925: in predict_proba
+    Xt = transform.transform(Xt)
+         ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py:319: in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ColumnTransformer(transformers=[('num', 'passthrough',
+                                 ['math_score', 'eng_score', 'k...                                               sparse_output=False),
+                                 ['aspiration'])])
+X =    math_score  ...    aspiration
+0          12  ...  Not sure yet
+
+[1 rows x 114 columns]
+params = {}
+
+    def transform(self, X, **params):
+        """Transform X separately by each transformer, concatenate results.
+    
+        Parameters
+        ----------
+        X : {array-like, dataframe} of shape (n_samples, n_features)
+            The data to be transformed by subset.
+    
+        **params : dict, default=None
+            Parameters to be passed to the underlying transformers' ``transform``
+            method.
+    
+            You can only pass this if metadata routing is enabled, which you
+            can enable using ``sklearn.set_config(enable_metadata_routing=True)``.
+    
+            .. versionadded:: 1.4
+    
+        Returns
+        -------
+        X_t : {array-like, sparse matrix} of \
+                shape (n_samples, sum_n_components)
+            Horizontally stacked results of transformers. sum_n_components is the
+            sum of n_components (output dimension) over transformers. If
+            any result is a sparse matrix, everything will be converted to
+            sparse matrices.
+        """
+        _raise_for_params(params, self, "transform")
+        check_is_fitted(self)
+        X = _check_X(X)
+    
+        # If ColumnTransformer is fit using a dataframe, and now a dataframe is
+        # passed to be transformed, we select columns by name instead. This
+        # enables the user to pass X at transform time with extra columns which
+        # were not present in fit time, and the order of the columns doesn't
+        # matter.
+        fit_dataframe_and_transform_dataframe = hasattr(self, "feature_names_in_") and (
+            nw.dependencies.is_into_dataframe(X)
+        )
+    
+        n_samples = _num_samples(X)
+        column_names = _get_feature_names(X)
+    
+        if fit_dataframe_and_transform_dataframe:
+            named_transformers = self.named_transformers_
+            # check that all names seen in fit are in transform, unless
+            # they were dropped
+            non_dropped_indices = [
+                ind
+                for name, ind in self._transformer_to_input_indices.items()
+                if name in named_transformers and named_transformers[name] != "drop"
+            ]
+    
+            all_indices = set(chain(*non_dropped_indices))
+            all_names = set(self.feature_names_in_[ind] for ind in all_indices)
+    
+            diff = all_names - set(column_names)
+            if diff:
+>               raise ValueError(f"columns are missing: {diff}")
+E               ValueError: columns are missing: {'skl_recruitment_employee_relations', 'skl_political_analysis_policy_research', 'skl_supply_chain_analysis_contract_negotiation', 'skl_scientific_laboratory_research', 'skl_criminal_justice_analysis_investigation', 'skl_medical_device_design_signal_processing', 'skl_cost_estimation_construction_economics', 'skl_attention_to_detail', 'skl_environmental_monitoring_impact_assessment', 'skl_cad_modeling_spatial_engineering', 'skl_financial_modeling_accounting', 'skl_critical_thinking_persuasive_debate', 'skl_clinical_diagnostics_health_care', 'skl_problem_solving_analytical_logic', 'skl_chemical_analysis_process_optimization', 'skl_land_use_planning_gis_mapping', 'skl_forest_resource_assessment_conservation_planning', 'skl_pedagogy_classroom_management', 'skl_case_management_counseling_ethics', 'skl_python_software_programming', 'skl_guest_relations_hospitality_service_standards', 'skl_microbial_culturing_laboratory_research', 'skl_team_collaboration_leadership', 'skl_property_valuation_market_analysis', 'skl_mathematical_quantitative_analysis', 'skl_news_writing_media_research', 'skl_statistical_modeling_programming_r_python', 'skl_active_listening_psychological_assessment', 'skl_patient_assessment_rehabilitation_technique', 'skl_epidemiological_surveillance_health_education', 'skl_gis_software_remote_sensing', 'skl_social_research_methods_community_engagement', 'skl_destination_marketing_itinerary_planning', 'skl_agricultural_environmental_science', 'skl_cross_cultural_trade_market_entry_strategy'}
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py:1068: ValueError
+________________ test_endpoint_never_returns_ineligible_mbchb _________________
+
+auth_override = None
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001B7C5803260>
+
+    def test_endpoint_never_returns_ineligible_mbchb(auth_override, monkeypatch):
+        monkeypatch.setattr(main, "_persist_recommendation", lambda *a, **k: None)
+    
+        # Straight As but no Biology, which MBChB requires.
+        payload = StudentProfilePayload(
+            fullName="Test Candidate",
+            kcseMeanGrade="A",
+            grades={
+                "Mathematics": "A",
+                "English": "A",
+                "Kiswahili": "A",
+                "Chemistry": "A",
+                "Physics": "A",
+                "Geography": "A",
+                "History & Government": "A",
+            },
+            interests=["Healthcare & Clinical Medicine"],
+            strengths=["Perseverance & Discipline"],
+            aspirations=["Medical Doctor (Physician/Surgeon)"],
+        )
+        mean_grade = _mean_grade_as_endpoint_computes_it(payload)
+        if MBCHB not in CATALOG_BY_TITLE:
+            pytest.fail(f"{MBCHB} is not in the catalogue")
+        assert not meets_minimum_requirements(
+            payload.grades, CATALOG_BY_TITLE[MBCHB]["minimumSubjectRequirements"], mean_grade
+        ), "this student was meant to be ineligible for MBChB"
+    
+>       resp = TestClient(app).post("/api/recommend", json=payload.model_dump())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_filter_new.py:139: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\testclient.py:556: in post
+    return super().post(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\httpx2\_client.py:1203: in post
+    return self.request(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\testclient.py:455: in request
+    return super().request(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\httpx2\_client.py:796: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\httpx2\_client.py:979: in send
+    response = self._send_handling_auth(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\httpx2\_client.py:1007: in _send_handling_auth
+    response = self._send_handling_redirects(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\httpx2\_client.py:1042: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\httpx2\_client.py:1075: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\testclient.py:354: in handle_request
+    raise exc
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\testclient.py:351: in handle_request
+    portal.call(self.app, scope, receive, send)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\anyio\from_thread.py:340: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\concurrent\futures\_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\anyio\from_thread.py:265: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\applications.py:1163: in __call__
+    await super().__call__(scope, receive, send)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\applications.py:96: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\middleware\base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend\main.py:499: in _reject_oversized_bodies
+    return await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\middleware\base.py:168: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\middleware\base.py:144: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\middleware\cors.py:88: in __call__
+    await self.app(scope, receive, send)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py:670: in __call__
+    await self.middleware_stack(scope, receive, send)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\routing.py:2734: in app
+    await route.handle(scope, receive, send)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\routing.py:1281: in handle
+    await super().handle(scope, receive, send)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\routing.py:280: in handle
+    await self.app(scope, receive, send)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\routing.py:158: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\routing.py:144: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\routing.py:706: in app
+    raw_response = await run_endpoint_function(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\routing.py:354: in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\concurrency.py:34: in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\anyio\to_thread.py:65: in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\anyio\_backends\_asyncio.py:2706: in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\anyio\_backends\_asyncio.py:1100: in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+backend\main.py:887: in get_recommendations
+    proba = _pipeline.predict_proba(row_df)[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py:925: in predict_proba
+    Xt = transform.transform(Xt)
+         ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py:319: in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ColumnTransformer(transformers=[('num', 'passthrough',
+                                 ['math_score', 'eng_score', 'k...                                               sparse_output=False),
+                                 ['aspiration'])])
+X =    math_score  ...                          aspiration
+0          12  ...  Medical Doctor (Physician/Surgeon)
+
+[1 rows x 114 columns]
+params = {}
+
+    def transform(self, X, **params):
+        """Transform X separately by each transformer, concatenate results.
+    
+        Parameters
+        ----------
+        X : {array-like, dataframe} of shape (n_samples, n_features)
+            The data to be transformed by subset.
+    
+        **params : dict, default=None
+            Parameters to be passed to the underlying transformers' ``transform``
+            method.
+    
+            You can only pass this if metadata routing is enabled, which you
+            can enable using ``sklearn.set_config(enable_metadata_routing=True)``.
+    
+            .. versionadded:: 1.4
+    
+        Returns
+        -------
+        X_t : {array-like, sparse matrix} of \
+                shape (n_samples, sum_n_components)
+            Horizontally stacked results of transformers. sum_n_components is the
+            sum of n_components (output dimension) over transformers. If
+            any result is a sparse matrix, everything will be converted to
+            sparse matrices.
+        """
+        _raise_for_params(params, self, "transform")
+        check_is_fitted(self)
+        X = _check_X(X)
+    
+        # If ColumnTransformer is fit using a dataframe, and now a dataframe is
+        # passed to be transformed, we select columns by name instead. This
+        # enables the user to pass X at transform time with extra columns which
+        # were not present in fit time, and the order of the columns doesn't
+        # matter.
+        fit_dataframe_and_transform_dataframe = hasattr(self, "feature_names_in_") and (
+            nw.dependencies.is_into_dataframe(X)
+        )
+    
+        n_samples = _num_samples(X)
+        column_names = _get_feature_names(X)
+    
+        if fit_dataframe_and_transform_dataframe:
+            named_transformers = self.named_transformers_
+            # check that all names seen in fit are in transform, unless
+            # they were dropped
+            non_dropped_indices = [
+                ind
+                for name, ind in self._transformer_to_input_indices.items()
+                if name in named_transformers and named_transformers[name] != "drop"
+            ]
+    
+            all_indices = set(chain(*non_dropped_indices))
+            all_names = set(self.feature_names_in_[ind] for ind in all_indices)
+    
+            diff = all_names - set(column_names)
+            if diff:
+>               raise ValueError(f"columns are missing: {diff}")
+E               ValueError: columns are missing: {'skl_recruitment_employee_relations', 'skl_political_analysis_policy_research', 'skl_supply_chain_analysis_contract_negotiation', 'skl_scientific_laboratory_research', 'skl_criminal_justice_analysis_investigation', 'skl_medical_device_design_signal_processing', 'skl_cost_estimation_construction_economics', 'skl_attention_to_detail', 'skl_environmental_monitoring_impact_assessment', 'skl_cad_modeling_spatial_engineering', 'skl_financial_modeling_accounting', 'skl_critical_thinking_persuasive_debate', 'skl_clinical_diagnostics_health_care', 'skl_problem_solving_analytical_logic', 'skl_chemical_analysis_process_optimization', 'skl_land_use_planning_gis_mapping', 'skl_forest_resource_assessment_conservation_planning', 'skl_pedagogy_classroom_management', 'skl_case_management_counseling_ethics', 'skl_python_software_programming', 'skl_guest_relations_hospitality_service_standards', 'skl_microbial_culturing_laboratory_research', 'skl_team_collaboration_leadership', 'skl_property_valuation_market_analysis', 'skl_mathematical_quantitative_analysis', 'skl_news_writing_media_research', 'skl_statistical_modeling_programming_r_python', 'skl_active_listening_psychological_assessment', 'skl_patient_assessment_rehabilitation_technique', 'skl_epidemiological_surveillance_health_education', 'skl_gis_software_remote_sensing', 'skl_social_research_methods_community_engagement', 'skl_destination_marketing_itinerary_planning', 'skl_agricultural_environmental_science', 'skl_cross_cultural_trade_market_entry_strategy'}
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py:1068: ValueError
+_______ test_a_student_with_no_career_still_gets_three_recommendations ________
+
+    def test_a_student_with_no_career_still_gets_three_recommendations():
+        payload = main.StudentProfilePayload(
+            kcseMeanGrade="B",
+            grades={"Mathematics": "B", "English": "B", "Kiswahili": "B", "Chemistry": "B", "Physics": "B"},
+            interests=["Software Development & Coding"],
+            strengths=["Logical & Analytical Reasoning"],
+            aspirations=[],
+        )
+        row_df, grades, mean_grade = main.profile_to_feature_row(payload)
+>       proba = main._pipeline.predict_proba(row_df)[0]
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_reasons_and_shortlist.py:97: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py:925: in predict_proba
+    Xt = transform.transform(Xt)
+         ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py:319: in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ColumnTransformer(transformers=[('num', 'passthrough',
+                                 ['math_score', 'eng_score', 'k...                                               sparse_output=False),
+                                 ['aspiration'])])
+X =    math_score  ...    aspiration
+0           9  ...  Not sure yet
+
+[1 rows x 114 columns]
+params = {}
+
+    def transform(self, X, **params):
+        """Transform X separately by each transformer, concatenate results.
+    
+        Parameters
+        ----------
+        X : {array-like, dataframe} of shape (n_samples, n_features)
+            The data to be transformed by subset.
+    
+        **params : dict, default=None
+            Parameters to be passed to the underlying transformers' ``transform``
+            method.
+    
+            You can only pass this if metadata routing is enabled, which you
+            can enable using ``sklearn.set_config(enable_metadata_routing=True)``.
+    
+            .. versionadded:: 1.4
+    
+        Returns
+        -------
+        X_t : {array-like, sparse matrix} of \
+                shape (n_samples, sum_n_components)
+            Horizontally stacked results of transformers. sum_n_components is the
+            sum of n_components (output dimension) over transformers. If
+            any result is a sparse matrix, everything will be converted to
+            sparse matrices.
+        """
+        _raise_for_params(params, self, "transform")
+        check_is_fitted(self)
+        X = _check_X(X)
+    
+        # If ColumnTransformer is fit using a dataframe, and now a dataframe is
+        # passed to be transformed, we select columns by name instead. This
+        # enables the user to pass X at transform time with extra columns which
+        # were not present in fit time, and the order of the columns doesn't
+        # matter.
+        fit_dataframe_and_transform_dataframe = hasattr(self, "feature_names_in_") and (
+            nw.dependencies.is_into_dataframe(X)
+        )
+    
+        n_samples = _num_samples(X)
+        column_names = _get_feature_names(X)
+    
+        if fit_dataframe_and_transform_dataframe:
+            named_transformers = self.named_transformers_
+            # check that all names seen in fit are in transform, unless
+            # they were dropped
+            non_dropped_indices = [
+                ind
+                for name, ind in self._transformer_to_input_indices.items()
+                if name in named_transformers and named_transformers[name] != "drop"
+            ]
+    
+            all_indices = set(chain(*non_dropped_indices))
+            all_names = set(self.feature_names_in_[ind] for ind in all_indices)
+    
+            diff = all_names - set(column_names)
+            if diff:
+>               raise ValueError(f"columns are missing: {diff}")
+E               ValueError: columns are missing: {'skl_recruitment_employee_relations', 'skl_political_analysis_policy_research', 'skl_supply_chain_analysis_contract_negotiation', 'skl_scientific_laboratory_research', 'skl_criminal_justice_analysis_investigation', 'skl_medical_device_design_signal_processing', 'skl_cost_estimation_construction_economics', 'skl_attention_to_detail', 'skl_environmental_monitoring_impact_assessment', 'skl_cad_modeling_spatial_engineering', 'skl_financial_modeling_accounting', 'skl_critical_thinking_persuasive_debate', 'skl_clinical_diagnostics_health_care', 'skl_problem_solving_analytical_logic', 'skl_chemical_analysis_process_optimization', 'skl_land_use_planning_gis_mapping', 'skl_forest_resource_assessment_conservation_planning', 'skl_pedagogy_classroom_management', 'skl_case_management_counseling_ethics', 'skl_python_software_programming', 'skl_guest_relations_hospitality_service_standards', 'skl_microbial_culturing_laboratory_research', 'skl_team_collaboration_leadership', 'skl_property_valuation_market_analysis', 'skl_mathematical_quantitative_analysis', 'skl_news_writing_media_research', 'skl_statistical_modeling_programming_r_python', 'skl_active_listening_psychological_assessment', 'skl_patient_assessment_rehabilitation_technique', 'skl_epidemiological_surveillance_health_education', 'skl_gis_software_remote_sensing', 'skl_social_research_methods_community_engagement', 'skl_destination_marketing_itinerary_planning', 'skl_agricultural_environmental_science', 'skl_cross_cultural_trade_market_entry_strategy'}
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py:1068: ValueError
+_____________ test_eligible_student_gets_only_eligible_top_picks ______________
+
+    def test_eligible_student_gets_only_eligible_top_picks():
+        """A strong, well-rounded profile should have plenty of genuinely
+        eligible programmes, and every top pick returned should be one of
+        them (not a fallback) - eligible_mask should be True for all 3."""
+        grades = {
+            "Mathematics": "A", "English": "A", "Kiswahili": "A-", "Biology": "A",
+            "Chemistry": "A", "Physics": "A", "Business Studies": "A-", "Geography": "B+",
+        }
+        row_df, g, mean_grade = _feature_row(grades, "A-")
+>       proba = main._pipeline.predict_proba(row_df)[0]
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_recommend_eligibility.py:46: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py:925: in predict_proba
+    Xt = transform.transform(Xt)
+         ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py:319: in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ColumnTransformer(transformers=[('num', 'passthrough',
+                                 ['math_score', 'eng_score', 'k...                                               sparse_output=False),
+                                 ['aspiration'])])
+X =    math_score  ...    aspiration
+0          12  ...  Not sure yet
+
+[1 rows x 114 columns]
+params = {}
+
+    def transform(self, X, **params):
+        """Transform X separately by each transformer, concatenate results.
+    
+        Parameters
+        ----------
+        X : {array-like, dataframe} of shape (n_samples, n_features)
+            The data to be transformed by subset.
+    
+        **params : dict, default=None
+            Parameters to be passed to the underlying transformers' ``transform``
+            method.
+    
+            You can only pass this if metadata routing is enabled, which you
+            can enable using ``sklearn.set_config(enable_metadata_routing=True)``.
+    
+            .. versionadded:: 1.4
+    
+        Returns
+        -------
+        X_t : {array-like, sparse matrix} of \
+                shape (n_samples, sum_n_components)
+            Horizontally stacked results of transformers. sum_n_components is the
+            sum of n_components (output dimension) over transformers. If
+            any result is a sparse matrix, everything will be converted to
+            sparse matrices.
+        """
+        _raise_for_params(params, self, "transform")
+        check_is_fitted(self)
+        X = _check_X(X)
+    
+        # If ColumnTransformer is fit using a dataframe, and now a dataframe is
+        # passed to be transformed, we select columns by name instead. This
+        # enables the user to pass X at transform time with extra columns which
+        # were not present in fit time, and the order of the columns doesn't
+        # matter.
+        fit_dataframe_and_transform_dataframe = hasattr(self, "feature_names_in_") and (
+            nw.dependencies.is_into_dataframe(X)
+        )
+    
+        n_samples = _num_samples(X)
+        column_names = _get_feature_names(X)
+    
+        if fit_dataframe_and_transform_dataframe:
+            named_transformers = self.named_transformers_
+            # check that all names seen in fit are in transform, unless
+            # they were dropped
+            non_dropped_indices = [
+                ind
+                for name, ind in self._transformer_to_input_indices.items()
+                if name in named_transformers and named_transformers[name] != "drop"
+            ]
+    
+            all_indices = set(chain(*non_dropped_indices))
+            all_names = set(self.feature_names_in_[ind] for ind in all_indices)
+    
+            diff = all_names - set(column_names)
+            if diff:
+>               raise ValueError(f"columns are missing: {diff}")
+E               ValueError: columns are missing: {'skl_recruitment_employee_relations', 'skl_political_analysis_policy_research', 'skl_supply_chain_analysis_contract_negotiation', 'skl_scientific_laboratory_research', 'skl_criminal_justice_analysis_investigation', 'skl_medical_device_design_signal_processing', 'skl_cost_estimation_construction_economics', 'skl_attention_to_detail', 'skl_environmental_monitoring_impact_assessment', 'skl_cad_modeling_spatial_engineering', 'skl_financial_modeling_accounting', 'skl_critical_thinking_persuasive_debate', 'skl_clinical_diagnostics_health_care', 'skl_problem_solving_analytical_logic', 'skl_chemical_analysis_process_optimization', 'skl_land_use_planning_gis_mapping', 'skl_forest_resource_assessment_conservation_planning', 'skl_pedagogy_classroom_management', 'skl_case_management_counseling_ethics', 'skl_python_software_programming', 'skl_guest_relations_hospitality_service_standards', 'skl_microbial_culturing_laboratory_research', 'skl_team_collaboration_leadership', 'skl_property_valuation_market_analysis', 'skl_mathematical_quantitative_analysis', 'skl_news_writing_media_research', 'skl_statistical_modeling_programming_r_python', 'skl_active_listening_psychological_assessment', 'skl_patient_assessment_rehabilitation_technique', 'skl_epidemiological_surveillance_health_education', 'skl_gis_software_remote_sensing', 'skl_social_research_methods_community_engagement', 'skl_destination_marketing_itinerary_planning', 'skl_agricultural_environmental_science', 'skl_cross_cultural_trade_market_entry_strategy'}
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py:1068: ValueError
+__________________ test_newly_trained_programme_is_reachable __________________
+
+    def test_newly_trained_programme_is_reachable():
+        """Business Management (added in the 53-class expansion) was
+        structurally impossible to recommend before that change - a profile
+        strongly biased toward it should now actually get it as the top pick."""
+        grades = {
+            "Mathematics": "C", "English": "C+", "Kiswahili": "C+", "Biology": "C+",
+            "Chemistry": "C", "Physics": "C", "Business Studies": "B-", "Geography": "B-",
+        }
+        payload = main.StudentProfilePayload(
+            kcseMeanGrade="C+", grades=grades,
+            interests=["General Business Administration & Strategy"],
+            strengths=["Leadership & Strategic Direction"],
+            aspirations=["Business Manager / Administrator"],
+        )
+        row_df, g, mean_grade = main.profile_to_feature_row(payload)
+>       proba = main._pipeline.predict_proba(row_df)[0]
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_recommend_eligibility.py:70: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py:925: in predict_proba
+    Xt = transform.transform(Xt)
+         ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py:319: in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ColumnTransformer(transformers=[('num', 'passthrough',
+                                 ['math_score', 'eng_score', 'k...                                               sparse_output=False),
+                                 ['aspiration'])])
+X =    math_score  ...                        aspiration
+0           6  ...  Business Manager / Administrator
+
+[1 rows x 114 columns]
+params = {}
+
+    def transform(self, X, **params):
+        """Transform X separately by each transformer, concatenate results.
+    
+        Parameters
+        ----------
+        X : {array-like, dataframe} of shape (n_samples, n_features)
+            The data to be transformed by subset.
+    
+        **params : dict, default=None
+            Parameters to be passed to the underlying transformers' ``transform``
+            method.
+    
+            You can only pass this if metadata routing is enabled, which you
+            can enable using ``sklearn.set_config(enable_metadata_routing=True)``.
+    
+            .. versionadded:: 1.4
+    
+        Returns
+        -------
+        X_t : {array-like, sparse matrix} of \
+                shape (n_samples, sum_n_components)
+            Horizontally stacked results of transformers. sum_n_components is the
+            sum of n_components (output dimension) over transformers. If
+            any result is a sparse matrix, everything will be converted to
+            sparse matrices.
+        """
+        _raise_for_params(params, self, "transform")
+        check_is_fitted(self)
+        X = _check_X(X)
+    
+        # If ColumnTransformer is fit using a dataframe, and now a dataframe is
+        # passed to be transformed, we select columns by name instead. This
+        # enables the user to pass X at transform time with extra columns which
+        # were not present in fit time, and the order of the columns doesn't
+        # matter.
+        fit_dataframe_and_transform_dataframe = hasattr(self, "feature_names_in_") and (
+            nw.dependencies.is_into_dataframe(X)
+        )
+    
+        n_samples = _num_samples(X)
+        column_names = _get_feature_names(X)
+    
+        if fit_dataframe_and_transform_dataframe:
+            named_transformers = self.named_transformers_
+            # check that all names seen in fit are in transform, unless
+            # they were dropped
+            non_dropped_indices = [
+                ind
+                for name, ind in self._transformer_to_input_indices.items()
+                if name in named_transformers and named_transformers[name] != "drop"
+            ]
+    
+            all_indices = set(chain(*non_dropped_indices))
+            all_names = set(self.feature_names_in_[ind] for ind in all_indices)
+    
+            diff = all_names - set(column_names)
+            if diff:
+>               raise ValueError(f"columns are missing: {diff}")
+E               ValueError: columns are missing: {'skl_recruitment_employee_relations', 'skl_political_analysis_policy_research', 'skl_supply_chain_analysis_contract_negotiation', 'skl_scientific_laboratory_research', 'skl_criminal_justice_analysis_investigation', 'skl_medical_device_design_signal_processing', 'skl_cost_estimation_construction_economics', 'skl_attention_to_detail', 'skl_environmental_monitoring_impact_assessment', 'skl_cad_modeling_spatial_engineering', 'skl_financial_modeling_accounting', 'skl_critical_thinking_persuasive_debate', 'skl_clinical_diagnostics_health_care', 'skl_problem_solving_analytical_logic', 'skl_chemical_analysis_process_optimization', 'skl_land_use_planning_gis_mapping', 'skl_forest_resource_assessment_conservation_planning', 'skl_pedagogy_classroom_management', 'skl_case_management_counseling_ethics', 'skl_python_software_programming', 'skl_guest_relations_hospitality_service_standards', 'skl_microbial_culturing_laboratory_research', 'skl_team_collaboration_leadership', 'skl_property_valuation_market_analysis', 'skl_mathematical_quantitative_analysis', 'skl_news_writing_media_research', 'skl_statistical_modeling_programming_r_python', 'skl_active_listening_psychological_assessment', 'skl_patient_assessment_rehabilitation_technique', 'skl_epidemiological_surveillance_health_education', 'skl_gis_software_remote_sensing', 'skl_social_research_methods_community_engagement', 'skl_destination_marketing_itinerary_planning', 'skl_agricultural_environmental_science', 'skl_cross_cultural_trade_market_entry_strategy'}
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py:1068: ValueError
+_______________ test_deactivated_programme_is_never_recommended _______________
+
+    def test_deactivated_programme_is_never_recommended():
+        """A deactivated programme must be excluded from both the eligible
+        ranking and the fallback list, even for a profile that would otherwise
+        strongly match it - exercises the exact filtering
+        select_recommended_indices applies for a programme an admin deactivated."""
+        title = "Bachelor of Business Management"
+        assert main.CATALOG_BY_TITLE[title].get("status") != "inactive"
+        try:
+            main.CATALOG_BY_TITLE[title]["status"] = "inactive"
+            grades = {
+                "Mathematics": "C", "English": "C+", "Kiswahili": "C+", "Biology": "C+",
+                "Chemistry": "C", "Physics": "C", "Business Studies": "B-", "Geography": "B-",
+            }
+            payload = main.StudentProfilePayload(
+                kcseMeanGrade="C+", grades=grades,
+                interests=["General Business Administration & Strategy"],
+                strengths=["Leadership & Strategic Direction"],
+                aspirations=["Business Manager / Administrator"],
+            )
+            row_df, g, mean_grade = main.profile_to_feature_row(payload)
+>           proba = main._pipeline.predict_proba(row_df)[0]
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_recommend_eligibility.py:135: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py:925: in predict_proba
+    Xt = transform.transform(Xt)
+         ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py:319: in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ColumnTransformer(transformers=[('num', 'passthrough',
+                                 ['math_score', 'eng_score', 'k...                                               sparse_output=False),
+                                 ['aspiration'])])
+X =    math_score  ...                        aspiration
+0           6  ...  Business Manager / Administrator
+
+[1 rows x 114 columns]
+params = {}
+
+    def transform(self, X, **params):
+        """Transform X separately by each transformer, concatenate results.
+    
+        Parameters
+        ----------
+        X : {array-like, dataframe} of shape (n_samples, n_features)
+            The data to be transformed by subset.
+    
+        **params : dict, default=None
+            Parameters to be passed to the underlying transformers' ``transform``
+            method.
+    
+            You can only pass this if metadata routing is enabled, which you
+            can enable using ``sklearn.set_config(enable_metadata_routing=True)``.
+    
+            .. versionadded:: 1.4
+    
+        Returns
+        -------
+        X_t : {array-like, sparse matrix} of \
+                shape (n_samples, sum_n_components)
+            Horizontally stacked results of transformers. sum_n_components is the
+            sum of n_components (output dimension) over transformers. If
+            any result is a sparse matrix, everything will be converted to
+            sparse matrices.
+        """
+        _raise_for_params(params, self, "transform")
+        check_is_fitted(self)
+        X = _check_X(X)
+    
+        # If ColumnTransformer is fit using a dataframe, and now a dataframe is
+        # passed to be transformed, we select columns by name instead. This
+        # enables the user to pass X at transform time with extra columns which
+        # were not present in fit time, and the order of the columns doesn't
+        # matter.
+        fit_dataframe_and_transform_dataframe = hasattr(self, "feature_names_in_") and (
+            nw.dependencies.is_into_dataframe(X)
+        )
+    
+        n_samples = _num_samples(X)
+        column_names = _get_feature_names(X)
+    
+        if fit_dataframe_and_transform_dataframe:
+            named_transformers = self.named_transformers_
+            # check that all names seen in fit are in transform, unless
+            # they were dropped
+            non_dropped_indices = [
+                ind
+                for name, ind in self._transformer_to_input_indices.items()
+                if name in named_transformers and named_transformers[name] != "drop"
+            ]
+    
+            all_indices = set(chain(*non_dropped_indices))
+            all_names = set(self.feature_names_in_[ind] for ind in all_indices)
+    
+            diff = all_names - set(column_names)
+            if diff:
+>               raise ValueError(f"columns are missing: {diff}")
+E               ValueError: columns are missing: {'skl_recruitment_employee_relations', 'skl_political_analysis_policy_research', 'skl_supply_chain_analysis_contract_negotiation', 'skl_scientific_laboratory_research', 'skl_criminal_justice_analysis_investigation', 'skl_medical_device_design_signal_processing', 'skl_cost_estimation_construction_economics', 'skl_attention_to_detail', 'skl_environmental_monitoring_impact_assessment', 'skl_cad_modeling_spatial_engineering', 'skl_financial_modeling_accounting', 'skl_critical_thinking_persuasive_debate', 'skl_clinical_diagnostics_health_care', 'skl_problem_solving_analytical_logic', 'skl_chemical_analysis_process_optimization', 'skl_land_use_planning_gis_mapping', 'skl_forest_resource_assessment_conservation_planning', 'skl_pedagogy_classroom_management', 'skl_case_management_counseling_ethics', 'skl_python_software_programming', 'skl_guest_relations_hospitality_service_standards', 'skl_microbial_culturing_laboratory_research', 'skl_team_collaboration_leadership', 'skl_property_valuation_market_analysis', 'skl_mathematical_quantitative_analysis', 'skl_news_writing_media_research', 'skl_statistical_modeling_programming_r_python', 'skl_active_listening_psychological_assessment', 'skl_patient_assessment_rehabilitation_technique', 'skl_epidemiological_surveillance_health_education', 'skl_gis_software_remote_sensing', 'skl_social_research_methods_community_engagement', 'skl_destination_marketing_itinerary_planning', 'skl_agricultural_environmental_science', 'skl_cross_cultural_trade_market_entry_strategy'}
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py:1068: ValueError
+____________________ test_a_preview_request_saves_nothing _____________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001B7C5802B40>
+
+    def test_a_preview_request_saves_nothing(monkeypatch):
+        saved = []
+        monkeypatch.setattr(main, "_persist_recommendation", lambda *a, **k: saved.append(a))
+>       response = main.get_recommendations(_payload(), USER, preview=True)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_whatif_and_activity.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\main.py:887: in get_recommendations
+    proba = _pipeline.predict_proba(row_df)[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py:925: in predict_proba
+    Xt = transform.transform(Xt)
+         ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py:319: in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ColumnTransformer(transformers=[('num', 'passthrough',
+                                 ['math_score', 'eng_score', 'k...                                               sparse_output=False),
+                                 ['aspiration'])])
+X =    math_score  ...    aspiration
+0           9  ...  Not sure yet
+
+[1 rows x 114 columns]
+params = {}
+
+    def transform(self, X, **params):
+        """Transform X separately by each transformer, concatenate results.
+    
+        Parameters
+        ----------
+        X : {array-like, dataframe} of shape (n_samples, n_features)
+            The data to be transformed by subset.
+    
+        **params : dict, default=None
+            Parameters to be passed to the underlying transformers' ``transform``
+            method.
+    
+            You can only pass this if metadata routing is enabled, which you
+            can enable using ``sklearn.set_config(enable_metadata_routing=True)``.
+    
+            .. versionadded:: 1.4
+    
+        Returns
+        -------
+        X_t : {array-like, sparse matrix} of \
+                shape (n_samples, sum_n_components)
+            Horizontally stacked results of transformers. sum_n_components is the
+            sum of n_components (output dimension) over transformers. If
+            any result is a sparse matrix, everything will be converted to
+            sparse matrices.
+        """
+        _raise_for_params(params, self, "transform")
+        check_is_fitted(self)
+        X = _check_X(X)
+    
+        # If ColumnTransformer is fit using a dataframe, and now a dataframe is
+        # passed to be transformed, we select columns by name instead. This
+        # enables the user to pass X at transform time with extra columns which
+        # were not present in fit time, and the order of the columns doesn't
+        # matter.
+        fit_dataframe_and_transform_dataframe = hasattr(self, "feature_names_in_") and (
+            nw.dependencies.is_into_dataframe(X)
+        )
+    
+        n_samples = _num_samples(X)
+        column_names = _get_feature_names(X)
+    
+        if fit_dataframe_and_transform_dataframe:
+            named_transformers = self.named_transformers_
+            # check that all names seen in fit are in transform, unless
+            # they were dropped
+            non_dropped_indices = [
+                ind
+                for name, ind in self._transformer_to_input_indices.items()
+                if name in named_transformers and named_transformers[name] != "drop"
+            ]
+    
+            all_indices = set(chain(*non_dropped_indices))
+            all_names = set(self.feature_names_in_[ind] for ind in all_indices)
+    
+            diff = all_names - set(column_names)
+            if diff:
+>               raise ValueError(f"columns are missing: {diff}")
+E               ValueError: columns are missing: {'skl_recruitment_employee_relations', 'skl_political_analysis_policy_research', 'skl_supply_chain_analysis_contract_negotiation', 'skl_scientific_laboratory_research', 'skl_criminal_justice_analysis_investigation', 'skl_medical_device_design_signal_processing', 'skl_cost_estimation_construction_economics', 'skl_attention_to_detail', 'skl_environmental_monitoring_impact_assessment', 'skl_cad_modeling_spatial_engineering', 'skl_financial_modeling_accounting', 'skl_critical_thinking_persuasive_debate', 'skl_clinical_diagnostics_health_care', 'skl_problem_solving_analytical_logic', 'skl_chemical_analysis_process_optimization', 'skl_land_use_planning_gis_mapping', 'skl_forest_resource_assessment_conservation_planning', 'skl_pedagogy_classroom_management', 'skl_case_management_counseling_ethics', 'skl_python_software_programming', 'skl_guest_relations_hospitality_service_standards', 'skl_microbial_culturing_laboratory_research', 'skl_team_collaboration_leadership', 'skl_property_valuation_market_analysis', 'skl_mathematical_quantitative_analysis', 'skl_news_writing_media_research', 'skl_statistical_modeling_programming_r_python', 'skl_active_listening_psychological_assessment', 'skl_patient_assessment_rehabilitation_technique', 'skl_epidemiological_surveillance_health_education', 'skl_gis_software_remote_sensing', 'skl_social_research_methods_community_engagement', 'skl_destination_marketing_itinerary_planning', 'skl_agricultural_environmental_science', 'skl_cross_cultural_trade_market_entry_strategy'}
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py:1068: ValueError
+____________________ test_a_normal_request_is_still_saved _____________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001B7C5800890>
+
+    def test_a_normal_request_is_still_saved(monkeypatch):
+        saved = []
+        monkeypatch.setattr(main, "_persist_recommendation", lambda *a, **k: saved.append(a))
+>       main.get_recommendations(_payload(), USER)
+
+backend\tests\test_whatif_and_activity.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\main.py:887: in get_recommendations
+    proba = _pipeline.predict_proba(row_df)[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py:925: in predict_proba
+    Xt = transform.transform(Xt)
+         ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py:319: in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ColumnTransformer(transformers=[('num', 'passthrough',
+                                 ['math_score', 'eng_score', 'k...                                               sparse_output=False),
+                                 ['aspiration'])])
+X =    math_score  ...    aspiration
+0           9  ...  Not sure yet
+
+[1 rows x 114 columns]
+params = {}
+
+    def transform(self, X, **params):
+        """Transform X separately by each transformer, concatenate results.
+    
+        Parameters
+        ----------
+        X : {array-like, dataframe} of shape (n_samples, n_features)
+            The data to be transformed by subset.
+    
+        **params : dict, default=None
+            Parameters to be passed to the underlying transformers' ``transform``
+            method.
+    
+            You can only pass this if metadata routing is enabled, which you
+            can enable using ``sklearn.set_config(enable_metadata_routing=True)``.
+    
+            .. versionadded:: 1.4
+    
+        Returns
+        -------
+        X_t : {array-like, sparse matrix} of \
+                shape (n_samples, sum_n_components)
+            Horizontally stacked results of transformers. sum_n_components is the
+            sum of n_components (output dimension) over transformers. If
+            any result is a sparse matrix, everything will be converted to
+            sparse matrices.
+        """
+        _raise_for_params(params, self, "transform")
+        check_is_fitted(self)
+        X = _check_X(X)
+    
+        # If ColumnTransformer is fit using a dataframe, and now a dataframe is
+        # passed to be transformed, we select columns by name instead. This
+        # enables the user to pass X at transform time with extra columns which
+        # were not present in fit time, and the order of the columns doesn't
+        # matter.
+        fit_dataframe_and_transform_dataframe = hasattr(self, "feature_names_in_") and (
+            nw.dependencies.is_into_dataframe(X)
+        )
+    
+        n_samples = _num_samples(X)
+        column_names = _get_feature_names(X)
+    
+        if fit_dataframe_and_transform_dataframe:
+            named_transformers = self.named_transformers_
+            # check that all names seen in fit are in transform, unless
+            # they were dropped
+            non_dropped_indices = [
+                ind
+                for name, ind in self._transformer_to_input_indices.items()
+                if name in named_transformers and named_transformers[name] != "drop"
+            ]
+    
+            all_indices = set(chain(*non_dropped_indices))
+            all_names = set(self.feature_names_in_[ind] for ind in all_indices)
+    
+            diff = all_names - set(column_names)
+            if diff:
+>               raise ValueError(f"columns are missing: {diff}")
+E               ValueError: columns are missing: {'skl_recruitment_employee_relations', 'skl_political_analysis_policy_research', 'skl_supply_chain_analysis_contract_negotiation', 'skl_scientific_laboratory_research', 'skl_criminal_justice_analysis_investigation', 'skl_medical_device_design_signal_processing', 'skl_cost_estimation_construction_economics', 'skl_attention_to_detail', 'skl_environmental_monitoring_impact_assessment', 'skl_cad_modeling_spatial_engineering', 'skl_financial_modeling_accounting', 'skl_critical_thinking_persuasive_debate', 'skl_clinical_diagnostics_health_care', 'skl_problem_solving_analytical_logic', 'skl_chemical_analysis_process_optimization', 'skl_land_use_planning_gis_mapping', 'skl_forest_resource_assessment_conservation_planning', 'skl_pedagogy_classroom_management', 'skl_case_management_counseling_ethics', 'skl_python_software_programming', 'skl_guest_relations_hospitality_service_standards', 'skl_microbial_culturing_laboratory_research', 'skl_team_collaboration_leadership', 'skl_property_valuation_market_analysis', 'skl_mathematical_quantitative_analysis', 'skl_news_writing_media_research', 'skl_statistical_modeling_programming_r_python', 'skl_active_listening_psychological_assessment', 'skl_patient_assessment_rehabilitation_technique', 'skl_epidemiological_surveillance_health_education', 'skl_gis_software_remote_sensing', 'skl_social_research_methods_community_engagement', 'skl_destination_marketing_itinerary_planning', 'skl_agricultural_environmental_science', 'skl_cross_cultural_trade_market_entry_strategy'}
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py:1068: ValueError
+___________ test_a_preview_gives_the_same_answer_as_a_real_request ____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001B7C581D070>
+
+    def test_a_preview_gives_the_same_answer_as_a_real_request(monkeypatch):
+        monkeypatch.setattr(main, "_persist_recommendation", lambda *a, **k: None)
+>       real = [r["programme"]["id"] for r in main.get_recommendations(_payload(), USER)["recommendations"]]
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+backend\tests\test_whatif_and_activity.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+backend\main.py:887: in get_recommendations
+    proba = _pipeline.predict_proba(row_df)[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\pipeline.py:925: in predict_proba
+    Xt = transform.transform(Xt)
+         ^^^^^^^^^^^^^^^^^^^^^^^
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\_set_output.py:319: in wrapped
+    data_to_wrap = f(self, X, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = ColumnTransformer(transformers=[('num', 'passthrough',
+                                 ['math_score', 'eng_score', 'k...                                               sparse_output=False),
+                                 ['aspiration'])])
+X =    math_score  ...    aspiration
+0           9  ...  Not sure yet
+
+[1 rows x 114 columns]
+params = {}
+
+    def transform(self, X, **params):
+        """Transform X separately by each transformer, concatenate results.
+    
+        Parameters
+        ----------
+        X : {array-like, dataframe} of shape (n_samples, n_features)
+            The data to be transformed by subset.
+    
+        **params : dict, default=None
+            Parameters to be passed to the underlying transformers' ``transform``
+            method.
+    
+            You can only pass this if metadata routing is enabled, which you
+            can enable using ``sklearn.set_config(enable_metadata_routing=True)``.
+    
+            .. versionadded:: 1.4
+    
+        Returns
+        -------
+        X_t : {array-like, sparse matrix} of \
+                shape (n_samples, sum_n_components)
+            Horizontally stacked results of transformers. sum_n_components is the
+            sum of n_components (output dimension) over transformers. If
+            any result is a sparse matrix, everything will be converted to
+            sparse matrices.
+        """
+        _raise_for_params(params, self, "transform")
+        check_is_fitted(self)
+        X = _check_X(X)
+    
+        # If ColumnTransformer is fit using a dataframe, and now a dataframe is
+        # passed to be transformed, we select columns by name instead. This
+        # enables the user to pass X at transform time with extra columns which
+        # were not present in fit time, and the order of the columns doesn't
+        # matter.
+        fit_dataframe_and_transform_dataframe = hasattr(self, "feature_names_in_") and (
+            nw.dependencies.is_into_dataframe(X)
+        )
+    
+        n_samples = _num_samples(X)
+        column_names = _get_feature_names(X)
+    
+        if fit_dataframe_and_transform_dataframe:
+            named_transformers = self.named_transformers_
+            # check that all names seen in fit are in transform, unless
+            # they were dropped
+            non_dropped_indices = [
+                ind
+                for name, ind in self._transformer_to_input_indices.items()
+                if name in named_transformers and named_transformers[name] != "drop"
+            ]
+    
+            all_indices = set(chain(*non_dropped_indices))
+            all_names = set(self.feature_names_in_[ind] for ind in all_indices)
+    
+            diff = all_names - set(column_names)
+            if diff:
+>               raise ValueError(f"columns are missing: {diff}")
+E               ValueError: columns are missing: {'skl_recruitment_employee_relations', 'skl_political_analysis_policy_research', 'skl_supply_chain_analysis_contract_negotiation', 'skl_scientific_laboratory_research', 'skl_criminal_justice_analysis_investigation', 'skl_medical_device_design_signal_processing', 'skl_cost_estimation_construction_economics', 'skl_attention_to_detail', 'skl_environmental_monitoring_impact_assessment', 'skl_cad_modeling_spatial_engineering', 'skl_financial_modeling_accounting', 'skl_critical_thinking_persuasive_debate', 'skl_clinical_diagnostics_health_care', 'skl_problem_solving_analytical_logic', 'skl_chemical_analysis_process_optimization', 'skl_land_use_planning_gis_mapping', 'skl_forest_resource_assessment_conservation_planning', 'skl_pedagogy_classroom_management', 'skl_case_management_counseling_ethics', 'skl_python_software_programming', 'skl_guest_relations_hospitality_service_standards', 'skl_microbial_culturing_laboratory_research', 'skl_team_collaboration_leadership', 'skl_property_valuation_market_analysis', 'skl_mathematical_quantitative_analysis', 'skl_news_writing_media_research', 'skl_statistical_modeling_programming_r_python', 'skl_active_listening_psychological_assessment', 'skl_patient_assessment_rehabilitation_technique', 'skl_epidemiological_surveillance_health_education', 'skl_gis_software_remote_sensing', 'skl_social_research_methods_community_engagement', 'skl_destination_marketing_itinerary_planning', 'skl_agricultural_environmental_science', 'skl_cross_cultural_trade_market_entry_strategy'}
+
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\compose\_column_transformer.py:1068: ValueError
+============================== warnings summary ===============================
+..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\testclient.py:53
+  C:\Users\fatma\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[a mean grade in lower case]
+FAILED backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[all A, every subject]
+FAILED backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[all A-, compulsory only]
+FAILED backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[business track]
+FAILED backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[career that clashes with the grades]
+FAILED backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[extra unfamiliar subject]
+FAILED backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[flat A]
+FAILED backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[flat A-]
+FAILED backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[flat B]
+FAILED backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[flat B+]
+FAILED backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[flat B-]
+FAILED backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[flat C+]
+FAILED backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[lowest passing mean, high maths]
+FAILED backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[no career, no choices]
+FAILED backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[strong arts, weak maths]
+FAILED backend\tests\test_edge_profiles.py::test_an_unusual_profile_still_gets_three_honest_results[strong sciences, weak English]
+FAILED backend\tests\test_filter_new.py::test_endpoint_never_returns_ineligible_mbchb
+FAILED backend\tests\test_reasons_and_shortlist.py::test_a_student_with_no_career_still_gets_three_recommendations
+FAILED backend\tests\test_recommend_eligibility.py::test_eligible_student_gets_only_eligible_top_picks
+FAILED backend\tests\test_recommend_eligibility.py::test_newly_trained_programme_is_reachable
+FAILED backend\tests\test_recommend_eligibility.py::test_deactivated_programme_is_never_recommended
+FAILED backend\tests\test_whatif_and_activity.py::test_a_preview_request_saves_nothing
+FAILED backend\tests\test_whatif_and_activity.py::test_a_normal_request_is_still_saved
+FAILED backend\tests\test_whatif_and_activity.py::test_a_preview_gives_the_same_answer_as_a_real_request
+================= 24 failed, 157 passed, 1 warning in 31.51s ==================

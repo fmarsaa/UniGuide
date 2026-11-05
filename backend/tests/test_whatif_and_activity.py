@@ -28,8 +28,10 @@ def _payload():
 def test_a_preview_request_saves_nothing(monkeypatch):
     saved = []
     monkeypatch.setattr(main, "_persist_recommendation", lambda *a, **k: saved.append(a))
-    results = main.get_recommendations(_payload(), USER, preview=True)
-    assert len(results) == 3
+    response = main.get_recommendations(_payload(), USER, preview=True)
+    results = response["recommendations"]
+    assert 0 < len(results) <= 3
+    assert all(r["meetsMinimumRequirements"] for r in results)
     assert saved == []
 
 
@@ -42,8 +44,8 @@ def test_a_normal_request_is_still_saved(monkeypatch):
 
 def test_a_preview_gives_the_same_answer_as_a_real_request(monkeypatch):
     monkeypatch.setattr(main, "_persist_recommendation", lambda *a, **k: None)
-    real = [r["programme"]["id"] for r in main.get_recommendations(_payload(), USER)]
-    preview = [r["programme"]["id"] for r in main.get_recommendations(_payload(), USER, preview=True)]
+    real = [r["programme"]["id"] for r in main.get_recommendations(_payload(), USER)["recommendations"]]
+    preview = [r["programme"]["id"] for r in main.get_recommendations(_payload(), USER, preview=True)["recommendations"]]
     assert real == preview
 
 

@@ -1,4 +1,3 @@
-from collections import Counter
 """
 UniGuide - Synthetic Student Profile Dataset Generator
 Author: Fatuma Omar Marsa (159056)
@@ -24,8 +23,13 @@ Implements the synthetic data generation pipeline described in Chapter 3:
   Random Forest classifier.
 """
 
+import os
+for v in ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREADS"):
+    os.environ.setdefault(v, "1")
+
 import random
 import re
+from collections import Counter
 from typing import Dict, List, Optional
 
 import numpy as np
