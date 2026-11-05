@@ -1,8 +1,36 @@
 {
+  "auth": {
+    "authorizedDomains": [
+      "localhost",
+      "uniguide1234.firebaseapp.com",
+      "uniguide1234.web.app"
+    ],
+    "providers": {
+      "emailPassword": true,
+      "googleSignIn": {
+        "oAuthBrandDisplayName": "UniGuide",
+        "supportEmail": "admin@uniguide.ac.ke"
+      }
+    }
+  },
   "firestore": {
     "database": "(default)",
     "location": "africa-south1",
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
+  },
+  "hosting": {
+    "public": "flutter_app/build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
   }
 }

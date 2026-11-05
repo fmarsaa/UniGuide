@@ -33,6 +33,20 @@ def test_rejects_invalid_subject_grade():
         main.StudentProfilePayload(kcseMeanGrade="B+", grades=grades)
 
 
+def test_rejects_below_c_plus_mean_grade():
+    with pytest.raises(pydantic.ValidationError, match="minimum KCSE mean grade"):
+        main.StudentProfilePayload(kcseMeanGrade="C", grades=_valid_grades())
+
+
+def test_rejects_below_c_plus_mean_points():
+    with pytest.raises(pydantic.ValidationError, match="minimum KCSE mean"):
+        main.StudentProfilePayload(
+            kcseMeanGrade="C+",
+            kcseMeanPoints=6,
+            grades=_valid_grades(),
+        )
+
+
 def test_rejects_missing_compulsory_subject():
     """Covers the 'incomplete' half of DR-05, not just malformed values -
     a profile missing one of the 4 compulsory subjects must be

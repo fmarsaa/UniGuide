@@ -128,6 +128,8 @@ def cluster_weighted_points(raw_points: int, agg_points: int, max_cluster_points
 
 
 def meets_minimum_requirements(grades: Dict[str, str], minimum_requirements: Dict[str, str], mean_grade: str = "C+") -> bool:
+    if grade_to_points(mean_grade) < GRADE_POINTS["C+"]:
+        return False
     for subject, min_grade in minimum_requirements.items():
         candidate_grade = find_grade_for_subject(grades, subject)
         # A subject the student did not sit cannot satisfy a minimum-grade

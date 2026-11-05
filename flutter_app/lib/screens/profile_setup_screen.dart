@@ -311,12 +311,17 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     return _pointsToGrade((totalPoints / grades.length).round());
   }
 
+  bool get _meanEligible {
+    final meanGrade = _computedMeanGrade;
+    return meanGrade != null && _gradePoints(meanGrade) >= KCSEGrade.cPlus.points;
+  }
+
   bool get _subjectsComplete {
     if (_compulsoryGrades.values.any((g) => g == null)) return false;
     for (int i = 0; i < _optionalSubjectChoice.length; i++) {
       if (_optionalSubjectChoice[i] == null || _optionalGrade[i] == null) return false;
     }
-    return true;
+    return _meanEligible;
   }
 
   bool get _isComplete =>
@@ -387,7 +392,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   String _stepHint(int step) {
     switch (step) {
       case 0:
-        return 'Choose a grade for every subject to continue.';
+        return 'Choose a grade for every subject and reach at least a C+ mean to continue.';
       case 1:
         return 'Pick at least one interest to continue.';
       case 2:

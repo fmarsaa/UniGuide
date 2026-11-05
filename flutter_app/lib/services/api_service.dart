@@ -38,6 +38,7 @@ class ApiService {
     return {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
+      'ngrok-skip-browser-warning': 'true',
     };
   }
 
@@ -80,7 +81,10 @@ class ApiService {
   /// model's real measured accuracy instead of an invented number.
   static Future<Map<String, dynamic>> fetchHealth() {
     return _withRetry('Could not reach the UniGuide server', () async {
-      final response = await http.get(Uri.parse('$baseUrl/api/health')).timeout(const Duration(seconds: 10));
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/health'),
+        headers: const {'ngrok-skip-browser-warning': 'true'},
+      ).timeout(const Duration(seconds: 10));
       if (response.statusCode != 200) throw _errorFor(response);
       return jsonDecode(response.body) as Map<String, dynamic>;
     });

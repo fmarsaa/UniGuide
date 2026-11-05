@@ -1,4 +1,4 @@
-# UniGuide Backend: FastAPI & Random Forest ML Subsystem
+# UniGuide Backend: FastAPI & ML Recommendation Subsystem
 
 **Project Title**: UniGuide: A Random Forest-Based Decision Support System for University Degree Programme Recommendation Among Kenyan Form-Four Leavers  
 **Student**: Fatuma Omar Marsa (Admission No: 159056, Class: ICS 4A)  
@@ -11,9 +11,9 @@
 
 - **Language**: Python 3.12 (dependencies are pinned in `requirements.txt`; `requirements-dev.txt` adds the test tools)
 - **Framework**: FastAPI
-- **Machine learning**: scikit-learn `RandomForestClassifier` inside a pipeline, hyperparameters chosen by grid search
-- **Explainability**: SHAP `TreeExplainer` (approximate mode, so a request takes milliseconds rather than half a minute)
-- **Data generation**: a seeded, rule-based generator (`synthetic_data_generator.py`) that produces 15,322 profiles over 53 programmes; the same seed gives the same data
+- **Machine learning**: scikit-learn pipelines with Random Forest and XGBoost training paths
+- **Explainability**: SHAP `TreeExplainer` for the current XGBoost artifact (approximate mode)
+- **Data generation**: a seeded, rule-based generator (`synthetic_data_generator.py`) that produces 12,057 degree-eligible profiles over 53 programmes; the same seed gives the same data
 - **Database and sign-in**: Firebase Authentication and Cloud Firestore, reached only through this backend
 
 ---
@@ -38,9 +38,17 @@ the full data, and writes:
 - `model_metrics.json`: accuracy, F1, per-programme report, confusion matrix, chosen settings, and a run record
   (git commit, dataset fingerprint, seeds, library versions, model version)
 
-The previous model is backed up to `model_backups/` before it is replaced. Latest run: 80.85% accuracy and 80.68%
-weighted F1 out of fold; 81.14% and 80.98% on the held-out 20%. See `ml/experiments/` for every experiment, including
-the comparison with Logistic Regression and Gradient Boosting.
+The previous model is backed up to `model_backups/` before it is replaced. The current XGBoost artifact reports
+85.90% 5-fold out-of-fold accuracy, 85.83% weighted F1, and 86.44% on the held-out 20%.
+
+The generated profiles enforce the KUCCPS C+ (7-point) minimum mean grade before
+assigning any programme label. The dataframe also retains one `clsc_` column per
+programme containing cluster-weighted points minus that programme's average cutoff;
+these columns are available for analysis but are disabled as model inputs in the
+current XGBoost pipeline (`INCLUDE_CLUSTER_SCORE_FEATURES = False`). The model
+uses the nine subject-point columns, mean points, 85 binary interest/skill/strength
+indicators, and aspiration. Optional subjects not present in a profile are
+represented by the mean grade when constructing the model feature row.
 
 ### 2b. Run the tests
 ```bash

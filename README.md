@@ -1,13 +1,13 @@
 # UniGuide
 
-A Random Forest-based decision support system that recommends university degree programmes to Kenyan Form Four leavers and explains each recommendation in plain language.
+An ML-based decision support system that recommends university degree programmes to Kenyan Form Four leavers and explains each recommendation in plain language.
 
 **Author**: Fatuma Omar Marsa (159056), Strathmore University, supervised by Deperias Webula Kerre
 
 ## What it does
 
 - **Student app (Android, Flutter)**: sign in with a verified email, enter KCSE grades, interests, skills and strengths (the career step is optional), and get three programmes with reasons. Students can save and compare programmes, try different grades in a what-if screen, download a PDF report, rate the result, and delete their account and data. An optional fingerprint or face unlock protects the app.
-- **Recommendation engine (FastAPI)**: a Random Forest scores 53 programmes, the KUCCPS minimum subject grades remove programmes the student cannot enter, and each university's own latest cutoff is compared with the student's cluster points. SHAP supplies the reasons.
+- **Recommendation engine (FastAPI)**: the current XGBoost model scores 53 programmes, the KUCCPS minimum subject grades remove programmes the student cannot enter, and each university's own latest cutoff is compared with the student's cluster points. SHAP supplies the reasons.
 - **Administrator web portal (same Flutter code, built for the browser)**: insights charts, per-university cutoffs, feedback, administrators, model retrain and restore, a weekly catalogue check against KUCCPS, and an audit log.
 - **Data and sign-in**: Firebase Authentication and Cloud Firestore. The apps never read Firestore directly; every request goes through the backend.
 

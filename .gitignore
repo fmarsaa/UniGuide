@@ -58,3 +58,11 @@ flutter_app/web_firebase.json
 
 # Real student session data (never commit)
 ml/experiments/student_evaluation/sessions.csv
+deploy/space_bundle/
+backend/model_release/
+
+*.pkl
+*.docx
+.firebase/
+pytest_output.txt
+train_output.txt

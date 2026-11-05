@@ -74,4 +74,12 @@ def test_assign_programme_label_never_picks_an_ineligible_programme():
         strengths=["Empathy & Human Care"],
         aspiration="Medical Doctor (Physician/Surgeon)",
     )
-    assert label != "Bachelor of Medicine and Bachelor of Surgery (MBChB)"
+    assert label == "Not eligible for degree study"
+
+
+def test_generated_dataset_contains_only_degree_eligible_profiles():
+    from synthetic_data_generator import create_synthetic_dataset
+
+    df = create_synthetic_dataset(6000)
+    assert (df["mean_points"] >= 7).all()
+    assert "Not eligible for degree study" not in set(df["programme_label"])

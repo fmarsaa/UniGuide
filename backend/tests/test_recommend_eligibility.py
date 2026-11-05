@@ -22,48 +22,16 @@ def _feature_row(grades, mean_grade):
     return main.profile_to_feature_row(payload)
 
 
-def test_straight_c_minus_student_gets_zero_eligible_programmes():
-    """No programme in the whole 53-programme catalogue requires below a
-    plain 'C' - a straight C- student must correctly get zero eligible
-    matches, not a lucky high-confidence hit on a high-barrier programme."""
+def test_below_c_plus_student_is_rejected_before_recommendation():
+    """Below-C+ degree applicants must be stopped at the request boundary,
+    rather than receiving fallback programme recommendations."""
     grades = {
         "Mathematics": "C-", "English": "C-", "Kiswahili": "C-", "Biology": "C-",
         "Chemistry": "C-", "Physics": "C-", "History": "C-", "Business Studies": "C-",
         "Geography": "C-",
     }
-    row_df, g, mean_grade = _feature_row(grades, "C-")
-    proba = main._pipeline.predict_proba(row_df)[0]
-    classes = main._pipeline.classes_
-
-    top_idx, eligible_mask = main.select_recommended_indices(proba, classes, g, mean_grade)
-
-    assert sum(eligible_mask) == 0
-    assert len(top_idx) == 3  # fallback still fills all 3 slots
-
-    for idx in top_idx:
-        title = classes[idx]
-        programme = main.CATALOG_BY_TITLE[title]
-        status = eligibility_status(0, programme["averageCutoff"], meets_requirements=eligible_mask[idx])
-        assert status == "Does Not Meet Minimum Subject Requirements"
-
-
-def test_high_barrier_programme_never_appears_for_low_grade_student():
-    """The exact scenario this fix targets: MBChB (real floor: B in
-    Biology/Chemistry/English) must never be recommended to a C- student,
-    regardless of how the model scores it on the other signals."""
-    grades = {
-        "Mathematics": "C-", "English": "C-", "Kiswahili": "C-", "Biology": "C-",
-        "Chemistry": "C-", "Physics": "C-",
-    }
-    row_df, g, mean_grade = _feature_row(grades, "C-")
-    proba = main._pipeline.predict_proba(row_df)[0]
-    classes = main._pipeline.classes_
-
-    top_idx, eligible_mask = main.select_recommended_indices(proba, classes, g, mean_grade)
-    recommended_titles = {classes[i] for i in top_idx}
-
-    assert "Bachelor of Medicine and Bachelor of Surgery (MBChB)" not in recommended_titles
-    assert "Bachelor of Veterinary Medicine (BVM)" not in recommended_titles
+    with pytest.raises(ValueError, match="minimum KCSE mean grade"):
+        main.StudentProfilePayload(kcseMeanGrade="C-", grades=grades)
 
 
 def test_eligible_student_gets_only_eligible_top_picks():

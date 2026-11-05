@@ -158,7 +158,7 @@ class _AuthGateState extends State<AuthGate> {
           return const AuthScreen();
         }
 
-        if (!user.emailVerified && !_emailVerifiedOverride) {
+        if (!user.isAnonymous && !user.emailVerified && !_emailVerifiedOverride) {
           return EmailVerificationScreen(
             key: ValueKey(user.uid),
             user: user,

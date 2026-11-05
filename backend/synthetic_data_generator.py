@@ -34,6 +34,7 @@ from kuccps import (
     COMPULSORY_SUBJECTS,
     FEATURE_COLUMN,
     FULL_OPTIONAL_SUBJECTS,
+    GRADE_POINTS,
     ML_FEATURE_SUBJECTS,
     UNDECIDED_ASPIRATION,
     aggregate_points,
@@ -794,6 +795,9 @@ def _score_programme(title: str, interests: List[str], skills: List[str], streng
 
 def assign_programme_label(grades: Dict[str, str], mean_grade: str, interests: List[str],
                             skills: List[str], strengths: List[str], aspiration: str) -> str:
+    if grade_to_points(mean_grade) < GRADE_POINTS["C+"]:
+        return "Not eligible for degree study"
+
     agg = aggregate_points(grades, mean_grade)
 
     eligible = [
@@ -908,7 +912,11 @@ def _build_profile_for_target(profile_id: int, target_title: str) -> dict:
     programme = CATALOG_BY_TITLE[target_title]
     min_reqs = programme["minimumSubjectRequirements"]
 
-    mean_points = int(np.clip(np.random.normal(8.5, 2.0), 4, 12))
+    # KUCCPS degree applicants must have at least a C+ mean (7 points).
+    # Keep the synthetic training population inside that degree-eligible
+    # population rather than assigning degree labels to below-threshold
+    # fallback profiles.
+    mean_points = int(np.clip(np.random.normal(8.5, 2.0), 7, 12))
     mean_grade = points_to_grade(mean_points)
 
     def jitter(spread):

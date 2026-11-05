@@ -25,15 +25,15 @@ _initialized = False
 
 
 def credential_source():
-    """The Firebase key as a dict (FIREBASE_SERVICE_ACCOUNT_JSON, for hosts that keep
-    secrets in environment variables) or as a file path (FIREBASE_SERVICE_ACCOUNT_PATH);
-    None when neither is usable."""
-    raw = os.environ.get("FIREBASE_SERVICE_ACCOUNT_JSON")
+    """The Firebase key as a dict (FIREBASE_SERVICE_ACCOUNT or FIREBASE_SERVICE_ACCOUNT_JSON,
+    for hosts that keep secrets in environment variables) or as a file path
+    (FIREBASE_SERVICE_ACCOUNT_PATH); None when neither is usable."""
+    raw = os.environ.get("FIREBASE_SERVICE_ACCOUNT") or os.environ.get("FIREBASE_SERVICE_ACCOUNT_JSON")
     if raw:
         try:
             return json.loads(raw)
         except ValueError:
-            logger.error("FIREBASE_SERVICE_ACCOUNT_JSON is not valid JSON; ignoring it.")
+            logger.error("FIREBASE_SERVICE_ACCOUNT is not valid JSON; ignoring it.")
     path = os.environ.get("FIREBASE_SERVICE_ACCOUNT_PATH")
     return path if path and os.path.isfile(path) else None
 

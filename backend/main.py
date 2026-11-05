@@ -366,6 +366,15 @@ class StudentProfilePayload(BaseModel):
     def _validate_mean_grade(cls, v: str) -> str:
         if v.strip().upper() not in GRADE_POINTS:
             raise ValueError(f"'{v}' is not a real KCSE grade (A, A-, B+, ... down to E).")
+        if grade_to_points(v) < GRADE_POINTS["C+"]:
+            raise ValueError("A minimum KCSE mean grade of C+ is required for degree recommendations.")
+        return v
+
+    @field_validator("kcseMeanPoints")
+    @classmethod
+    def _validate_mean_points(cls, v: Optional[int]) -> Optional[int]:
+        if v is not None and v < GRADE_POINTS["C+"]:
+            raise ValueError("A minimum KCSE mean of 7 points (C+) is required for degree recommendations.")
         return v
 
     @field_validator("grades")
@@ -853,18 +862,9 @@ def select_recommended_indices(
     # labelled programme was shown 73% of the time, against 92% with this rule (Experiment 9).
     top_idx = []
     if eligible_idx:
-        best_fit = max(eligible_idx, key=lambda i: proba[i])
-        top_idx = [best_fit] + [i for i in sorted(eligible_idx, key=rank_key) if i != best_fit][:2]
-
-    if len(top_idx) < 3:
-        for title in FALLBACK_ORDER:
-            if title not in classes or CATALOG_BY_TITLE.get(title, {}).get("status") == "inactive":
-                continue
-            idx = int(np.where(classes == title)[0][0])
-            if idx not in top_idx:
-                top_idx.append(idx)
-            if len(top_idx) == 3:
-                break
+        # Sort eligible programmes by probability descending and take up to 3
+        top_idx = sorted(eligible_idx, key=lambda i: proba[i], reverse=True)[:3]
+    # No fallback filling – if fewer than 3 eligible programmes, return fewer indices
     return top_idx, eligible_mask
 
 

@@ -1,0 +1,7 @@
+f = open("rf_model_pipeline.pkl", "rb")
+magic = f.read(4)
+f.close()
+print("First 4 bytes hex:", magic.hex())
+print("Is zlib/gzip compressed:", magic[:2] == bytes([0x1f, 0x8b]) or magic[:2] == bytes([0x78, 0x9c]) or magic[:2] == bytes([0x78, 0xda]))
+print("Is uncompressed pickle:", magic[0] == 0x80)
+print("File size MB:", round(__import__("os").path.getsize("rf_model_pipeline.pkl") / 1024 / 1024, 1))

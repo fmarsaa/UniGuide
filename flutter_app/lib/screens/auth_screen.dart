@@ -1,4 +1,8 @@
+import 'dart:math';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
 
 /// Real Firebase Authentication sign-in / sign-up. On success this simply
@@ -14,12 +18,15 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   bool _isLoginMode = true;
   bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
   bool _isLoading = false;
   bool _acceptedPrivacy = false;
   String? _errorText;
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   final TextEditingController _nameController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
@@ -28,82 +35,58 @@ class _AuthScreenState extends State<AuthScreen> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     _nameController.dispose();
     super.dispose();
   }
 
-  Widget _buildPrivacyConsent() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 12),
-      child: InkWell(
-        onTap: () => setState(() => _acceptedPrivacy = !_acceptedPrivacy),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: 24,
-              height: 24,
-              child: Checkbox(
-                value: _acceptedPrivacy,
-                activeColor: const Color(0xFF0EA5A4),
-                onChanged: (v) => setState(() => _acceptedPrivacy = v ?? false),
-              ),
-            ),
-            const SizedBox(width: 10),
-            const Expanded(
-              child: Text(
-                'I understand that UniGuide keeps my grades and answers so it can give me recommendations, '
-                'and that I can delete my account and all of this from the menu at any time.',
-                style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12, height: 1.4),
-              ),
-            ),
-          ],
-        ),
+  // ---------------------------------------------------------------------------
+  // Strong Password Suggestion
+  // ---------------------------------------------------------------------------
+  String _generateStrongPassword() {
+    const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    const lower = 'abcdefghijkmnopqrstuvwxyz';
+    const numbers = '23456789';
+    const special = '!@#\$%^&*()-_=+';
+    const allChars = upper + lower + numbers + special;
+
+    final rand = Random.secure();
+    final passwordChars = <String>[
+      upper[rand.nextInt(upper.length)],
+      lower[rand.nextInt(lower.length)],
+      numbers[rand.nextInt(numbers.length)],
+      special[rand.nextInt(special.length)],
+    ];
+
+    for (int i = 0; i < 11; i++) {
+      passwordChars.add(allChars[rand.nextInt(allChars.length)]);
+    }
+
+    passwordChars.shuffle(rand);
+    return passwordChars.join();
+  }
+
+  void _applySuggestedPassword() {
+    final suggested = _generateStrongPassword();
+    setState(() {
+      _passwordController.text = suggested;
+      _confirmPasswordController.text = suggested;
+      _obscurePassword = false;
+      _obscureConfirmPassword = false;
+    });
+    Clipboard.setData(ClipboardData(text: suggested));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('✨ Strong password generated & copied to clipboard!'),
+        backgroundColor: Color(0xFF0EA5A4),
+        duration: Duration(seconds: 3),
       ),
     );
   }
 
-  void _submit() async {
-    if (!_formKey.currentState!.validate()) return;
-    if (!_isLoginMode && !_acceptedPrivacy) {
-      setState(() => _errorText = 'Please tick the box to continue.');
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-      _errorText = null;
-    });
-
-    final email = _emailController.text.trim();
-    final password = _passwordController.text;
-
-    try {
-      if (_isLoginMode) {
-        await FirebaseAuth.instance
-            .signInWithEmailAndPassword(email: email, password: password);
-      } else {
-        final credential =
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
-        if (_nameController.text.trim().isNotEmpty) {
-          await credential.user?.updateDisplayName(_nameController.text.trim());
-        }
-        await credential.user?.sendEmailVerification();
-      }
-      // Success: FirebaseAuth.authStateChanges() in main.dart takes it from here -
-      // it shows an EmailVerificationScreen for a newly-registered, unverified user.
-    } on FirebaseAuthException catch (e) {
-      setState(() => _errorText = _messageForAuthError(e));
-    } catch (e) {
-      setState(() => _errorText = 'Something went wrong. Please try again.');
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
-
+  // ---------------------------------------------------------------------------
+  // Password Rules & Live Strength Meter
+  // ---------------------------------------------------------------------------
   static final List<MapEntry<String, bool Function(String)>> _passwordRules = [
     MapEntry('at least 8 characters', (p) => p.length >= 8),
     MapEntry('an uppercase letter', (p) => RegExp(r'[A-Z]').hasMatch(p)),
@@ -117,6 +100,95 @@ class _AuthScreenState extends State<AuthScreen> {
         for (final rule in _passwordRules)
           if (!rule.value(password)) rule.key
       ];
+
+  int _calculateStrengthScore(String password) {
+    if (password.isEmpty) return 0;
+    int score = 0;
+    for (final rule in _passwordRules) {
+      if (rule.value(password)) score++;
+    }
+    return score;
+  }
+
+  Widget _buildPasswordStrengthMeter() {
+    return ListenableBuilder(
+      listenable: _passwordController,
+      builder: (context, _) {
+        final password = _passwordController.text;
+        if (password.isEmpty) return const SizedBox.shrink();
+
+        final score = _calculateStrengthScore(password);
+        Color meterColor;
+        String strengthText;
+        double progress;
+
+        switch (score) {
+          case 0:
+          case 1:
+          case 2:
+            meterColor = const Color(0xFFEF4444);
+            strengthText = 'Weak';
+            progress = 0.25;
+            break;
+          case 3:
+            meterColor = const Color(0xFFF59E0B);
+            strengthText = 'Fair';
+            progress = 0.55;
+            break;
+          case 4:
+            meterColor = const Color(0xFF38BDF8);
+            strengthText = 'Good';
+            progress = 0.80;
+            break;
+          case 5:
+          default:
+            meterColor = const Color(0xFF2DD4BF);
+            strengthText = 'Strong';
+            progress = 1.0;
+            break;
+        }
+
+        return Padding(
+          padding: const EdgeInsets.only(top: 10, bottom: 4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Password Strength: $strengthText',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: meterColor,
+                    ),
+                  ),
+                  Text(
+                    '$score of 5 rules met',
+                    style: const TextStyle(
+                      fontSize: 10,
+                      color: Color(0xFF94A3B8),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: LinearProgressIndicator(
+                  value: progress,
+                  minHeight: 4,
+                  backgroundColor: const Color(0xFF334155),
+                  valueColor: AlwaysStoppedAnimation<Color>(meterColor),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   Widget _buildPasswordChecklist() {
     return ListenableBuilder(
@@ -160,6 +232,162 @@ class _AuthScreenState extends State<AuthScreen> {
         );
       },
     );
+  }
+
+  Widget _buildPrivacyConsent() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: InkWell(
+        onTap: () => setState(() => _acceptedPrivacy = !_acceptedPrivacy),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 24,
+              height: 24,
+              child: Checkbox(
+                value: _acceptedPrivacy,
+                activeColor: const Color(0xFF0EA5A4),
+                onChanged: (v) => setState(() => _acceptedPrivacy = v ?? false),
+              ),
+            ),
+            const SizedBox(width: 10),
+            const Expanded(
+              child: Text(
+                'I understand that UniGuide keeps my grades and answers so it can give me recommendations, '
+                'and that I can delete my account and all of this from the menu at any time.',
+                style: TextStyle(
+                    color: Color(0xFF94A3B8), fontSize: 12, height: 1.4),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Form Submission
+  // ---------------------------------------------------------------------------
+  void _submit() async {
+    if (!_formKey.currentState!.validate()) return;
+    if (!_isLoginMode &&
+        _passwordController.text != _confirmPasswordController.text) {
+      setState(() => _errorText = 'Passwords do not match.');
+      return;
+    }
+    if (!_isLoginMode && !_acceptedPrivacy) {
+      setState(() => _errorText = 'Please tick the box to continue.');
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _errorText = null;
+    });
+
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    try {
+      if (_isLoginMode) {
+        await FirebaseAuth.instance
+            .signInWithEmailAndPassword(email: email, password: password);
+      } else {
+        final credential =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+        if (_nameController.text.trim().isNotEmpty) {
+          await credential.user?.updateDisplayName(_nameController.text.trim());
+        }
+        await credential.user?.sendEmailVerification();
+      }
+    } on FirebaseAuthException catch (e) {
+      setState(() => _errorText = _messageForAuthError(e));
+    } catch (e) {
+      setState(() => _errorText = 'Something went wrong. Please try again.');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Social Logins & Guest
+  // ---------------------------------------------------------------------------
+  Future<void> _signInWithGoogle() async {
+    setState(() {
+      _isLoading = true;
+      _errorText = null;
+    });
+
+    try {
+      if (kIsWeb) {
+        await FirebaseAuth.instance.signInWithPopup(GoogleAuthProvider());
+        return;
+      }
+
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+      if (googleUser == null) {
+        if (mounted) setState(() => _isLoading = false);
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final OAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+    } on FirebaseAuthException catch (e) {
+      setState(() => _errorText = _messageForAuthError(e));
+    } catch (e) {
+      setState(() => _errorText = 'Google Sign-In failed ($e).');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _signInWithApple() async {
+    setState(() {
+      _isLoading = true;
+      _errorText = null;
+    });
+
+    try {
+      final appleProvider = AppleAuthProvider();
+      await FirebaseAuth.instance.signInWithProvider(appleProvider);
+    } on FirebaseAuthException catch (e) {
+      setState(() => _errorText = _messageForAuthError(e));
+    } catch (e) {
+      setState(() => _errorText =
+          'Apple Sign-In is not configured yet in Firebase Console.');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _continueAsGuest() async {
+    setState(() {
+      _isLoading = true;
+      _errorText = null;
+    });
+
+    try {
+      await FirebaseAuth.instance.signInAnonymously();
+    } on FirebaseAuthException catch (e) {
+      setState(() => _errorText = _messageForAuthError(e));
+    } catch (e) {
+      setState(() =>
+          _errorText = 'Could not start guest session ($e). Check connection.');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   String _messageForAuthError(FirebaseAuthException e) {
@@ -218,8 +446,9 @@ class _AuthScreenState extends State<AuthScreen> {
                     icon: Icons.email_outlined,
                   ),
                   validator: (val) {
-                    if (val == null || val.trim().isEmpty)
+                    if (val == null || val.trim().isEmpty) {
                       return 'Please enter your email';
+                    }
                     if (!val.contains('@')) return 'Please enter a valid email';
                     return null;
                   },
@@ -297,6 +526,39 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
+  Widget _buildSocialButton({
+    required String label,
+    required Widget iconWidget,
+    required VoidCallback? onPressed,
+  }) {
+    return OutlinedButton(
+      onPressed: onPressed,
+      style: OutlinedButton.styleFrom(
+        backgroundColor: const Color(0xFF0F172A),
+        side: const BorderSide(color: Color(0xFF334155)),
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          iconWidget,
+          const SizedBox(width: 8),
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -361,7 +623,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       height: 1.4,
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 28),
 
                   // Form Container Card
                   Container(
@@ -384,7 +646,9 @@ class _AuthScreenState extends State<AuthScreen> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Text(
-                            _isLoginMode ? 'Sign In' : 'Create Account',
+                            kIsWeb
+                                ? 'Administrator Sign In'
+                                : (_isLoginMode ? 'Sign In' : 'Create Account'),
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 20,
@@ -393,15 +657,17 @@ class _AuthScreenState extends State<AuthScreen> {
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            _isLoginMode
-                                ? 'Enter your credentials to access the decision platform'
-                                : 'Register your candidate profile to generate recommendations',
+                            kIsWeb
+                                ? 'Use your administrator account to access the web portal'
+                                : (_isLoginMode
+                                    ? 'Enter your credentials to access the decision platform'
+                                    : 'Register your candidate profile to generate recommendations'),
                             style: const TextStyle(
                               color: Color(0xFF94A3B8),
                               fontSize: 12,
                             ),
                           ),
-                          const SizedBox(height: 22),
+                          const SizedBox(height: 20),
 
                           if (_errorText != null) ...[
                             Container(
@@ -444,11 +710,12 @@ class _AuthScreenState extends State<AuthScreen> {
                           TextFormField(
                             controller: _emailController,
                             keyboardType: TextInputType.emailAddress,
+                            autocorrect: false,
+                            enableSuggestions: false,
                             style: const TextStyle(color: Colors.white),
                             decoration: _inputDecoration(
                               label: 'Email Address',
                               icon: Icons.email_outlined,
-                              // Placeholders only on sign-up, never on sign-in.
                               hint: _isLoginMode ? null : 'Enter email',
                             ),
                             validator: (val) {
@@ -463,13 +730,54 @@ class _AuthScreenState extends State<AuthScreen> {
                           ),
                           const SizedBox(height: 16),
 
+                          // Header for Password on Sign-up (Suggest Password button)
+                          if (!_isLoginMode)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  'Password',
+                                  style: TextStyle(
+                                    color: Color(0xFF94A3B8),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap: _applySuggestedPassword,
+                                  borderRadius: BorderRadius.circular(6),
+                                  child: const Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 4, vertical: 2),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(Icons.auto_awesome,
+                                            size: 13, color: Color(0xFF2DD4BF)),
+                                        SizedBox(width: 4),
+                                        Text(
+                                          'Suggest Strong Password',
+                                          style: TextStyle(
+                                            color: Color(0xFF2DD4BF),
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          if (!_isLoginMode) const SizedBox(height: 6),
+
                           // Password Field
                           TextFormField(
                             controller: _passwordController,
                             obscureText: _obscurePassword,
                             style: const TextStyle(color: Colors.white),
                             decoration: _inputDecoration(
-                              label: 'Password',
+                              label: _isLoginMode ? 'Password' : '',
                               icon: Icons.lock_outline,
                               hint: _isLoginMode ? null : '••••••••',
                               suffixIcon: IconButton(
@@ -490,9 +798,6 @@ class _AuthScreenState extends State<AuthScreen> {
                               if (val == null || val.isEmpty) {
                                 return 'Please enter your password';
                               }
-                              // Strength rules only apply when creating a password -
-                              // signing in must still accept whatever an existing
-                              // account already has.
                               if (!_isLoginMode) {
                                 final unmet = _unmetPasswordRules(val);
                                 if (unmet.isNotEmpty) {
@@ -502,8 +807,48 @@ class _AuthScreenState extends State<AuthScreen> {
                               return null;
                             },
                           ),
-                          if (!_isLoginMode) _buildPasswordChecklist(),
-                          if (!_isLoginMode) _buildPrivacyConsent(),
+
+                          if (!_isLoginMode) ...[
+                            _buildPasswordStrengthMeter(),
+                            _buildPasswordChecklist(),
+                            const SizedBox(height: 16),
+
+                            // Confirm Password Field
+                            TextFormField(
+                              controller: _confirmPasswordController,
+                              obscureText: _obscureConfirmPassword,
+                              style: const TextStyle(color: Colors.white),
+                              decoration: _inputDecoration(
+                                label: 'Confirm Password',
+                                icon: Icons.lock_clock_outlined,
+                                hint: 'Re-enter password',
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _obscureConfirmPassword
+                                        ? Icons.visibility_outlined
+                                        : Icons.visibility_off_outlined,
+                                    color: const Color(0xFF94A3B8),
+                                    size: 20,
+                                  ),
+                                  onPressed: () {
+                                    setState(() => _obscureConfirmPassword =
+                                        !_obscureConfirmPassword);
+                                  },
+                                ),
+                              ),
+                              validator: (val) {
+                                if (val == null || val.isEmpty) {
+                                  return 'Please confirm your password';
+                                }
+                                if (val != _passwordController.text) {
+                                  return 'Passwords do not match';
+                                }
+                                return null;
+                              },
+                            ),
+                            _buildPrivacyConsent(),
+                          ],
+
                           if (_isLoginMode) ...[
                             Align(
                               alignment: Alignment.centerRight,
@@ -521,9 +866,9 @@ class _AuthScreenState extends State<AuthScreen> {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 12),
+                            const SizedBox(height: 8),
                           ] else
-                            const SizedBox(height: 24),
+                            const SizedBox(height: 20),
 
                           // Submit Button
                           ElevatedButton(
@@ -531,7 +876,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF0EA5A4),
                               foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 15),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -557,43 +902,139 @@ class _AuthScreenState extends State<AuthScreen> {
                                     ),
                                   ),
                           ),
+
+                          const SizedBox(height: 18),
+
+                          // Social Logins Divider
+                          Row(
+                            children: [
+                              const Expanded(
+                                child: Divider(
+                                    color: Color(0xFF334155), thickness: 1),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                                child: Text(
+                                  'OR CONTINUE WITH',
+                                  style: TextStyle(
+                                    color: const Color(0xFF94A3B8)
+                                        .withOpacity(0.85),
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.7,
+                                  ),
+                                ),
+                              ),
+                              const Expanded(
+                                child: Divider(
+                                    color: Color(0xFF334155), thickness: 1),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 14),
+
+                          // Social Login Buttons (Google + Apple)
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _buildSocialButton(
+                                  label: 'Google',
+                                  iconWidget: Container(
+                                    width: 18,
+                                    height: 18,
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.white,
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: const Text(
+                                      'G',
+                                      style: TextStyle(
+                                        color: Color(0xFF4285F4),
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                  onPressed:
+                                      _isLoading ? null : _signInWithGoogle,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: _buildSocialButton(
+                                  label: 'Apple',
+                                  iconWidget: const Icon(
+                                    Icons.apple,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
+                                  onPressed:
+                                      _isLoading ? null : _signInWithApple,
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 10),
+
+                          // Continue as Guest Button
+                          Center(
+                            child: TextButton.icon(
+                              onPressed: _isLoading ? null : _continueAsGuest,
+                              icon: const Icon(Icons.person_outline,
+                                  size: 16, color: Color(0xFF94A3B8)),
+                              label: const Text(
+                                'Continue as Guest',
+                                style: TextStyle(
+                                  color: Color(0xFF94A3B8),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 18),
 
-                  // Toggle Login / Register
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        _isLoginMode
-                            ? "Don't have an account?"
-                            : "Already registered?",
-                        style: const TextStyle(
-                            color: Color(0xFF94A3B8), fontSize: 13),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            _isLoginMode = !_isLoginMode;
-                            _errorText = null;
-                            _formKey.currentState?.reset();
-                          });
-                        },
-                        child: Text(
-                          _isLoginMode ? 'Register' : 'Sign In',
+                  if (!kIsWeb)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          _isLoginMode
+                              ? "Don't have an account?"
+                              : "Already registered?",
                           style: const TextStyle(
-                            color: Color(0xFF2DD4BF),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13,
+                              color: Color(0xFF94A3B8), fontSize: 13),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              _isLoginMode = !_isLoginMode;
+                              _errorText = null;
+                              _passwordController.clear();
+                              _confirmPasswordController.clear();
+                              _formKey.currentState?.reset();
+                            });
+                          },
+                          child: Text(
+                            _isLoginMode ? 'Register' : 'Sign In',
+                            style: const TextStyle(
+                              color: Color(0xFF2DD4BF),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
                 ],
               ),
             ),
@@ -610,7 +1051,7 @@ class _AuthScreenState extends State<AuthScreen> {
     Widget? suffixIcon,
   }) {
     return InputDecoration(
-      labelText: label,
+      labelText: label.isEmpty ? null : label,
       hintText: hint,
       labelStyle: const TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
       hintStyle: const TextStyle(color: Color(0xFF64748B), fontSize: 12),
