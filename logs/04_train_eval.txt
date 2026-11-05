@@ -1,0 +1,138 @@
+﻿Dataset: C:\Users\fatma\Downloads\testing2\backend\xgboost_training_dataset_v2_noskills.csv
+Rows: 10605  Columns: 116  Classes: 53
+Feature count (before one-hot): 61 (60 numeric + 1 categorical)
+Feature list:
+  math_score
+  eng_score
+  kis_score
+  chem_score
+  bio_score
+  phys_score
+  history_score
+  business_score
+  geography_score
+  mean_points
+  int_healthcare_clinical_medicine
+  int_patient_care_nursing
+  int_pharmaceutical_sciences
+  int_software_development_coding
+  int_artificial_intelligence_machine_learning
+  int_data_analytics_statistics
+  int_cybersecurity_network_defense
+  int_civil_infrastructure_structural_engineering
+  int_electrical_electronic_systems
+  int_robotics_mechatronics_automation
+  int_corporate_law_constitutional_advocacy
+  int_financial_markets_investment_banking
+  int_actuarial_modeling_risk_analysis
+  int_agribusiness_food_sustainability
+  int_dental_oral_health_care
+  int_veterinary_animal_health_care
+  int_food_science_nutrition
+  int_mechanical_systems_manufacturing
+  int_architecture_building_design
+  int_mathematical_research_data_science
+  int_economic_policy_market_analysis
+  int_journalism_media_production
+  int_business_systems_enterprise_technology
+  int_public_health_epidemiology
+  int_clinical_laboratory_diagnostic_sciences
+  int_physical_rehabilitation_therapy
+  int_environmental_conservation_sustainability
+  int_chemical_materials_sciences
+  int_physics_applied_sciences_research
+  int_food_production_agro_processing
+  int_social_research_community_development
+  int_counseling_mental_health_support
+  int_teaching_curriculum_development
+  int_tourism_destination_management
+  int_hospitality_guest_services
+  int_human_resource_organizational_development
+  int_international_trade_global_business
+  int_procurement_supply_chain_management
+  int_urban_planning_land_use
+  int_geospatial_mapping_remote_sensing
+  int_political_governance_studies
+  int_criminal_justice_security_studies
+  int_general_business_administration_strategy
+  str_perseverance_discipline
+  str_logical_analytical_reasoning
+  str_attention_to_precision
+  str_empathy_human_care
+  str_creative_problem_solving
+  str_leadership_strategic_direction
+  str_team_collaboration
+  aspiration
+Aspiration categories (one-hot): 66
+
+Split sizes: train=8484  test=2121
+
+=== Stratified 5-fold CV on training rows only ===
+Logistic Regression            accuracy 0.7898 +/- 0.0100 | macro-F1 0.7886 +/- 0.0098 | weighted F1 0.7886 +/- 0.0098 (11s)
+Random Forest                  accuracy 0.8135 +/- 0.0102 | macro-F1 0.8105 +/- 0.0106 | weighted F1 0.8105 +/- 0.0106 (31s)
+Histogram Gradient Boosting    accuracy 0.8685 +/- 0.0072 | macro-F1 0.8675 +/- 0.0074 | weighted F1 0.8675 +/- 0.0074 (1062s)
+XGBoost                        accuracy 0.8755 +/- 0.0065 | macro-F1 0.8746 +/- 0.0063 | weighted F1 0.8746 +/- 0.0063 (203s)
+
+=== Fitted on training rows, evaluated once on test rows ===
+Logistic Regression            accuracy 0.8062 | macro-F1 0.8056 | weighted F1 0.8055 (3s)
+Random Forest                  accuracy 0.8076 | macro-F1 0.8057 | weighted F1 0.8057 (8s)
+Histogram Gradient Boosting    accuracy 0.8722 | macro-F1 0.8719 | weighted F1 0.8719 (259s)
+XGBoost                        accuracy 0.8727 | macro-F1 0.8723 | weighted F1 0.8723 (50s)
+
+=== XGBoost test-set detail ===
+accuracy             0.8727
+macro_f1             0.8723
+weighted_precision   0.8748
+weighted_recall      0.8727
+weighted_f1          0.8723
+top3_accuracy        0.9821
+
+5 lowest-recall programmes:
+  0.7000  (support 40)  Bachelor of Economics
+  0.7000  (support 40)  Bachelor of Science in Community Health and Development
+  0.7250  (support 40)  Bachelor of Science in Informatics and Computer Science
+  0.7500  (support 40)  Bachelor of Science in Industrial Chemistry
+  0.7750  (support 40)  Bachelor of Education (Science)
+
+10 most frequent confusion pairs (count | true -> predicted):
+    7 | Bachelor of Science in Community Health and Development -> Bachelor of Arts in Sociology
+    5 | Bachelor of Arts in Sociology -> Bachelor of Science in Community Health and Development
+    5 | Bachelor of Education (Arts) -> Bachelor of Education (Science)
+    5 | Bachelor of Education (Science) -> Bachelor of Education (Arts)
+    5 | Bachelor of Science in Chemistry -> Bachelor of Science in Industrial Chemistry
+    4 | Bachelor of Science in Data Science and Analytics -> Bachelor of Science in Mathematics
+    4 | Bachelor of Science in Medical Laboratory Sciences -> Bachelor of Science in Biochemistry
+    3 | Bachelor of Engineering in Chemical Engineering -> Bachelor of Science in Software Engineering
+    3 | Bachelor of Science in Environmental Science -> Bachelor of Commerce (BCom) - Finance & Accounting
+    3 | Bachelor of Science in Industrial Chemistry -> Bachelor of Science in Chemistry
+
+Total errors: 270 of 2121
+Errors within the same field (KUCCPS cluster number): 56 (0.2074 of errors)
+
+=== Figures (training-split model) ===
+Saved figure: C:\Users\fatma\Downloads\testing2\report_outputs_v2\fig_dataset_sample.png
+Saved figure: C:\Users\fatma\Downloads\testing2\report_outputs_v2\fig_class_distribution.png
+Saved figure: C:\Users\fatma\Downloads\testing2\report_outputs_v2\fig_model_comparison.png
+Saved figure: C:\Users\fatma\Downloads\testing2\report_outputs_v2\fig_confusion_field.png
+Saved figure: C:\Users\fatma\Downloads\testing2\report_outputs_v2\fig_confusion_full.png
+Saved figure: C:\Users\fatma\Downloads\testing2\report_outputs_v2\fig_shap_global_top15.png
+Saved figure: C:\Users\fatma\Downloads\testing2\report_outputs_v2\fig_shap_ics_top15.png
+
+=== Same protocol on the OLD dataset (XGBoost, old features incl. skl_) ===
+Old dataset: C:\Users\fatma\Downloads\testing2\backend\xgboost_training_dataset.csv
+Rows: 12057  Classes: 53  Features before one-hot: 96 (skl_ columns: 35)
+Split sizes: train=9645  test=2412
+
+XGBoost                       OLD (with skills)    NEW (no skills)
+CV accuracy (train rows)                 0.8489             0.8755
+CV macro-F1 (train rows)                 0.8518             0.8746
+Test accuracy                            0.8648             0.8727
+Test macro-F1                            0.8696             0.8723
+Test top-3 accuracy                      0.9789             0.9821
+
+Saved metrics: C:\Users\fatma\Downloads\testing2\report_outputs_v2\metrics.json
+
+=== Deployment model: XGBoost refitted on ALL rows (not used for any reported number) ===
+Saved deployment model: C:\Users\fatma\Downloads\testing2\backend\uniguide_xgb_v2.joblib (4.18 MB, 53 classes)
+
+Total time: 2087s

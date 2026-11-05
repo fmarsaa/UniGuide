@@ -1,0 +1,14 @@
+{
+  "model_type": "Extreme Gradient Boosting (XGBoost)",
+  "model_version": "xgb-v2-20261106-1fdca5e",
+  "model_file": "uniguide_xgb_v2.joblib",
+  "accuracy": 0.8727015558698727,
+  "weighted_f1": 0.8723057917688937,
+  "macro_f1": 0.8723129440965474,
+  "top3_accuracy": 0.9820839226779821,
+  "evaluation_method": "Stratified 80/20 split (random_state=42); XGBoost fitted on the training rows and evaluated once on the test rows. Deployment model refitted on all rows.",
+  "n_train": 8484,
+  "n_test": 2121,
+  "n_classes": 53,
+  "source": "report_outputs_v2\\metrics.json"
+}
