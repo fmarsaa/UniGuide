@@ -648,11 +648,15 @@ def _choose_optional_subjects(aspiration: str, n_optional: int) -> List[str]:
     return chosen[:n_optional]
 
 
-# Global tracking counters for dataset generation statistics
+# Global tracking counters for dataset generation statistics. These count every
+# labelling call, including profiles that are later discarded; the per-profile
+# flags in _LAST_LABEL_FLAGS let the generator report the same figures for the
+# rows actually kept in the dataset.
 GENERATOR_STATS = {
     "top_score_zero": 0,
     "tie_before_tiebreak": 0,
 }
+_LAST_LABEL_FLAGS = {"top_score_zero": False, "tie_before_tiebreak": False}
 
 
 def _score_programme(title: str, interests: List[str], strengths: List[str],
@@ -671,6 +675,8 @@ def _score_programme(title: str, interests: List[str], strengths: List[str],
 
 def assign_programme_label(grades: Dict[str, str], mean_grade: str, interests: List[str],
                             strengths: List[str], aspiration: str) -> Optional[str]:
+    _LAST_LABEL_FLAGS["top_score_zero"] = False
+    _LAST_LABEL_FLAGS["tie_before_tiebreak"] = False
     if grade_to_points(mean_grade) < GRADE_POINTS["C+"]:
         return "Not eligible for degree study"
 
@@ -688,12 +694,14 @@ def assign_programme_label(grades: Dict[str, str], mean_grade: str, interests: L
 
     if best_score <= 0:
         GENERATOR_STATS["top_score_zero"] += 1
+        _LAST_LABEL_FLAGS["top_score_zero"] = True
         candidates = eligible
     else:
         candidates = [title for title, s in scored if s == best_score]
 
     if len(candidates) > 1:
         GENERATOR_STATS["tie_before_tiebreak"] += 1
+        _LAST_LABEL_FLAGS["tie_before_tiebreak"] = True
 
     def cwp_and_cutoff(title: str):
         programme = CATALOG_BY_TITLE[title]
@@ -871,6 +879,8 @@ def _build_profile_for_target(profile_id: int, target_title: str) -> dict:
     record.update(build_cluster_score_features(grades, mean_grade))
     record["aspiration"] = aspiration
     record["programme_label"] = label
+    record["_tie_before_tiebreak"] = _LAST_LABEL_FLAGS["tie_before_tiebreak"]
+    record["_top_score_zero"] = _LAST_LABEL_FLAGS["top_score_zero"]
     return record
 
 
@@ -996,6 +1006,11 @@ def generate_dataset(seed: int = 42) -> pd.DataFrame:
         if row[col_name] < 0:
             cutoff_not_met += 1
 
+    kept_ties = int(df["_tie_before_tiebreak"].sum())
+    kept_top_zero = int(df["_top_score_zero"].sum())
+    df = df.drop(columns=["_tie_before_tiebreak", "_top_score_zero"])
+    labels_not_in_catalogue = sorted(set(df["programme_label"]) - set(TRAINED_PROGRAMME_TITLES))
+
     # Print all required metrics
     print(f"Pass 1 kept: {pass1_kept}")
     print(f"Pass 1 attempts: {pass1_attempts}")
@@ -1006,14 +1021,17 @@ def generate_dataset(seed: int = 42) -> pd.DataFrame:
     print(f"Extra top-ups after deduplication: {extra_top_ups}")
     print(f"Final row count: {final_row_count}")
     print(f"Number of distinct labels: {distinct_labels}")
+    print(f"Labels not in the catalogue: {len(labels_not_in_catalogue)} {labels_not_in_catalogue}")
     print(f"Smallest class: {smallest_class[0]} ({smallest_class[1]})")
     print(f"Largest class: {largest_class[0]} ({largest_class[1]})")
     print("Full value_counts:")
     print(val_counts.to_string())
     print(f"Profiles with mean_points < 7: {profiles_below_cplus}")
     print(f"Missing values: {missing_values}")
-    print(f"Profiles with a tie for the top score before tie-breaking: {GENERATOR_STATS['tie_before_tiebreak']}")
-    print(f"Profiles whose top score was 0: {GENERATOR_STATS['top_score_zero']}")
+    print(f"Profiles with a tie for the top score before tie-breaking (kept rows): {kept_ties}")
+    print(f"Profiles whose top score was 0 (kept rows): {kept_top_zero}")
+    print(f"Labelling calls with a tie, including discarded profiles: {GENERATOR_STATS['tie_before_tiebreak']}")
+    print(f"Labelling calls whose top score was 0, including discarded profiles: {GENERATOR_STATS['top_score_zero']}")
     print(f"Profiles labelled with a programme whose cutoff they did not meet: {cutoff_not_met}")
 
     skl_cols = [c for c in df.columns if c.startswith("skl_")]

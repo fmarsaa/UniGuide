@@ -1,0 +1,78 @@
+﻿Pass 1 kept: 6000
+Pass 1 attempts: 6000
+Pass 2 kept: 4605
+Discards by reason - no eligible programme: 0
+Discards by reason - below C+: 0
+Duplicates removed: 0
+Extra top-ups after deduplication: 0
+Final row count: 10605
+Number of distinct labels: 53
+Labels not in the catalogue: 0 []
+Smallest class: Bachelor of Engineering in Chemical Engineering (200)
+Largest class: Bachelor of Science in Statistics (205)
+Full value_counts:
+programme_label
+Bachelor of Science in Statistics                                      205
+Bachelor of Science in Nursing                                         200
+Bachelor of Science in Physiotherapy                                   200
+Bachelor of Science in Industrial Chemistry                            200
+Bachelor of Science in Medical Laboratory Sciences                     200
+Bachelor of Science in Food, Nutrition and Dietetics                   200
+Bachelor of Science in Business Information Technology (BBIT)          200
+Bachelor of Science in Public Health                                   200
+Bachelor of Science in Food Science and Technology                     200
+Bachelor of Science in Human Resource Management                       200
+Bachelor of Science in Biomedical Engineering                          200
+Bachelor of Science in Civil Engineering                               200
+Bachelor of Science in Software Engineering                            200
+Bachelor of Science in International Business Management               200
+Bachelor of Procurement and Logistics Management                       200
+Bachelor of Arts in Political Science and Public Administration        200
+Bachelor of Arts in Journalism and Mass Communication                  200
+Bachelor of Science in Physics                                         200
+Bachelor of Pharmacy (BPharm)                                          200
+Bachelor of Science in Environmental Science                           200
+Bachelor of Science in Real Estate Management                          200
+Bachelor of Science in Mathematics                                     200
+Bachelor of Arts in Sociology                                          200
+Bachelor of Laws (LLB)                                                 200
+Bachelor of Economics                                                  200
+Bachelor of Dental Surgery (BDS)                                       200
+Bachelor of Science in Forestry                                        200
+Bachelor of Science in Microbiology                                    200
+Bachelor of Arts in Criminology and Security Studies                   200
+Bachelor of Business Management                                        200
+Bachelor of Science in Electrical and Electronic Engineering           200
+Bachelor of Science in Community Health and Development                200
+Bachelor of Medicine and Bachelor of Surgery (MBChB)                   200
+Bachelor of Architecture                                               200
+Bachelor of Arts in Counseling Psychology                              200
+Bachelor of Education (Arts)                                           200
+Bachelor of Veterinary Medicine (BVM)                                  200
+Bachelor of Quantity Surveying                                         200
+Bachelor of Science in Actuarial Science                               200
+Bachelor of Science in Hospitality Management                          200
+Bachelor of Science in Biochemistry                                    200
+Bachelor of Science in Agriculture                                     200
+Bachelor of Science in Data Science and Analytics                      200
+Bachelor of Education (Science)                                        200
+Bachelor of Urban and Regional Planning                                200
+Bachelor of Science in Informatics and Computer Science                200
+Bachelor of Science in Geomatics and Geospatial Information Systems    200
+Bachelor of Tourism Management                                         200
+Bachelor of Commerce (BCom) - Finance & Accounting                     200
+Bachelor of Science in Chemistry                                       200
+Bachelor of Social Work                                                200
+Bachelor of Science in Mechanical Engineering                          200
+Bachelor of Engineering in Chemical Engineering                        200
+Profiles with mean_points < 7: 0
+Missing values: 0
+Profiles with a tie for the top score before tie-breaking (kept rows): 2361
+Profiles whose top score was 0 (kept rows): 1
+Labelling calls with a tie, including discarded profiles: 5153
+Labelling calls whose top score was 0, including discarded profiles: 4
+Profiles labelled with a programme whose cutoff they did not meet: 3520
+Confirmation: no column starts with skl_
+Full column list (116 columns):
+['student_id', 'math_score', 'eng_score', 'kis_score', 'chem_score', 'bio_score', 'phys_score', 'history_score', 'business_score', 'geography_score', 'mean_points', 'int_healthcare_clinical_medicine', 'int_patient_care_nursing', 'int_pharmaceutical_sciences', 'int_software_development_coding', 'int_artificial_intelligence_machine_learning', 'int_data_analytics_statistics', 'int_cybersecurity_network_defense', 'int_civil_infrastructure_structural_engineering', 'int_electrical_electronic_systems', 'int_robotics_mechatronics_automation', 'int_corporate_law_constitutional_advocacy', 'int_financial_markets_investment_banking', 'int_actuarial_modeling_risk_analysis', 'int_agribusiness_food_sustainability', 'int_dental_oral_health_care', 'int_veterinary_animal_health_care', 'int_food_science_nutrition', 'int_mechanical_systems_manufacturing', 'int_architecture_building_design', 'int_mathematical_research_data_science', 'int_economic_policy_market_analysis', 'int_journalism_media_production', 'int_business_systems_enterprise_technology', 'int_public_health_epidemiology', 'int_clinical_laboratory_diagnostic_sciences', 'int_physical_rehabilitation_therapy', 'int_environmental_conservation_sustainability', 'int_chemical_materials_sciences', 'int_physics_applied_sciences_research', 'int_food_production_agro_processing', 'int_social_research_community_development', 'int_counseling_mental_health_support', 'int_teaching_curriculum_development', 'int_tourism_destination_management', 'int_hospitality_guest_services', 'int_human_resource_organizational_development', 'int_international_trade_global_business', 'int_procurement_supply_chain_management', 'int_urban_planning_land_use', 'int_geospatial_mapping_remote_sensing', 'int_political_governance_studies', 'int_criminal_justice_security_studies', 'int_general_business_administration_strategy', 'str_perseverance_discipline', 'str_logical_analytical_reasoning', 'str_attention_to_precision', 'str_empathy_human_care', 'str_creative_problem_solving', 'str_leadership_strategic_direction', 'str_team_collaboration', 'clsc_bachelor_of_medicine_and_bachelor_of_surgery_mbchb', 'clsc_bachelor_of_pharmacy_bpharm', 'clsc_bachelor_of_science_in_nursing', 'clsc_bachelor_of_science_in_informatics_and_computer_science', 'clsc_bachelor_of_science_in_software_engineering', 'clsc_bachelor_of_science_in_business_information_technology_bbit', 'clsc_bachelor_of_science_in_electrical_and_electronic_engineering', 'clsc_bachelor_of_science_in_civil_engineering', 'clsc_bachelor_of_laws_llb', 'clsc_bachelor_of_science_in_actuarial_science', 'clsc_bachelor_of_commerce_bcom_finance_accounting', 'clsc_bachelor_of_dental_surgery_bds', 'clsc_bachelor_of_veterinary_medicine_bvm', 'clsc_bachelor_of_science_in_food_nutrition_and_dietetics', 'clsc_bachelor_of_science_in_mechanical_engineering', 'clsc_bachelor_of_architecture', 'clsc_bachelor_of_quantity_surveying', 'clsc_bachelor_of_science_in_mathematics', 'clsc_bachelor_of_economics', 'clsc_bachelor_of_arts_in_journalism_and_mass_communication', 'clsc_bachelor_of_science_in_agriculture', 'clsc_bachelor_of_science_in_industrial_chemistry', 'clsc_bachelor_of_science_in_microbiology', 'clsc_bachelor_of_science_in_food_science_and_technology', 'clsc_bachelor_of_science_in_statistics', 'clsc_bachelor_of_education_science', 'clsc_bachelor_of_education_arts', 'clsc_bachelor_of_science_in_public_health', 'clsc_bachelor_of_arts_in_sociology', 'clsc_bachelor_of_social_work', 'clsc_bachelor_of_arts_in_counseling_psychology', 'clsc_bachelor_of_business_management', 'clsc_bachelor_of_tourism_management', 'clsc_bachelor_of_science_in_hospitality_management', 'clsc_bachelor_of_science_in_real_estate_management', 'clsc_bachelor_of_engineering_in_chemical_engineering', 'clsc_bachelor_of_science_in_human_resource_management', 'clsc_bachelor_of_science_in_international_business_management', 'clsc_bachelor_of_urban_and_regional_planning', 'clsc_bachelor_of_science_in_geomatics_and_geospatial_information_systems', 'clsc_bachelor_of_science_in_medical_laboratory_sciences', 'clsc_bachelor_of_science_in_physiotherapy', 'clsc_bachelor_of_science_in_community_health_and_development', 'clsc_bachelor_of_science_in_data_science_and_analytics', 'clsc_bachelor_of_science_in_biochemistry', 'clsc_bachelor_of_science_in_physics', 'clsc_bachelor_of_science_in_chemistry', 'clsc_bachelor_of_procurement_and_logistics_management', 'clsc_bachelor_of_science_in_environmental_science', 'clsc_bachelor_of_science_in_forestry', 'clsc_bachelor_of_science_in_biomedical_engineering', 'clsc_bachelor_of_arts_in_political_science_and_public_administration', 'clsc_bachelor_of_arts_in_criminology_and_security_studies', 'aspiration', 'programme_label']
+Saved dataset to C:\Users\fatma\Downloads\testing2\backend\xgboost_training_dataset_v2_noskills.csv
