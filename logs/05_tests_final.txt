@@ -194,4 +194,4 @@ backend\tests\test_whatif_and_activity.py::test_records_with_no_timestamp_do_not
     _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======================= 181 passed, 1 warning in 24.69s =======================
+======================= 181 passed, 1 warning in 25.06s =======================

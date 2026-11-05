@@ -1,0 +1,7 @@
+﻿keeping administrator: fatmamarsa2@gmail.com
+would delete: fmarsa99@gmail.com
+would delete: fatumamm99@gmail.com
+would delete: alysa.gathoni2807@gmail.com
+
+3 student account(s), 1 administrator(s) kept.
+Dry run only - nothing was deleted. Re-run with --yes to delete.
