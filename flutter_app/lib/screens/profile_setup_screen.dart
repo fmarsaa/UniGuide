@@ -59,7 +59,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   late List<String?> _optionalGrade;
 
   late List<String> _selectedInterests;
-  late List<String> _selectedSkills;
   late List<String> _selectedStrengths;
   late List<String> _selectedAspirations;
 
@@ -67,7 +66,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   bool _showValidationErrors = false;
 
   // Kept in exact sync with backend/synthetic_data_generator.py's
-  // INTERESTS_POOL/SKILLS_POOL/STRENGTHS_POOL/ASPIRATIONS_POOL - the trained
+  // INTERESTS_POOL/STRENGTHS_POOL/ASPIRATIONS_POOL - the trained
   // Random Forest only knows these exact option strings as features.
   final List<String> _availableInterests = [
     'Healthcare & Clinical Medicine',
@@ -117,45 +116,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     'General Business Administration & Strategy',
   ];
 
-  final List<String> _availableSkills = [
-    'Clinical Diagnostics & Health Care',
-    'Python & Software Programming',
-    'Mathematical & Quantitative Analysis',
-    'Scientific Laboratory Research',
-    'Problem Solving & Analytical Logic',
-    'Critical Thinking & Persuasive Debate',
-    'CAD Modeling & Spatial Engineering',
-    'Financial Modeling & Accounting',
-    'Attention to Detail',
-    'Team Collaboration & Leadership',
-    'Agricultural & Environmental Science',
-    'News Writing & Media Research',
-    'Cost Estimation & Construction Economics',
-    // 53-class catalogue expansion additions - kept in exact sync with
-    // backend/synthetic_data_generator.py's SKILLS_POOL.
-    'Chemical Analysis & Process Optimization',
-    'Microbial Culturing & Laboratory Research',
-    'Statistical Modeling & Programming (R/Python)',
-    'Pedagogy & Classroom Management',
-    'Epidemiological Surveillance & Health Education',
-    'Social Research Methods & Community Engagement',
-    'Case Management & Counseling Ethics',
-    'Active Listening & Psychological Assessment',
-    'Destination Marketing & Itinerary Planning',
-    'Guest Relations & Hospitality Service Standards',
-    'Recruitment & Employee Relations',
-    'Cross-Cultural Trade & Market Entry Strategy',
-    'Supply Chain Analysis & Contract Negotiation',
-    'Land Use Planning & GIS Mapping',
-    'GIS Software & Remote Sensing',
-    'Property Valuation & Market Analysis',
-    'Forest Resource Assessment & Conservation Planning',
-    'Environmental Monitoring & Impact Assessment',
-    'Medical Device Design & Signal Processing',
-    'Patient Assessment & Rehabilitation Technique',
-    'Political Analysis & Policy Research',
-    'Criminal Justice Analysis & Investigation',
-  ];
 
   final List<String> _availableStrengths = [
     'Perseverance & Discipline',
@@ -266,7 +226,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     );
 
     _selectedInterests = List<String>.from(widget.initialProfile.interests);
-    _selectedSkills = List<String>.from(widget.initialProfile.skills);
     _selectedStrengths = List<String>.from(widget.initialProfile.strengths);
     _selectedAspirations = List<String>.from(widget.initialProfile.aspirations);
   }
@@ -327,7 +286,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   bool get _isComplete =>
       _subjectsComplete &&
       _selectedInterests.isNotEmpty &&
-      _selectedSkills.isNotEmpty &&
       _selectedStrengths.isNotEmpty;
 
   void _toggleItem(List<String> list, String item) {
@@ -363,7 +321,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       kcseMeanGrade: _computedMeanGrade ?? 'C+',
       grades: grades,
       interests: _selectedInterests,
-      skills: _selectedSkills,
       strengths: _selectedStrengths,
       aspirations: _selectedAspirations,
     );
@@ -374,7 +331,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   // --- Step flow ----------------------------------------------------------
   // One job per screen instead of one 150-chip scroll. Progress and the
   // per-step requirement mirror exactly what _isComplete checks at the end.
-  static const List<String> _stepTitles = ['Grades', 'Interests', 'Skills', 'Aspirations'];
+  static const List<String> _stepTitles = ['Grades', 'Interests', 'Strengths', 'Aspirations'];
 
   bool _stepComplete(int step) {
     switch (step) {
@@ -383,7 +340,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       case 1:
         return _selectedInterests.isNotEmpty;
       case 2:
-        return _selectedSkills.isNotEmpty && _selectedStrengths.isNotEmpty;
+        return _selectedStrengths.isNotEmpty;
       default:
         return true; // optional - an undecided student can simply continue
     }
@@ -396,11 +353,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       case 1:
         return 'Pick at least one interest to continue.';
       case 2:
-        return _selectedSkills.isEmpty && _selectedStrengths.isEmpty
-            ? 'Pick at least one skill and one strength to continue.'
-            : _selectedSkills.isEmpty
-                ? 'Pick at least one skill to continue.'
-                : 'Pick at least one strength to continue.';
+        return 'Pick at least one strength to continue.';
       default:
         return '';
     }
@@ -584,35 +537,18 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
         );
       case 2:
         return _buildPickerStep(
-          title: 'What are you good at?',
-          subtitle: 'Choose the practical and thinking skills you have shown, then your strengths as a person.',
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              GroupedOptionPicker(
-                groups: withOtherGroup(kSkillGroups, _availableSkills),
-                selected: _selectedSkills,
-                onToggle: (o) => _toggleItem(_selectedSkills, o),
-                searchHint: 'Search skills',
-              ),
-              const SizedBox(height: 20),
-              _buildSectionHeader(
-                title: 'Personal strengths',
-                subtitle: 'Soft skills and attributes that describe you.',
-              ),
-              const SizedBox(height: 10),
-              FlatOptionChips(
-                options: _availableStrengths,
-                selected: _selectedStrengths,
-                onToggle: (o) => _toggleItem(_selectedStrengths, o),
-              ),
-            ],
+          title: 'What are your personal strengths?',
+          subtitle: 'Choose your personal strengths and attributes that describe you.',
+          child: FlatOptionChips(
+            options: _availableStrengths,
+            selected: _selectedStrengths,
+            onToggle: (o) => _toggleItem(_selectedStrengths, o),
           ),
         );
       default:
         return _buildPickerStep(
           title: 'Do you have a career in mind?',
-          subtitle: 'This is optional. If you have one, pick your top choice. If not, choose "Not sure yet" - we will recommend from your grades, interests and skills.',
+          subtitle: 'This is optional. If you have one, pick your top choice. If not, choose "Not sure yet" - we will recommend from your grades, interests and strengths.',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

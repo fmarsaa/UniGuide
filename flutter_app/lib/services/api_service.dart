@@ -117,7 +117,7 @@ class ApiService {
   /// Requests Top 3 Random Forest recommendations with real SHAP explanations.
   /// [preview] asks for the same answer without saving it - used by the "What if?"
   /// simulator, so trying other grades never touches the student's real history.
-  static Future<List<RecommendationItem>> getRecommendations(StudentProfile profile, {bool preview = false}) {
+  static Future<RecommendationResponse> getRecommendations(StudentProfile profile, {bool preview = false}) {
     return _withRetry('Could not reach the UniGuide recommendation service', () async {
       final headers = await _authHeaders();
       final response = await http
@@ -130,8 +130,16 @@ class ApiService {
 
       if (response.statusCode != 200) throw _errorFor(response);
 
-      final List<dynamic> data = jsonDecode(response.body);
-      return data.map((json) => RecommendationItem.fromJson(json)).toList();
+      final dynamic decoded = jsonDecode(response.body);
+      if (decoded is Map<String, dynamic>) {
+        return RecommendationResponse.fromJson(decoded);
+      } else if (decoded is List) {
+        return RecommendationResponse(
+          recommendations: decoded.map((json) => RecommendationItem.fromJson(json as Map<String, dynamic>)).toList(),
+          message: null,
+        );
+      }
+      return RecommendationResponse(recommendations: [], message: null);
     });
   }
 

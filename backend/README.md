@@ -46,7 +46,7 @@ assigning any programme label. The dataframe also retains one `clsc_` column per
 programme containing cluster-weighted points minus that programme's average cutoff;
 these columns are available for analysis but are disabled as model inputs in the
 current XGBoost pipeline (`INCLUDE_CLUSTER_SCORE_FEATURES = False`). The model
-uses the nine subject-point columns, mean points, 85 binary interest/skill/strength
+uses the nine subject-point columns, mean points, 50 binary interest/strength
 indicators, and aspiration. Optional subjects not present in a profile are
 represented by the mean grade when constructing the model feature row.
 

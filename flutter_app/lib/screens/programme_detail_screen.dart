@@ -198,6 +198,22 @@ class ProgrammeDetailScreen extends StatelessWidget {
                 );
               }).toList(),
             ),
+            const SizedBox(height: 16),
+            if (programme.requiredSkills.isNotEmpty) ...[
+              _buildSectionHeader(context, 'Skills you will develop in this programme'),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: programme.requiredSkills.map((skill) {
+                  return Chip(
+                    backgroundColor: Colors.teal.shade50,
+                    avatar: Icon(Icons.school_outlined, size: 16, color: Colors.teal.shade700),
+                    label: Text(skill, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.teal.shade900)),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 16),
+            ],
             const SizedBox(height: 24),
           ],
         ),

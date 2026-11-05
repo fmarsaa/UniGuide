@@ -23,6 +23,7 @@ class WhatIfScreen extends StatefulWidget {
 class _WhatIfScreenState extends State<WhatIfScreen> {
   late final Map<String, String> _grades;
   List<RecommendationItem>? _result;
+  String? _resultMessage;
   bool _loading = false;
   String? _error;
 
@@ -66,16 +67,16 @@ class _WhatIfScreenState extends State<WhatIfScreen> {
       kcseMeanGrade: _meanGradeOf(_grades),
       grades: Map<String, String>.from(_grades),
       interests: p.interests,
-      skills: p.skills,
       strengths: p.strengths,
       aspirations: p.aspirations,
     );
     try {
-      final results =
+      final res =
           await ApiService.getRecommendations(modified, preview: true);
       if (!mounted) return;
       setState(() {
-        _result = results;
+        _result = res.recommendations;
+        _resultMessage = res.message;
         _loading = false;
       });
     } on ApiException catch (e) {
@@ -220,6 +221,27 @@ class _WhatIfScreenState extends State<WhatIfScreen> {
 
   List<Widget> _resultSection(BuildContext context) {
     final results = _result!;
+    if (results.isEmpty) {
+      return [
+        const SizedBox(height: 22),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.cardBackground(context),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.cardBorder(context)),
+          ),
+          child: Center(
+            child: Text(
+              _resultMessage ?? 'No programmes match your subject grades.',
+              style: TextStyle(fontSize: 13, color: AppColors.textPrimary(context)),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+        const SizedBox(height: 24),
+      ];
+    }
     final currentIds = widget.current.map((r) => r.programme.id).toList();
     final newIds = results.map((r) => r.programme.id).toList();
     final dropped =

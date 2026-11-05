@@ -2069,6 +2069,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(prog.title, style: TextStyle(fontSize: 12, color: Colors.grey.shade700)),
+              if (prog.requiredSkills.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                const Text('Skills you will develop in this programme', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
+                Text(prog.requiredSkills.join(', '), style: TextStyle(fontSize: 11, color: Colors.grey.shade700)),
+              ],
               const SizedBox(height: 14),
               const Text('Cutoff points by university', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
               const SizedBox(height: 2),

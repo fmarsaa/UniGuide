@@ -16,7 +16,7 @@ POINTS_TO_GRADE: Dict[int, str] = {v: k for k, v in GRADE_POINTS.items()}
 # What the model sees as the "aspiration" when a student has not picked a career
 # yet. UniGuide is for students who may not have decided, so the career step is
 # optional; the training data includes profiles with this value so the model
-# learns to decide from grades, interests, skills and strengths alone.
+# learns to decide from grades, interests and strengths alone.
 UNDECIDED_ASPIRATION = "Not sure yet"
 
 # The 4 subjects every candidate must provide a grade for. Biology is

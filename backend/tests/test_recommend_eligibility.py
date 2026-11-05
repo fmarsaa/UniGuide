@@ -63,7 +63,6 @@ def test_newly_trained_programme_is_reachable():
     payload = main.StudentProfilePayload(
         kcseMeanGrade="C+", grades=grades,
         interests=["General Business Administration & Strategy"],
-        skills=["Financial Modeling & Accounting", "Team Collaboration & Leadership"],
         strengths=["Leadership & Strategic Direction"],
         aspirations=["Business Manager / Administrator"],
     )
@@ -129,7 +128,6 @@ def test_deactivated_programme_is_never_recommended():
         payload = main.StudentProfilePayload(
             kcseMeanGrade="C+", grades=grades,
             interests=["General Business Administration & Strategy"],
-            skills=["Financial Modeling & Accounting", "Team Collaboration & Leadership"],
             strengths=["Leadership & Strategic Direction"],
             aspirations=["Business Manager / Administrator"],
         )

@@ -12,6 +12,7 @@ import '../widgets/shap_bars.dart';
 
 class RecommendationsScreen extends StatelessWidget {
   final List<RecommendationItem> recommendations;
+  final String? message;
   final StudentProfile profile;
   final Function(Programme programme) onSelectProgramme;
   final Function(RecommendationItem recommendation) onOpenFeedback;
@@ -27,6 +28,7 @@ class RecommendationsScreen extends StatelessWidget {
   const RecommendationsScreen({
     Key? key,
     required this.recommendations,
+    this.message,
     required this.profile,
     required this.onSelectProgramme,
     required this.onOpenFeedback,
@@ -156,6 +158,27 @@ class RecommendationsScreen extends StatelessWidget {
             if (recommendations.isNotEmpty && recommendations.every((r) => !r.meetsMinimumRequirements))
               _buildTvetPathwayNotice(context),
 
+            if (recommendations.isEmpty)
+              Container(
+                margin: const EdgeInsets.only(bottom: 16),
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: AppColors.cardBackground(context),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.cardBorder(context)),
+                ),
+                child: Center(
+                  child: Text(
+                    message ?? 'No programmes match your subject grades.',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary(context),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
             // Top 3 Recommendation Cards
             ...recommendations.map((item) => _buildRecommendationCard(context, item)).toList(),
 

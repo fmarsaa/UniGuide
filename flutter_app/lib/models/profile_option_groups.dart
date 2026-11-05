@@ -82,68 +82,7 @@ const Map<String, List<String>> kInterestGroups = {
   ],
 };
 
-const String kSkillPeople = 'Working with people';
-const String kSkillNumbers = 'Numbers, data & computers';
-const String kSkillDesign = 'Designing, building & mapping';
-const String kSkillLab = 'Lab & field science';
-const String kSkillIdeas = 'Writing, debating & analysing society';
-const String kSkillTrade = 'Trade, planning & negotiating';
-const String kSkillGeneral = 'General';
-
-const Map<String, List<String>> kSkillGroups = {
-  kSkillPeople: [
-    'Clinical Diagnostics & Health Care',
-    'Patient Assessment & Rehabilitation Technique',
-    'Epidemiological Surveillance & Health Education',
-    'Pedagogy & Classroom Management',
-    'Social Research Methods & Community Engagement',
-    'Case Management & Counseling Ethics',
-    'Active Listening & Psychological Assessment',
-    'Guest Relations & Hospitality Service Standards',
-    'Recruitment & Employee Relations',
-  ],
-  kSkillNumbers: [
-    'Python & Software Programming',
-    'Mathematical & Quantitative Analysis',
-    'Statistical Modeling & Programming (R/Python)',
-    'Problem Solving & Analytical Logic',
-    'Financial Modeling & Accounting',
-  ],
-  kSkillDesign: [
-    'CAD Modeling & Spatial Engineering',
-    'Cost Estimation & Construction Economics',
-    'Land Use Planning & GIS Mapping',
-    'GIS Software & Remote Sensing',
-    'Property Valuation & Market Analysis',
-    'Medical Device Design & Signal Processing',
-  ],
-  kSkillLab: [
-    'Scientific Laboratory Research',
-    'Chemical Analysis & Process Optimization',
-    'Microbial Culturing & Laboratory Research',
-    'Agricultural & Environmental Science',
-    'Forest Resource Assessment & Conservation Planning',
-    'Environmental Monitoring & Impact Assessment',
-  ],
-  kSkillIdeas: [
-    'Critical Thinking & Persuasive Debate',
-    'News Writing & Media Research',
-    'Political Analysis & Policy Research',
-    'Criminal Justice Analysis & Investigation',
-  ],
-  kSkillTrade: [
-    'Cross-Cultural Trade & Market Entry Strategy',
-    'Supply Chain Analysis & Contract Negotiation',
-    'Destination Marketing & Itinerary Planning',
-  ],
-  kSkillGeneral: [
-    'Attention to Detail',
-    'Team Collaboration & Leadership',
-  ],
-};
-
-/// Group names that always stay at the bottom, whatever the shuffle does.
-const Set<String> kPinnedLastGroups = {kSkillGeneral, 'Other'};
+const Set<String> kPinnedLastGroups = {'Other'};
 
 /// Returns [groups] plus an "Other" group holding every option in [all] that
 /// no group lists, so grouping can never hide a real option.

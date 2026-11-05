@@ -1,3 +1,4 @@
+from collections import Counter
 """
 UniGuide - Synthetic Student Profile Dataset Generator
 Author: Fatuma Omar Marsa (159056)
@@ -9,12 +10,12 @@ Implements the synthetic data generation pipeline described in Chapter 3:
   subjects actually captured by the Flutter profile setup screen (Mathematics,
   English, Kiswahili and Chemistry are compulsory; Biology, Physics and the
   rest are optional subjects a student may or may not have sat).
-- Interests, skills, strengths, and career aspirations drawn from the exact
+- Interests, strengths, and career aspirations drawn from the exact
   option lists presented to students in the mobile app, so the trained model's
   vocabulary matches what the app can ever submit.
 - Programme labels are assigned using the multi-criteria rule described in the
   proposal: first gate on KUCCPS minimum subject requirements, then match the
-  student's stated interests/skills/aspirations against each eligible
+  student's stated interests/strengths/aspirations against each eligible
   programme, and finally break ties by closeness of the computed Cluster
   Weighted Points (CWP) to the programme's average cutoff. The seeded,
   programme-biased random generator in this module (no LLM is involved in
@@ -25,7 +26,7 @@ Implements the synthetic data generation pipeline described in Chapter 3:
 
 import random
 import re
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import numpy as np
 import pandas as pd
@@ -94,47 +95,6 @@ INTERESTS_POOL = [
     "General Business Administration & Strategy",
 ]
 
-SKILLS_POOL = [
-    "Clinical Diagnostics & Health Care",
-    "Python & Software Programming",
-    "Mathematical & Quantitative Analysis",
-    "Scientific Laboratory Research",
-    "Problem Solving & Analytical Logic",
-    "Critical Thinking & Persuasive Debate",
-    "CAD Modeling & Spatial Engineering",
-    "Financial Modeling & Accounting",
-    "Attention to Detail",
-    "Team Collaboration & Leadership",
-    "Agricultural & Environmental Science",
-    "News Writing & Media Research",
-    "Cost Estimation & Construction Economics",
-    # --- 53-class catalogue expansion additions --- each label's first
-    # word is deliberately drawn from the matching programme's own
-    # requiredSkills text in programmes_catalog.py, so _score_programme's
-    # existing substring match stays meaningful without any code change.
-    "Chemical Analysis & Process Optimization",
-    "Microbial Culturing & Laboratory Research",
-    "Statistical Modeling & Programming (R/Python)",
-    "Pedagogy & Classroom Management",
-    "Epidemiological Surveillance & Health Education",
-    "Social Research Methods & Community Engagement",
-    "Case Management & Counseling Ethics",
-    "Active Listening & Psychological Assessment",
-    "Destination Marketing & Itinerary Planning",
-    "Guest Relations & Hospitality Service Standards",
-    "Recruitment & Employee Relations",
-    "Cross-Cultural Trade & Market Entry Strategy",
-    "Supply Chain Analysis & Contract Negotiation",
-    "Land Use Planning & GIS Mapping",
-    "GIS Software & Remote Sensing",
-    "Property Valuation & Market Analysis",
-    "Forest Resource Assessment & Conservation Planning",
-    "Environmental Monitoring & Impact Assessment",
-    "Medical Device Design & Signal Processing",
-    "Patient Assessment & Rehabilitation Technique",
-    "Political Analysis & Policy Research",
-    "Criminal Justice Analysis & Investigation",
-]
 
 STRENGTHS_POOL = [
     "Perseverance & Discipline",
@@ -250,34 +210,21 @@ def _slug(label: str) -> str:
 # see everything assign_programme_label() used to decide the label, instead
 # of an information-lossy single sample of it.
 INTEREST_COLUMN: Dict[str, str] = {i: f"int_{_slug(i)}" for i in INTERESTS_POOL}
-SKILL_COLUMN: Dict[str, str] = {s: f"skl_{_slug(s)}" for s in SKILLS_POOL}
 STRENGTH_COLUMN: Dict[str, str] = {s: f"str_{_slug(s)}" for s in STRENGTHS_POOL}
-TRAIT_FEATURE_COLUMNS: List[str] = (
-    list(INTEREST_COLUMN.values()) + list(SKILL_COLUMN.values()) + list(STRENGTH_COLUMN.values())
-)
-# Reverse lookup used by main.py to build a human-readable SHAP explanation
-# for a trait feature, e.g. "int_healthcare_clinical_medicine" -> ("Interests",
-# "Interest", "Healthcare & Clinical Medicine").
+TRAIT_FEATURE_COLUMNS: List[str] = list(INTEREST_COLUMN.values()) + list(STRENGTH_COLUMN.values())
+
 TRAIT_COLUMN_INFO: Dict[str, tuple] = {}
 for _label, _col in INTEREST_COLUMN.items():
     TRAIT_COLUMN_INFO[_col] = ("Interests", "Interest", _label)
-for _label, _col in SKILL_COLUMN.items():
-    TRAIT_COLUMN_INFO[_col] = ("Skills", "Skill", _label)
 for _label, _col in STRENGTH_COLUMN.items():
     TRAIT_COLUMN_INFO[_col] = ("Strengths", "Strength", _label)
 
 
-def build_trait_features(interests: List[str], skills: List[str], strengths: List[str]) -> Dict[str, int]:
-    """One boolean (0/1) column per pool entry - shared by training (every
-    sampled interest/skill/strength) and serving (main.py, from the real
-    profile a student submitted) so the two can never disagree on schema."""
+def build_trait_features(interests: List[str], strengths: List[str]) -> Dict[str, int]:
     row = {col: 0 for col in TRAIT_FEATURE_COLUMNS}
     for i in interests:
         if i in INTEREST_COLUMN:
             row[INTEREST_COLUMN[i]] = 1
-    for s in skills:
-        if s in SKILL_COLUMN:
-            row[SKILL_COLUMN[s]] = 1
     for s in strengths:
         if s in STRENGTH_COLUMN:
             row[STRENGTH_COLUMN[s]] = 1
@@ -570,79 +517,11 @@ STRENGTH_MAP["Team Collaboration"].extend([_TOURISM, _HOSPITALITY])
 STRENGTH_MAP["Creative Problem Solving"].append(_URP)
 STRENGTH_MAP["Perseverance & Discipline"].extend([_ENVSCI, _FORESTRY])
 
-# Generation-bias only (see _build_profile_for_target) - which skills a
-# programme's synthetic profiles should be weighted toward. Not used by
-# _score_programme, which keeps its existing free-text substring match
-# against the real catalog description/requiredSkills; this list only
-# decides what a *plausible* student for that programme tends to pick when
-# generating a profile, from the exact same SKILLS_POOL the app exposes.
-PROGRAMME_SKILLS: Dict[str, List[str]] = {
-    _MBCHB: ["Clinical Diagnostics & Health Care", "Scientific Laboratory Research", "Attention to Detail"],
-    _BPHARM: ["Clinical Diagnostics & Health Care", "Scientific Laboratory Research", "Attention to Detail"],
-    _NURSING: ["Clinical Diagnostics & Health Care", "Team Collaboration & Leadership"],
-    _DENTAL: ["Clinical Diagnostics & Health Care", "Attention to Detail"],
-    _VET: ["Clinical Diagnostics & Health Care", "Scientific Laboratory Research"],
-    _NUTRITION: ["Scientific Laboratory Research", "Attention to Detail"],
-    _ICS: ["Python & Software Programming", "Problem Solving & Analytical Logic", "Mathematical & Quantitative Analysis"],
-    _SE: ["Python & Software Programming", "Problem Solving & Analytical Logic"],
-    _BBIT: ["Python & Software Programming", "Financial Modeling & Accounting", "Team Collaboration & Leadership"],
-    _EEE: ["CAD Modeling & Spatial Engineering", "Mathematical & Quantitative Analysis", "Problem Solving & Analytical Logic"],
-    _CIVIL: ["CAD Modeling & Spatial Engineering", "Cost Estimation & Construction Economics", "Mathematical & Quantitative Analysis"],
-    _MECH: ["CAD Modeling & Spatial Engineering", "Problem Solving & Analytical Logic", "Mathematical & Quantitative Analysis"],
-    _ARCH: ["CAD Modeling & Spatial Engineering", "Attention to Detail"],
-    _QS: ["Cost Estimation & Construction Economics", "Attention to Detail", "Mathematical & Quantitative Analysis"],
-    _LAW: ["Critical Thinking & Persuasive Debate", "Attention to Detail"],
-    _ACTUARIAL: ["Mathematical & Quantitative Analysis", "Financial Modeling & Accounting", "Attention to Detail"],
-    _BCOM: ["Financial Modeling & Accounting", "Team Collaboration & Leadership"],
-    _MATH: ["Mathematical & Quantitative Analysis", "Problem Solving & Analytical Logic"],
-    _ECON: ["Mathematical & Quantitative Analysis", "Critical Thinking & Persuasive Debate"],
-    _JMC: ["News Writing & Media Research", "Critical Thinking & Persuasive Debate"],
-    _AGRI: ["Agricultural & Environmental Science", "Scientific Laboratory Research"],
-    # --- 53-class catalogue expansion additions ---
-    _INDCHEM: ["Chemical Analysis & Process Optimization", "Scientific Laboratory Research"],
-    _MICRO: ["Microbial Culturing & Laboratory Research", "Scientific Laboratory Research"],
-    _FOODSCI: ["Scientific Laboratory Research", "Agricultural & Environmental Science"],
-    _STATS: ["Statistical Modeling & Programming (R/Python)", "Mathematical & Quantitative Analysis"],
-    _EDUSCI: ["Pedagogy & Classroom Management", "Critical Thinking & Persuasive Debate"],
-    _EDUARTS: ["Pedagogy & Classroom Management", "News Writing & Media Research"],
-    _PUBHEALTH: ["Epidemiological Surveillance & Health Education", "Scientific Laboratory Research"],
-    _SOCIOLOGY: ["Social Research Methods & Community Engagement", "Critical Thinking & Persuasive Debate"],
-    _SOCIALWORK: ["Case Management & Counseling Ethics", "Social Research Methods & Community Engagement"],
-    _COUNSELING: ["Active Listening & Psychological Assessment", "Case Management & Counseling Ethics"],
-    _BUSMGMT: ["Financial Modeling & Accounting", "Team Collaboration & Leadership"],
-    _TOURISM: ["Destination Marketing & Itinerary Planning", "Team Collaboration & Leadership"],
-    _HOSPITALITY: ["Guest Relations & Hospitality Service Standards", "Team Collaboration & Leadership"],
-    _REALESTATE: ["Property Valuation & Market Analysis", "Mathematical & Quantitative Analysis"],
-    _CHEMENG: ["Chemical Analysis & Process Optimization", "Problem Solving & Analytical Logic"],
-    _HRM: ["Recruitment & Employee Relations", "Team Collaboration & Leadership"],
-    _INTLBUS: ["Cross-Cultural Trade & Market Entry Strategy", "Financial Modeling & Accounting"],
-    _URP: ["Land Use Planning & GIS Mapping", "Critical Thinking & Persuasive Debate"],
-    _GEOMATICS: ["GIS Software & Remote Sensing", "Mathematical & Quantitative Analysis"],
-    _MEDLAB: ["Scientific Laboratory Research", "Attention to Detail"],
-    _PHYSIO: ["Patient Assessment & Rehabilitation Technique", "Clinical Diagnostics & Health Care"],
-    _COMMHEALTH: ["Epidemiological Surveillance & Health Education", "Social Research Methods & Community Engagement"],
-    _DATASCI: ["Statistical Modeling & Programming (R/Python)", "Python & Software Programming"],
-    _BIOCHEM: ["Scientific Laboratory Research", "Chemical Analysis & Process Optimization"],
-    _PHYSICS: ["Mathematical & Quantitative Analysis", "Scientific Laboratory Research"],
-    _CHEMISTRY: ["Chemical Analysis & Process Optimization", "Scientific Laboratory Research"],
-    _PROCUREMENT: ["Supply Chain Analysis & Contract Negotiation", "Financial Modeling & Accounting"],
-    _ENVSCI: ["Environmental Monitoring & Impact Assessment", "Agricultural & Environmental Science"],
-    _FORESTRY: ["Forest Resource Assessment & Conservation Planning", "Agricultural & Environmental Science"],
-    _BIOMEDENG: ["Medical Device Design & Signal Processing", "Mathematical & Quantitative Analysis"],
-    _POLSCI: ["Political Analysis & Policy Research", "Critical Thinking & Persuasive Debate"],
-    _CRIMINOLOGY: ["Criminal Justice Analysis & Investigation", "Critical Thinking & Persuasive Debate"],
-}
-
-# Cross-cutting skills/strengths legitimately common across many unrelated
+# Cross-cutting strengths legitimately common across many unrelated
 # programmes (per the profile-redesign audit's "shared characteristics"
 # tier) - used as the second-choice bucket in biased generation so a
 # profile's non-primary picks aren't drawn from the *entire* pool at random,
 # but still aren't limited to only that one programme's own associated tags.
-SHARED_SKILLS: List[str] = [
-    "Attention to Detail",
-    "Team Collaboration & Leadership",
-    "Problem Solving & Analytical Logic",
-]
 SHARED_STRENGTHS: List[str] = [
     "Team Collaboration",
     "Perseverance & Discipline",
@@ -720,7 +599,6 @@ PROGRAMME_ASPIRATIONS: Dict[str, List[str]] = _invert(ASPIRATION_MAP, TRAINED_PR
 for _title in TRAINED_PROGRAMME_TITLES:
     assert PROGRAMME_INTERESTS[_title], f"{_title} has no associated interests"
     assert PROGRAMME_STRENGTHS[_title], f"{_title} has no associated strengths"
-    assert _title in PROGRAMME_SKILLS and PROGRAMME_SKILLS[_title], f"{_title} has no associated skills"
     assert len(PROGRAMME_ASPIRATIONS[_title]) >= 2, f"{_title} still has fewer than 2 aspiration options"
 
 
@@ -766,35 +644,29 @@ def _choose_optional_subjects(aspiration: str, n_optional: int) -> List[str]:
     return chosen[:n_optional]
 
 
-def _score_programme(title: str, interests: List[str], skills: List[str], strengths: List[str],
-                      aspiration: str) -> float:
-    programme = CATALOG_BY_TITLE[title]
-    score = 0.0
+# Global tracking counters for dataset generation statistics
+GENERATOR_STATS = {
+    "top_score_zero": 0,
+    "tie_before_tiebreak": 0,
+}
 
+
+def _score_programme(title: str, interests: List[str], strengths: List[str],
+                      aspiration: str) -> float:
+    score = 0.0
     if title in ASPIRATION_MAP.get(aspiration, []):
         score += 4.0
-
     for interest in interests:
         if title in INTEREST_MAP.get(interest, []):
             score += 2.0
-
-    haystack = " ".join(programme["requiredSkills"] + [programme["description"]]).lower()
-    for skill in skills:
-        # Match on the first meaningful token of the skill label (e.g. "Python" from
-        # "Python & Software Programming") so it lines up with catalog skill phrasing.
-        token = skill.split(" & ")[0].split(" ")[0].lower()
-        if token and token in haystack:
-            score += 1.0
-
     for strength in strengths:
         if title in STRENGTH_MAP.get(strength, []):
             score += 1.0
-
     return score
 
 
 def assign_programme_label(grades: Dict[str, str], mean_grade: str, interests: List[str],
-                            skills: List[str], strengths: List[str], aspiration: str) -> str:
+                            strengths: List[str], aspiration: str) -> Optional[str]:
     if grade_to_points(mean_grade) < GRADE_POINTS["C+"]:
         return "Not eligible for degree study"
 
@@ -805,25 +677,36 @@ def assign_programme_label(grades: Dict[str, str], mean_grade: str, interests: L
         if meets_minimum_requirements(grades, CATALOG_BY_TITLE[title]["minimumSubjectRequirements"], mean_grade)
     ]
     if not eligible:
-        eligible = FALLBACK_ORDER
+        return None
 
-    scored = [(title, _score_programme(title, interests, skills, strengths, aspiration)) for title in eligible]
+    scored = [(title, _score_programme(title, interests, strengths, aspiration)) for title in eligible]
     best_score = max(s for _, s in scored)
 
     if best_score <= 0:
-        # No thematic match among eligible programmes: fall back to the closest
-        # academic fit (smallest gap between the student's CWP and the cutoff).
+        GENERATOR_STATS["top_score_zero"] += 1
         candidates = eligible
     else:
         candidates = [title for title, s in scored if s == best_score]
 
-    def cutoff_gap(title: str) -> float:
+    if len(candidates) > 1:
+        GENERATOR_STATS["tie_before_tiebreak"] += 1
+
+    def cwp_and_cutoff(title: str):
         programme = CATALOG_BY_TITLE[title]
         raw = raw_cluster_points(grades, programme["clusterSubjects"], mean_grade)
         cwp = cluster_weighted_points(raw, agg)
-        return abs(cwp - programme["averageCutoff"])
+        return cwp, programme["averageCutoff"]
 
-    return min(candidates, key=cutoff_gap)
+    qualifying_candidates = []
+    for title in candidates:
+        cwp, cutoff = cwp_and_cutoff(title)
+        if cwp >= cutoff:
+            qualifying_candidates.append((title, cwp - cutoff))
+
+    if qualifying_candidates:
+        return min(qualifying_candidates, key=lambda x: x[1])[0]
+    else:
+        return min(candidates, key=lambda t: abs(cwp_and_cutoff(t)[0] - cwp_and_cutoff(t)[1]))
 
 
 _JITTER_SPREADS = {
@@ -841,7 +724,7 @@ _DEFAULT_OPTIONAL_SPREAD = [-2, -1, 0, 1]
 # which programme it would end up labelling, plus a hand-picked 5-class-only
 # `_build_targeted_profile` top-up) with ONE mechanism applied to all 21
 # trained programmes: pick a target programme first, generate a profile
-# whose interests/skills/strengths/aspiration are *weighted toward* that
+# whose interests/strengths/aspiration are *weighted toward* that
 # programme's own associations (own pool / shared cross-cutting pool / full
 # pool, per the three-tier model in the profile-redesign audit) and whose
 # grades are floor-enforced to clear its real KUCCPS minimums, then hand the
@@ -849,7 +732,7 @@ _DEFAULT_OPTIONAL_SPREAD = [-2, -1, 0, 1]
 #
 # This does NOT hand-assign labels and does NOT force the outcome: a biased
 # profile can still land on a neighbouring class if its random draws
-# genuinely point there (e.g. a BDS-targeted draw whose skills/strengths
+# genuinely point there (e.g. a BDS-targeted draw whose strengths
 # happen to score higher for Medicine) - that's deliberate. It's exactly the
 # realistic, ambiguous middle-ground profile the Top-3 ranking exists to
 # help with, not a bug in the generator.
@@ -934,10 +817,6 @@ def _build_profile_for_target(profile_id: int, target_title: str) -> dict:
         random.randint(2, 3), PROGRAMME_INTERESTS[target_title], [], INTERESTS_POOL,
         own_prob=0.70, shared_prob=0.0,
     )
-    skills = _weighted_sample(
-        random.randint(2, 3), PROGRAMME_SKILLS[target_title], SHARED_SKILLS, SKILLS_POOL,
-        own_prob=0.55, shared_prob=0.25,
-    )
     strengths = _weighted_sample(
         random.randint(2, 3), PROGRAMME_STRENGTHS[target_title], SHARED_STRENGTHS, STRENGTHS_POOL,
         own_prob=0.55, shared_prob=0.25,
@@ -977,71 +856,178 @@ def _build_profile_for_target(profile_id: int, target_title: str) -> dict:
     if random.random() < UNDECIDED_RATE:
         aspiration = UNDECIDED_ASPIRATION
 
-    label = assign_programme_label(grades, mean_grade, interests, skills, strengths, aspiration)
+    label = assign_programme_label(grades, mean_grade, interests, strengths, aspiration)
     feature_points = extract_ml_feature_points(grades, mean_grade)
 
     record = {"student_id": f"std_{profile_id:05d}"}
     for subject in ML_FEATURE_SUBJECTS:
         record[FEATURE_COLUMN[subject]] = feature_points[subject]
     record["mean_points"] = mean_points
-    record.update(build_trait_features(interests, skills, strengths))
+    record.update(build_trait_features(interests, strengths))
     record.update(build_cluster_score_features(grades, mean_grade))
     record["aspiration"] = aspiration
     record["programme_label"] = label
     return record
 
 
-def _top_up_to_floor(df: pd.DataFrame, floor: int, seed: int) -> pd.DataFrame:
-    """Generalizes the old 5-class-only oversample_thin_classes to every
-    trained programme: tops up any class that fell short of `floor` after
-    the main balanced-target generation pass, using the exact same
-    _build_profile_for_target (and therefore the same assign_programme_label
-    rule) as every other profile. Own seed so this pass is reproducible
-    independent of how many draws the main pass consumed."""
-    rng_state = random.getstate()
-    np_state = np.random.get_state()
+def generate_dataset(seed: int = 42) -> pd.DataFrame:
     random.seed(seed)
     np.random.seed(seed)
 
-    counts = df["programme_label"].value_counts().to_dict()
-    extra_records = []
-    next_id = 900000
+    GENERATOR_STATS["top_score_zero"] = 0
+    GENERATOR_STATS["tie_before_tiebreak"] = 0
+
+    discards_by_reason = {
+        "no eligible programme": 0,
+        "below C+": 0,
+    }
+
+    pass1_kept = 0
+    pass1_attempts = 0
+    target_pass1 = 6000
+    max_pass1_attempts = 120000
+
+    kept_records = []
+    pid = 1
+
+    while len(kept_records) < target_pass1 and pass1_attempts < max_pass1_attempts:
+        pass1_attempts += 1
+        target_title = random.choice(TRAINED_PROGRAMME_TITLES)
+        rec = _build_profile_for_target(pid, target_title)
+        label = rec["programme_label"]
+        if label is None:
+            discards_by_reason["no eligible programme"] += 1
+        elif label == "Not eligible for degree study":
+            discards_by_reason["below C+"] += 1
+        else:
+            kept_records.append(rec)
+            pid += 1
+
+    pass1_kept = len(kept_records)
+    if pass1_kept < target_pass1:
+        raise RuntimeError(f"Pass 1 could not reach {target_pass1} (kept: {pass1_kept}, attempts: {pass1_attempts})")
+
+    # Pass 2: top up every programme to at least 200
+    counts = Counter(r["programme_label"] for r in kept_records)
+    pass2_kept = 0
+    floor = 200
+
     for title in TRAINED_PROGRAMME_TITLES:
-        needed = max(0, floor - counts.get(title, 0))
-        attempts = 0
-        max_attempts = needed * 25 + 200  # generous ceiling - can't loop forever
-        while counts.get(title, 0) < floor and attempts < max_attempts:
-            record = _build_profile_for_target(next_id, title)
-            next_id += 1
-            attempts += 1
-            extra_records.append(record)
-            counts[record["programme_label"]] = counts.get(record["programme_label"], 0) + 1
+        attempts_prog = 0
+        max_attempts_prog = 30000
+        while counts.get(title, 0) < floor and attempts_prog < max_attempts_prog:
+            attempts_prog += 1
+            rec = _build_profile_for_target(pid, title)
+            label = rec["programme_label"]
+            if label is None:
+                discards_by_reason["no eligible programme"] += 1
+            elif label == "Not eligible for degree study":
+                discards_by_reason["below C+"] += 1
+            elif label == title:
+                kept_records.append(rec)
+                counts[title] = counts.get(title, 0) + 1
+                pass2_kept += 1
+                pid += 1
 
-    random.setstate(rng_state)
-    np.random.set_state(np_state)
+        if counts.get(title, 0) < floor:
+            raise RuntimeError(f"Safety limit reached: could not top up {title} to {floor} (current: {counts.get(title, 0)})")
 
-    if not extra_records:
-        return df
-    extra_df = pd.DataFrame(extra_records)
-    return pd.concat([df, extra_df], ignore_index=True)
+    df = pd.DataFrame(kept_records)
+
+    # Model feature columns for exact duplicate detection
+    model_feature_cols = (
+        [FEATURE_COLUMN[s] for s in ML_FEATURE_SUBJECTS] +
+        ["mean_points"] +
+        list(INTEREST_COLUMN.values()) +
+        list(STRENGTH_COLUMN.values()) +
+        ["aspiration"]
+    )
+
+    initial_count = len(df)
+    df = df.drop_duplicates(subset=model_feature_cols).reset_index(drop=True)
+    duplicates_removed = initial_count - len(df)
+
+    # If any programme falls below 200 after deduplication, top it up again
+    post_counts = df["programme_label"].value_counts().to_dict()
+    extra_top_ups = 0
+
+    for title in TRAINED_PROGRAMME_TITLES:
+        needed = max(0, floor - post_counts.get(title, 0))
+        attempts_extra = 0
+        max_extra = 30000
+        while post_counts.get(title, 0) < floor and attempts_extra < max_extra:
+            attempts_extra += 1
+            rec = _build_profile_for_target(pid, title)
+            label = rec["programme_label"]
+            if label is None:
+                discards_by_reason["no eligible programme"] += 1
+            elif label == "Not eligible for degree study":
+                discards_by_reason["below C+"] += 1
+            elif label == title:
+                rec_series = pd.Series({col: rec[col] for col in model_feature_cols})
+                # Check for duplicates on model feature columns
+                matches = (df[model_feature_cols] == rec_series).all(axis=1)
+                if not matches.any():
+                    df = pd.concat([df, pd.DataFrame([rec])], ignore_index=True)
+                    post_counts[title] = post_counts.get(title, 0) + 1
+                    extra_top_ups += 1
+                    pid += 1
+
+        if post_counts.get(title, 0) < floor:
+            raise RuntimeError(f"Safety limit reached after deduplication: could not top up {title} to {floor}")
+
+    final_row_count = len(df)
+    distinct_labels = df["programme_label"].nunique()
+    val_counts = df["programme_label"].value_counts()
+    smallest_class = val_counts.index[-1], int(val_counts.iloc[-1])
+    largest_class = val_counts.index[0], int(val_counts.iloc[0])
+    profiles_below_cplus = int((df["mean_points"] < 7).sum())
+    missing_values = int(df.isnull().sum().sum())
+
+    # Profiles labelled with a programme whose cutoff they did not meet
+    cutoff_not_met = 0
+    for idx, row in df.iterrows():
+        title = row["programme_label"]
+        col_name = CLUSTER_SCORE_COLUMN[title]
+        if row[col_name] < 0:
+            cutoff_not_met += 1
+
+    # Print all required metrics
+    print(f"Pass 1 kept: {pass1_kept}")
+    print(f"Pass 1 attempts: {pass1_attempts}")
+    print(f"Pass 2 kept: {pass2_kept}")
+    print(f"Discards by reason - no eligible programme: {discards_by_reason['no eligible programme']}")
+    print(f"Discards by reason - below C+: {discards_by_reason['below C+']}")
+    print(f"Duplicates removed: {duplicates_removed}")
+    print(f"Extra top-ups after deduplication: {extra_top_ups}")
+    print(f"Final row count: {final_row_count}")
+    print(f"Number of distinct labels: {distinct_labels}")
+    print(f"Smallest class: {smallest_class[0]} ({smallest_class[1]})")
+    print(f"Largest class: {largest_class[0]} ({largest_class[1]})")
+    print("Full value_counts:")
+    print(val_counts.to_string())
+    print(f"Profiles with mean_points < 7: {profiles_below_cplus}")
+    print(f"Missing values: {missing_values}")
+    print(f"Profiles with a tie for the top score before tie-breaking: {GENERATOR_STATS['tie_before_tiebreak']}")
+    print(f"Profiles whose top score was 0: {GENERATOR_STATS['top_score_zero']}")
+    print(f"Profiles labelled with a programme whose cutoff they did not meet: {cutoff_not_met}")
+
+    skl_cols = [c for c in df.columns if c.startswith("skl_")]
+    assert len(skl_cols) == 0, f"Found skl_ columns: {skl_cols}"
+    print("Confirmation: no column starts with skl_")
+    print(f"Full column list ({len(df.columns)} columns):")
+    print(list(df.columns))
+
+    return df
 
 
-def create_synthetic_dataset(n_samples: int = 1500, seed: int = 42) -> pd.DataFrame:
-    # Seeded so the training pipeline is reproducible run-to-run - important
-    # for a thesis where reported accuracy/F1 numbers should be reproducible.
-    random.seed(seed)
-    np.random.seed(seed)
-    targets = TRAINED_PROGRAMME_TITLES
-    records = [
-        _build_profile_for_target(i, random.choice(targets))
-        for i in range(1, n_samples + 1)
-    ]
-    df = pd.DataFrame(records)
-    return _top_up_to_floor(df, floor=THIN_CLASS_FLOOR, seed=seed + 1000)
+def create_synthetic_dataset(n_samples: int = 6000, seed: int = 42) -> pd.DataFrame:
+    return generate_dataset(seed=seed)
 
 
 if __name__ == "__main__":
-    df = create_synthetic_dataset(1500)
-    df.to_csv("synthetic_student_profiles.csv", index=False)
-    print(f"Generated {len(df)} synthetic student profiles. Sample distribution:")
-    print(df["programme_label"].value_counts())
+    out_dir = os.path.dirname(__file__)
+    csv_path = os.path.join(out_dir, "xgboost_training_dataset_v2_noskills.csv")
+    df = generate_dataset(seed=42)
+    df.to_csv(csv_path, index=False)
+    print(f"Saved dataset to {csv_path}")

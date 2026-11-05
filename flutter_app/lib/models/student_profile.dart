@@ -8,7 +8,6 @@ class StudentProfile {
   final int kcseMeanPoints;
   final Map<String, String> grades; // e.g. {"Mathematics": "A", "English": "B+"}
   final List<String> interests;
-  final List<String> skills;
   final List<String> strengths;
   final List<String> aspirations;
   final double calculatedClusterScore;
@@ -23,7 +22,6 @@ class StudentProfile {
     int? kcseMeanPoints,
     Map<String, String>? grades,
     List<String>? interests,
-    List<String>? skills,
     List<String>? strengths,
     List<String>? aspirations,
     this.calculatedClusterScore = 0.0,
@@ -32,7 +30,6 @@ class StudentProfile {
         kcseMeanPoints = kcseMeanPoints ?? KCSEGrade.fromString(kcseMeanGrade).points,
         grades = grades ?? {},
         interests = interests ?? [],
-        skills = skills ?? [],
         strengths = strengths ?? [],
         aspirations = aspirations ?? [],
         updatedAt = updatedAt ?? DateTime.now();
@@ -48,7 +45,6 @@ class StudentProfile {
       kcseMeanPoints: json['kcseMeanPoints'] ?? 9,
       grades: Map<String, String>.from(json['grades'] ?? {}),
       interests: List<String>.from(json['interests'] ?? []),
-      skills: List<String>.from(json['skills'] ?? []),
       strengths: List<String>.from(json['strengths'] ?? []),
       aspirations: List<String>.from(json['aspirations'] ?? []),
       calculatedClusterScore: (json['calculatedClusterScore'] as num?)?.toDouble() ?? 0.0,
@@ -67,7 +63,6 @@ class StudentProfile {
     'kcseMeanPoints': kcseMeanPoints,
     'grades': grades,
     'interests': interests,
-    'skills': skills,
     'strengths': strengths,
     'aspirations': aspirations,
     'calculatedClusterScore': calculatedClusterScore,

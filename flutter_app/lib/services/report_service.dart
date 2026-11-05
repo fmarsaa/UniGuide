@@ -84,7 +84,10 @@ class ReportService {
           pw.SizedBox(height: 4),
           small('Mean grade: ${profile.kcseMeanGrade}', bold: true),
           heading('Your top programme matches'),
-          for (final rec in recommendations) ...[
+          if (recommendations.isEmpty)
+            small('No programmes match your subject grades.')
+          else
+            for (final rec in recommendations) ...[
             pw.Container(
               margin: const pw.EdgeInsets.only(bottom: 12),
               padding: const pw.EdgeInsets.all(10),

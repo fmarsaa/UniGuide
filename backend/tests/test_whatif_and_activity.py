@@ -19,7 +19,6 @@ def _payload():
         kcseMeanGrade="B",
         grades={"Mathematics": "B", "English": "B", "Kiswahili": "B", "Chemistry": "B", "Physics": "B"},
         interests=["Software Development & Coding"],
-        skills=["Python & Software Programming"],
         strengths=["Logical & Analytical Reasoning"],
         aspirations=[],
     )

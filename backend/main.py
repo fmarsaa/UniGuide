@@ -348,7 +348,6 @@ class StudentProfilePayload(BaseModel):
     kcseMeanPoints: Optional[int] = None
     grades: Dict[str, str] = {}
     interests: List[str] = []
-    skills: List[str] = []
     strengths: List[str] = []
     aspirations: List[str] = []
     calculatedClusterScore: Optional[float] = None
@@ -523,7 +522,7 @@ def profile_to_feature_row(payload: StudentProfilePayload):
 
     row = {FEATURE_COLUMN[subject]: feature_points[subject] for subject in ML_FEATURE_SUBJECTS}
     row["mean_points"] = mean_points
-    row.update(build_trait_features(payload.interests or [], payload.skills or [], payload.strengths or []))
+    row.update(build_trait_features(payload.interests or [], payload.strengths or []))
     row.update(build_cluster_score_features(grades, mean_grade))
     row["aspiration"] = payload.aspirations[0] if payload.aspirations else UNDECIDED_ASPIRATION
     return pd.DataFrame([row]), grades, mean_grade
@@ -596,7 +595,7 @@ def describe_feature(raw_name: str, row: dict):
             selected = row.get(col) == value
             if selected and value == UNDECIDED_ASPIRATION:
                 feature_name = "Career choice: not sure yet"
-                desc = "You have not picked a career yet, so your grades, interests and skills decide this result."
+                desc = "You have not picked a career yet, so your grades, interests and strengths decide this result."
             elif selected:
                 feature_name = f"{word}: {value}"
                 desc = f"Your stated {word.lower()} of '{value}' relates to this programme's profile."
@@ -645,8 +644,6 @@ def build_plain_reasons(shap_list, row: dict, programme: dict, grades: Dict[str,
                 _category, word, label = TRAIT_COLUMN_INFO[rest]
                 if word == "Interest":
                     sentence = f"You said you are interested in {label}."
-                elif word == "Skill":
-                    sentence = f"You listed {label} as one of your skills."
                 else:
                     sentence = f"{label} is one of the strengths you picked."
             elif rest == "mean_points":
@@ -668,7 +665,7 @@ def build_plain_reasons(shap_list, row: dict, programme: dict, grades: Dict[str,
                     if row.get(col) != value:
                         break  # a one-hot dummy for an option the student did not choose
                     if value == UNDECIDED_ASPIRATION:
-                        sentence = "You have not picked a career yet, so this match is based on your grades, interests and skills."
+                        sentence = "You have not picked a career yet, so this match is based on your grades, interests and strengths."
                     else:
                         sentence = f"You picked {value} as a career you have in mind."
         if sentence and sentence not in reasons:
@@ -704,7 +701,6 @@ def _persist_recommendation(uid: str, email: Optional[str], payload: StudentProf
             "kcseMeanPoints": payload.kcseMeanPoints,
             "grades": payload.grades,
             "interests": payload.interests,
-            "skills": payload.skills,
             "strengths": payload.strengths,
             "aspirations": payload.aspirations,
             "role": "student",
@@ -842,29 +838,9 @@ def select_recommended_indices(
     ]
     eligible_idx = [i for i in range(n_classes) if eligible_mask[i]]
 
-    # Within the eligible programmes, prefer ones the student can realistically
-    # get into: compare their points with EACH university's own latest cutoff
-    # (cutoffs differ by university), then rank by model probability inside each
-    # tier. A programme the model barely considers (probability under the
-    # 1-in-53 chance level) never jumps ahead of one it does, whatever its tier.
-    agg = aggregate_points(grades, mean_grade)
-
-    def rank_key(i):
-        programme = CATALOG_BY_TITLE[classes[i]]
-        cwp = cluster_weighted_points(raw_cluster_points(grades, programme["clusterSubjects"], mean_grade), agg)
-        summary = university_cutoff_summary(cwp, programme.get("offeringUniversities"), programme.get("averageCutoff"))
-        tier = cutoff_tier(summary) + (3 if proba[i] < 0.02 else 0)
-        return (tier, -proba[i])
-
-    # The model's best fit is always shown first, even when it is a stretch (the app says so in
-    # plain words). The other two places go to the best programmes the student can reach. Ranking
-    # purely by reachability pushed good fits out of the three shown: on out-of-fold profiles the
-    # labelled programme was shown 73% of the time, against 92% with this rule (Experiment 9).
     top_idx = []
     if eligible_idx:
-        # Sort eligible programmes by probability descending and take up to 3
         top_idx = sorted(eligible_idx, key=lambda i: proba[i], reverse=True)[:3]
-    # No fallback filling – if fewer than 3 eligible programmes, return fewer indices
     return top_idx, eligible_mask
 
 
@@ -949,7 +925,8 @@ def get_recommendations(payload: StudentProfilePayload, decoded: dict = Depends(
 
     if not preview and not _is_duplicate_submission(uid, payload):
         _persist_recommendation(uid, decoded.get("email"), payload, results)
-    return results
+    message = None if results else "No programmes match your subject grades."
+    return {"recommendations": results, "message": message}
 
 
 def programmes_missed_for_career(grades: Dict[str, str], careers: List[str]) -> list:

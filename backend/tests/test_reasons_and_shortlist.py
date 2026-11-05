@@ -90,7 +90,6 @@ def test_a_student_with_no_career_still_gets_three_recommendations():
         kcseMeanGrade="B",
         grades={"Mathematics": "B", "English": "B", "Kiswahili": "B", "Chemistry": "B", "Physics": "B"},
         interests=["Software Development & Coding"],
-        skills=["Python & Software Programming"],
         strengths=["Logical & Analytical Reasoning"],
         aspirations=[],
     )

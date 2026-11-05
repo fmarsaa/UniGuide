@@ -50,7 +50,6 @@ def test_assign_programme_label_returns_a_trained_programme():
     label = assign_programme_label(
         grades, mean_grade="A-",
         interests=["Healthcare & Clinical Medicine"],
-        skills=["Clinical Diagnostics & Health Care"],
         strengths=["Empathy & Human Care"],
         aspiration="Medical Doctor (Physician/Surgeon)",
     )
@@ -70,7 +69,6 @@ def test_assign_programme_label_never_picks_an_ineligible_programme():
     label = assign_programme_label(
         grades, mean_grade="C",
         interests=["Healthcare & Clinical Medicine"],
-        skills=["Clinical Diagnostics & Health Care"],
         strengths=["Empathy & Human Care"],
         aspiration="Medical Doctor (Physician/Surgeon)",
     )

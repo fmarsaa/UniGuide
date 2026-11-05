@@ -2,7 +2,7 @@ import 'programme.dart';
 
 class ShapFeatureImpact {
   final String featureName;
-  final String category; // 'Academic', 'Interests', 'Skills', 'Strengths', 'Aspirations'
+  final String category; // 'Academic', 'Interests', 'Strengths', 'Aspirations'
   final double shapValue; // e.g. +0.32 or -0.08
   final String description;
 
@@ -37,10 +37,6 @@ class RecommendationItem {
   final double studentClusterScore;
   final double cutoffDiff; // studentScore - programme.averageCutoff
   final String eligibilityStatus; // 'Likely Admission', 'Competitive', etc.
-  // False means the student's KCSE subject grades fail this programme's real
-  // KUCCPS minimum requirements outright - the backend still returns it (as
-  // a fallback so the list isn't empty) but it is NOT a genuine match, and
-  // the UI must say so rather than presenting it like the others.
   final bool meetsMinimumRequirements;
   final List<ShapFeatureImpact> shapExplanations;
   final String primaryReason;
@@ -76,9 +72,6 @@ class RecommendationItem {
     );
   }
 
-  /// Round-trips through the same shape fromJson expects - used to cache
-  /// the last successful recommendation response locally (see
-  /// main.dart's offline fallback) so it survives a plain JSON encode/decode.
   Map<String, dynamic> toJson() => {
     'rank': rank,
     'programme': programme.toJson(),
@@ -91,4 +84,23 @@ class RecommendationItem {
     'primaryReason': primaryReason,
     'plainReasons': plainReasons,
   };
+}
+
+class RecommendationResponse {
+  final List<RecommendationItem> recommendations;
+  final String? message;
+
+  RecommendationResponse({
+    required this.recommendations,
+    this.message,
+  });
+
+  factory RecommendationResponse.fromJson(Map<String, dynamic> json) {
+    return RecommendationResponse(
+      recommendations: (json['recommendations'] as List<dynamic>? ?? [])
+          .map((item) => RecommendationItem.fromJson(item as Map<String, dynamic>))
+          .toList(),
+      message: json['message'] as String?,
+    );
+  }
 }

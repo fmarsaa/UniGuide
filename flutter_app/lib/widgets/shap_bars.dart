@@ -23,8 +23,6 @@ class ShapExplanationCard extends StatelessWidget {
         return Colors.blue.shade700;
       case 'Interests':
         return Colors.purple.shade700;
-      case 'Skills':
-        return Colors.teal.shade700;
       case 'Strengths':
         return Colors.amber.shade800;
       case 'Aspirations':

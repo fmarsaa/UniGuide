@@ -342,6 +342,7 @@ class _StudentHomeState extends State<StudentHome> {
   int _currentTabIndex = 0;
   late StudentProfile _currentProfile;
   List<RecommendationItem> _recommendations = [];
+  String? _recommendationMessage;
   bool _isLoadingRecommendations = false;
   String? _loadError;
   bool _hasRequestedRecommendations = false;
@@ -371,12 +372,13 @@ class _StudentHomeState extends State<StudentHome> {
       _isShowingCachedRecommendations = false;
     });
     try {
-      final recs = await ApiService.getRecommendations(_currentProfile);
+      final res = await ApiService.getRecommendations(_currentProfile);
       setState(() {
-        _recommendations = recs;
+        _recommendations = res.recommendations;
+        _recommendationMessage = res.message;
         _isLoadingRecommendations = false;
       });
-      RecommendationCache.save(recs);
+      RecommendationCache.save(res.recommendations);
     } on ApiException catch (e) {
       // A real server response (bad request, not qualified, etc.) should
       // still surface as an error, not be silently swapped for a stale
@@ -538,7 +540,7 @@ class _StudentHomeState extends State<StudentHome> {
       );
     }
 
-    if (!_hasRequestedRecommendations || _recommendations.isEmpty) {
+    if (!_hasRequestedRecommendations || (_recommendations.isEmpty && _recommendationMessage == null)) {
       return Scaffold(
         backgroundColor: AppColors.scaffoldBackground(context),
         body: Center(
@@ -573,6 +575,7 @@ class _StudentHomeState extends State<StudentHome> {
 
     return RecommendationsScreen(
       recommendations: _recommendations,
+      message: _recommendationMessage,
       profile: _currentProfile,
       studentPrimaryInterest: _currentProfile.interests.isNotEmpty ? _currentProfile.interests.first : null,
       cachedAt: _isShowingCachedRecommendations ? _cachedRecommendationsAt : null,
