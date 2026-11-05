@@ -1,0 +1,10 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\fatma\AppData\Local\Programs\Python\Python312\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\fatma\Downloads\testing2\backend
+configfile: pytest.ini
+plugins: anyio-4.15.1
+collecting ... collected 3 items
+
+backend\tests\test_filter_new.py::test_select_recommended_indices_two_eligible PASSED [ 33%]
+backend\tests\test_filter_new.py::test_select_recommended_indices_none_eligible PASSED [ 66%]

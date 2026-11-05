@@ -1,0 +1,15 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\fatma\AppData\Local\Programs\Python\Python312\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\fatma\Downloads\testing2\backend
+configfile: pytest.ini
+plugins: anyio-4.15.1
+collecting ... collected 181 items
+
+backend\tests\test_account_and_hardening.py::test_deleting_an_account_removes_everything_stored_about_the_student PASSED [  0%]
+backend\tests\test_account_and_hardening.py::test_deleting_one_account_leaves_other_students_alone PASSED [  1%]
+backend\tests\test_account_and_hardening.py::test_deletion_needs_the_explicit_confirmation_word PASSED [  1%]
+backend\tests\test_account_and_hardening.py::test_an_administrator_cannot_delete_their_account_here PASSED [  2%]
+backend\tests\test_account_and_hardening.py::test_the_audit_log_records_a_deletion_without_naming_the_student PASSED [  2%]
+backend\tests\test_account_and_hardening.py::test_requests_beyond_the_limit_are_refused_until_the_window_passes PASSED [  3%]
+backend\tests\test_account_and_hardening.py::test_one_users_requests_do_not_count_against_another PASSED [  3%]
