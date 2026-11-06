@@ -1,7 +1,8 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/student_profile.dart';
 import '../models/recommendation.dart';
 import '../models/programme.dart';
@@ -22,12 +23,59 @@ class ApiException implements Exception {
 class ApiService {
   // 10.0.2.2 is the Android emulator's alias for the host machine's localhost.
   // Override with --dart-define=API_BASE_URL=http://<lan-ip>:8000 for a real device.
-  // The web admin portal runs in the browser on the same computer as the server,
-  // so there the default is plain localhost.
-  static const String baseUrl = String.fromEnvironment(
-    'API_BASE_URL',
-    defaultValue: kIsWeb ? 'http://localhost:8000' : 'http://10.0.2.2:8000',
-  );
+  // Without API_BASE_URL the web admin portal calls port 8000 on the computer that
+  // served the page, so one build works on localhost and on a LAN or hotspot address.
+  // On the phone a server address saved from the sign-in screen replaces the default.
+  static const String _configuredBaseUrl = String.fromEnvironment('API_BASE_URL');
+  static final String defaultBaseUrl = _configuredBaseUrl.isNotEmpty
+      ? _configuredBaseUrl
+      : (kIsWeb ? '${Uri.base.scheme}://${Uri.base.host}:8000' : 'http://10.0.2.2:8000');
+  static const String _serverAddressKey = 'server_address';
+  static String baseUrl = defaultBaseUrl;
+
+  static Future<void> loadSavedBaseUrl() async {
+    if (kIsWeb) return;
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getString(_serverAddressKey);
+    if (saved != null && saved.isNotEmpty) baseUrl = saved;
+  }
+
+  /// Turns "192.168.43.5:8000" or "http://192.168.43.5:8000/" into "http://192.168.43.5:8000".
+  static String normaliseAddress(String address) {
+    var value = address.trim();
+    while (value.endsWith('/')) {
+      value = value.substring(0, value.length - 1);
+    }
+    if (value.isNotEmpty && !value.startsWith('http://') && !value.startsWith('https://')) {
+      value = 'http://$value';
+    }
+    return value;
+  }
+
+  /// Saves [address] as the server address; an empty address restores the default.
+  static Future<void> saveBaseUrl(String address) async {
+    final prefs = await SharedPreferences.getInstance();
+    final value = normaliseAddress(address);
+    if (value.isEmpty) {
+      await prefs.remove(_serverAddressKey);
+      baseUrl = defaultBaseUrl;
+    } else {
+      await prefs.setString(_serverAddressKey, value);
+      baseUrl = value;
+    }
+  }
+
+  /// True when [address] answers GET /api/health with status 200.
+  static Future<bool> testConnection(String address) async {
+    try {
+      final response = await http
+          .get(Uri.parse('${normaliseAddress(address)}/api/health'))
+          .timeout(const Duration(seconds: 6));
+      return response.statusCode == 200;
+    } catch (_) {
+      return false;
+    }
+  }
 
   static Future<Map<String, String>> _authHeaders() async {
     final user = FirebaseAuth.instance.currentUser;
@@ -70,7 +118,8 @@ class ApiService {
         rethrow;
       } catch (e) {
         if (attemptNumber >= retries) {
-          throw ApiException('$failureMessage: $e');
+          debugPrint('$failureMessage: $e');
+          throw ApiException('$failureMessage. Check that you are connected to the internet, then tap Retry.');
         }
         await Future.delayed(Duration(milliseconds: 500 * (attemptNumber + 1)));
       }

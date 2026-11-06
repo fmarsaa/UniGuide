@@ -1,0 +1,10 @@
+﻿
+
+Id               : 24164
+ProcessName      : python
+WorkingSetMB     : 89.4
+PrivateMB        : 278.7
+PeakWorkingSetMB : 367.3
+
+
+

@@ -1,0 +1,22 @@
+﻿Part 1 - running backend at http://127.0.0.1:8000
+[PASS] GET /api/health answers - model_loaded=True version=xgb-v4-20261106 firestore_configured=True
+[PASS] model is v4 and loaded
+[PASS] GET /api/programmes - 53 programmes
+[PASS] CORS allows the portal origin http://localhost:5000 - allow-origin=http://localhost:5000
+[PASS] POST /api/recommend without sign-in is refused - status 401
+
+Part 2 - app requests through the backend code (demo sign-in, in-memory database)
+[PASS] student sign-in role - student
+[PASS] profile -> recommendations - 1. Bachelor of Medicine and Bachelor of Surgery (MBChB); 2. Bachelor of Science in Nursing; 3. Bachelor of Science in Informatics and Computer Science
+[PASS] recommendation saved to the student's history - 1 record(s)
+[PASS] what-if preview answers and saves nothing - Bachelor of Science in Nursing; Bachelor of Science in Actuarial Science; Bachelor of Medicine and Bachelor of Surgery (MBChB)
+[PASS] career note - []
+[PASS] compare data for two programmes - prog_mbchb, prog_nursing
+[PASS] save a programme to the shortlist - prog_mbchb
+[PASS] feedback - {'status': 'success', 'feedback_id': 'auto2'}
+[PASS] administrator sign-in role - fatmamarsa2@gmail.com: administrator
+[PASS] admin cutoff update - Bachelor of Medicine and Bachelor of Surgery (MBChB) at University of Nairobi: 45.584 -> 46.084
+[PASS] audit log records the cutoff update
+[PASS] admin analytics overview - status 200
+
+ALL CHECKS PASSED

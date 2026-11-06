@@ -1,0 +1,7 @@
+﻿Stopped python process 24164: "C:\Users\fatma\AppData\Local\Programs\Python\Python312\python.exe" -m uvicorn main:app --host 0.0.0.0 --port 8000
+Waiting for the backend to load the model...
+
+Laptop IP on this network : 192.168.1.6
+Server address for the app: http://192.168.1.6:8000
+Admin portal on the phone : http://192.168.1.6:5000
+Health check              : status=healthy model_loaded=True model_version=xgb-v4-20261106 firestore_configured=True

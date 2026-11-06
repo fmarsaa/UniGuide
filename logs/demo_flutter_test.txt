@@ -1,0 +1,26 @@
+﻿00:00 +0: loading C:/Users/fatma/Downloads/testing2/flutter_app/test/admin_charts_test.dart
+00:00 +0: C:/Users/fatma/Downloads/testing2/flutter_app/test/csv_test.dart: every cell is quoted so commas never split a row
+00:00 +1: C:/Users/fatma/Downloads/testing2/flutter_app/test/csv_test.dart: quotes inside a cell are doubled
+00:00 +2: C:/Users/fatma/Downloads/testing2/flutter_app/test/csv_test.dart: line breaks inside a cell stay inside that cell
+00:00 +3: C:/Users/fatma/Downloads/testing2/flutter_app/test/csv_test.dart: missing values become empty cells
+00:00 +4: C:/Users/fatma/Downloads/testing2/flutter_app/test/report_service_test.dart: the report is a real PDF file
+Helvetica has no Unicode support see https://github.com/DavBfr/dart_pdf/wiki/Fonts-Management
+Helvetica-Bold has no Unicode support see https://github.com/DavBfr/dart_pdf/wiki/Fonts-Management
+00:00 +5: C:/Users/fatma/Downloads/testing2/flutter_app/test/admin_charts_test.dart: a bar chart with no counts says there is nothing to show instead of an empty axis
+00:00 +5: C:/Users/fatma/Downloads/testing2/flutter_app/test/report_service_test.dart: a programme name with characters the PDF font cannot draw does not break the report
+Helvetica has no Unicode support see https://github.com/DavBfr/dart_pdf/wiki/Fonts-Management
+Helvetica-Bold has no Unicode support see https://github.com/DavBfr/dart_pdf/wiki/Fonts-Management
+00:00 +6: C:/Users/fatma/Downloads/testing2/flutter_app/test/admin_charts_test.dart: a bar chart with no counts says there is nothing to show instead of an empty axis
+00:00 +6: C:/Users/fatma/Downloads/testing2/flutter_app/test/report_service_test.dart: a report can be built with no recommendations or grades
+Helvetica has no Unicode support see https://github.com/DavBfr/dart_pdf/wiki/Fonts-Management
+Helvetica-Bold has no Unicode support see https://github.com/DavBfr/dart_pdf/wiki/Fonts-Management
+00:00 +7: C:/Users/fatma/Downloads/testing2/flutter_app/test/admin_charts_test.dart: a bar chart with no counts says there is nothing to show instead of an empty axis
+00:01 +8: C:/Users/fatma/Downloads/testing2/flutter_app/test/career_note_card_test.dart: the card names the programme and the grade that is short
+00:02 +9: C:/Users/fatma/Downloads/testing2/flutter_app/test/admin_charts_test.dart: a bar chart with counts draws without an error
+00:02 +10: C:/Users/fatma/Downloads/testing2/flutter_app/test/career_note_card_test.dart: nothing is shown when no programme is being held back
+00:02 +11: C:/Users/fatma/Downloads/testing2/flutter_app/test/admin_charts_test.dart: the registration line says so when nobody has registered
+00:02 +12: C:/Users/fatma/Downloads/testing2/flutter_app/test/admin_charts_test.dart: a donut chart lists each part with its count and share
+00:02 +13: C:/Users/fatma/Downloads/testing2/flutter_app/test/admin_charts_test.dart: the journey bars give each step as a share of the students registered
+00:02 +14: C:/Users/fatma/Downloads/testing2/flutter_app/test/admin_charts_test.dart: the journey bars show a message when nobody has registered
+00:02 +15: C:/Users/fatma/Downloads/testing2/flutter_app/test/admin_charts_test.dart: a ranked list with nothing in it shows the given message
+00:02 +16: All tests passed!

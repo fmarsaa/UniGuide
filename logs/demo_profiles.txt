@@ -1,0 +1,25 @@
+﻿Model: uniguide_xgb_v4.joblib, version xgb-v4-20261106
+
+1. Strong science student
+  mean grade A-; grades {'Mathematics': 'A', 'English': 'B+', 'Kiswahili': 'B', 'Chemistry': 'A', 'Biology': 'A', 'Physics': 'A-', 'Geography': 'B+'}
+  career: Medical Doctor (Physician/Surgeon)
+  recommendations: 3
+    1. Bachelor of Science in Nursing | meets subject requirements: True | Meets the latest cutoff at all 2 universities
+    2. Bachelor of Science in Medical Laboratory Sciences | meets subject requirements: True | Meets the latest cutoff at all 2 universities
+    3. Bachelor of Medicine and Bachelor of Surgery (MBChB) | meets subject requirements: True | Close call: 0.4 pts below the lowest cutoff (45.05)
+  message: None
+
+2. Undecided student (Not sure yet)
+  mean grade B; grades {'Mathematics': 'B', 'English': 'B+', 'Kiswahili': 'B', 'Chemistry': 'B-', 'Biology': 'B', 'History & Government': 'A-', 'Business Studies': 'B+'}
+  career: Not sure yet
+  recommendations: 3
+    1. Bachelor of Arts in Journalism and Mass Communication | meets subject requirements: True | Meets the latest cutoff at all 3 universities
+    2. Bachelor of Science in Community Health and Development | meets subject requirements: True | Meets the latest cutoff at all 2 universities
+    3. Bachelor of Science in Business Information Technology (BBIT) | meets subject requirements: True | Meets the latest cutoff
+  message: None
+
+3. C+ mean, meets no programme's subject requirements
+  mean grade C+; grades {'Mathematics': 'D+', 'English': 'C-', 'Kiswahili': 'B', 'Chemistry': 'D+', 'Christian Religious Education (CRE)': 'A', 'Home Science': 'B+', 'Art & Design': 'B-'}
+  career: Not sure yet
+  recommendations: 0
+  message: No programmes match your subject grades.

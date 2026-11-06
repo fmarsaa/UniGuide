@@ -1,0 +1,15 @@
+﻿
+Name       Enabled Direction Action Profile Program                                                          
+----       ------- --------- ------ ------- -------                                                          
+python.exe    True   Inbound  Allow  Public C:\users\fatma\appdata\local\programs\python\python312\python.exe
+python.exe    True   Inbound  Allow  Public C:\users\fatma\appdata\local\programs\python\python312\python.exe
+
+
+
+
+Name     InterfaceAlias NetworkCategory
+----     -------------- ---------------
+Mohammed WiFi                    Public
+
+
+

@@ -41,6 +41,7 @@ Future<void> main() async {
   // On Android the settings come from google-services.json; on the web build
   // they come from the defines above.
   await Firebase.initializeApp(options: kIsWeb ? _webFirebaseOptions : null);
+  await ApiService.loadSavedBaseUrl();
   runApp(const UniGuideApp());
 }
 

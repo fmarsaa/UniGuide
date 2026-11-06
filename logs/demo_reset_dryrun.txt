@@ -1,0 +1,3 @@
+﻿would delete: fatumamm99@gmail.com  (1 recommendations, 0 feedback)
+
+Dry run only - nothing was deleted. Re-run with --yes to delete.
