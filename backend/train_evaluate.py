@@ -1,9 +1,9 @@
 """
-UniGuide - Train and evaluate the skills-free XGBoost model (v2)
+UniGuide - Train and evaluate the skills-free XGBoost model (v4)
 Author: Fatuma Omar Marsa (159056)
 
 Protocol (every reported number comes from this script's output):
-1. Load the v2 dataset (no skl_ columns) and select the model features.
+1. Load the v4 dataset (no skl_ columns) and select the model features.
 2. One stratified 80/20 split, random_state=42.
 3. Logistic Regression, Random Forest, Histogram Gradient Boosting and XGBoost
    compared with stratified 5-fold cross-validation on the TRAINING rows only.
@@ -13,7 +13,7 @@ Protocol (every reported number comes from this script's output):
 6. The same split / CV / test protocol for XGBoost on the OLD dataset (which
    still has the skl_ skill columns), for a side-by-side comparison.
 7. Only after evaluation: XGBoost refitted on ALL rows and saved as
-   uniguide_xgb_v2.joblib for deployment. That model is never used for any
+   uniguide_xgb_v4.joblib for deployment. That model is never used for any
    reported number.
 
 Run from the repository root:  python backend/train_evaluate.py
@@ -49,21 +49,22 @@ from sklearn.metrics import (accuracy_score, classification_report, confusion_ma
                              precision_score, recall_score)
 from sklearn.model_selection import StratifiedKFold, cross_validate, train_test_split
 from sklearn.pipeline import Pipeline
+from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 
-from kuccps import FEATURE_COLUMN, ML_FEATURE_SUBJECTS  # noqa: E402
+from kuccps import FEATURE_COLUMN, SUBJECT_FEATURE_COLUMNS, TOOK_COLUMN  # noqa: E402
 from programmes_catalog import CATALOG_BY_TITLE  # noqa: E402
 from synthetic_data_generator import TRAIT_COLUMN_INFO  # noqa: E402
 from train_xgboost import XGBoostStringClassifier  # noqa: E402
 
-NEW_DATASET = os.path.join(HERE, "xgboost_training_dataset_v2_noskills.csv")
+NEW_DATASET = os.path.join(HERE, "xgboost_training_dataset_v4.csv")
 OLD_DATASET = os.path.join(HERE, "xgboost_training_dataset.csv")
-MODEL_OUT = os.path.join(HERE, "uniguide_xgb_v2.joblib")
-OUT_DIR = os.path.join(ROOT, "report_outputs_v2")
+MODEL_OUT = os.path.join(HERE, "uniguide_xgb_v4.joblib")
+OUT_DIR = os.path.join(ROOT, "report_outputs_v4")
 TARGET = "programme_label"
 SEED = 42
 LEAKAGE_THRESHOLD = 0.97
@@ -93,7 +94,7 @@ def log(*args):
 
 
 def select_features(df, include_skills=False):
-    subjects = [FEATURE_COLUMN[s] for s in ML_FEATURE_SUBJECTS]
+    subjects = [c for c in SUBJECT_FEATURE_COLUMNS if c in df.columns]
     traits = [c for c in df.columns if c.startswith("int_") or c.startswith("str_")]
     skills = [c for c in df.columns if c.startswith("skl_")] if include_skills else []
     numeric = subjects + ["mean_points"] + traits + skills
@@ -101,9 +102,10 @@ def select_features(df, include_skills=False):
     return numeric, categorical
 
 
-def preprocessor(numeric, categorical, scale=False):
+def preprocessor(numeric, categorical, scale=False, impute=False):
+    steps = ([("imputer", SimpleImputer(strategy="median"))] if impute else []) +             ([("scaler", StandardScaler())] if scale else [])
     return ColumnTransformer([
-        ("num", StandardScaler() if scale else "passthrough", numeric),
+        ("num", Pipeline(steps) if steps else "passthrough", numeric),
         ("cat", OneHotEncoder(handle_unknown="ignore", sparse_output=False), categorical),
     ])
 
@@ -116,10 +118,10 @@ def make_xgb():
 def build_models(numeric, categorical):
     return {
         "Logistic Regression": Pipeline([
-            ("preprocessor", preprocessor(numeric, categorical, scale=True)),
+            ("preprocessor", preprocessor(numeric, categorical, scale=True, impute=True)),
             ("classifier", LogisticRegression(max_iter=2000, class_weight="balanced", random_state=SEED))]),
         "Random Forest": Pipeline([
-            ("preprocessor", preprocessor(numeric, categorical)),
+            ("preprocessor", preprocessor(numeric, categorical, impute=True)),
             ("classifier", RandomForestClassifier(n_estimators=350, max_features="log2",
                                                   class_weight="balanced_subsample", random_state=SEED, n_jobs=2))]),
         "Histogram Gradient Boosting": Pipeline([
@@ -181,6 +183,9 @@ def readable(feature):
     for subject, col in FEATURE_COLUMN.items():
         if raw == col:
             return SUBJECT_LABEL[subject]
+    for subject, col in TOOK_COLUMN.items():
+        if raw == col:
+            return f"Took {subject}"
     if raw == "mean_points":
         return "Mean grade points"
     if raw in TRAIT_COLUMN_INFO:
@@ -389,13 +394,13 @@ def main():
         cell.set_edgecolor("#e4e3df")
         if r == 0:
             cell.set_text_props(weight="bold")
-    ax.set_title("Sample of 8 rows from the v2 training dataset (selected columns; grade points 1-12)",
+    ax.set_title("Sample of 8 rows from the v4 training dataset (selected columns; grade points 1-12)",
                  loc="left", fontsize=10)
     figures["dataset_sample"] = save(fig, "fig_dataset_sample.png")
 
     counts = y.value_counts().sort_values(ascending=False)
     figures["class_distribution"] = hbar(counts.values, [short(t) for t in counts.index], "Number of profiles",
-                                         f"Profiles per programme (v2 dataset, {len(df)} rows, {len(counts)} classes)",
+                                         f"Profiles per programme (v4 dataset, {len(df)} rows, {len(counts)} classes)",
                                          "fig_class_distribution.png")
 
     names = list(models)

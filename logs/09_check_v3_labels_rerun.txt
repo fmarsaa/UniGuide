@@ -1,0 +1,25 @@
+﻿Dataset: C:\Users\fatma\Downloads\testing2\backend\xgboost_training_dataset_v3.csv
+1. Gap (cluster-weighted points - averageCutoff) for each row's label
+   rows: 11135
+   minimum: 0.0070
+   mean: 6.7935
+   maximum: 31.0290
+   rows with gap < 0: 0
+   minimum >= 0: True
+
+2. Profiles redirected to a reachable programme by the cutoff rule
+   replay of seed 42 identical to the CSV (all columns except subject grade points): True
+   redirected: 1869 of 11135 (16.78%)
+
+3. assign_programme_label on 1000 fresh profiles (seed 2026, not saved)
+   labelled: 1000
+   reaches no programme's cutoff: 0
+   no eligible programme: 0
+   below C+: 0
+
+3b. assign_programme_label on 1000 profiles with uniform random grades (seed 2027, mean C+ or above, not saved)
+   draws redrawn because the mean was below C+: 461
+   labelled: 890
+   reaches no programme's cutoff: 0
+   no eligible programme: 110
+   below C+: 0

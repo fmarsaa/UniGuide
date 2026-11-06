@@ -8,8 +8,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY *.py ./
-COPY uniguide_xgb_v2.joblib ./
-COPY model_metrics_v2.json ./
+COPY uniguide_xgb_v4.joblib model_metrics_v4.jso[n] ./
 
 RUN useradd --create-home appuser && chown -R appuser /app
 USER appuser

@@ -5,7 +5,7 @@ Supervised by: Deperias Webula Kerre
 Strathmore University - School of Computing and Engineering Sciences
 
 Connects the Flutter Mobile Application with:
-1. XGBoost classifier (real inference against uniguide_xgb_v2.joblib -
+1. XGBoost classifier (real inference against uniguide_xgb_v4.joblib -
    produced by train_evaluate.py, trained without student skills)
 2. SHAP Explainability Subsystem (real per-prediction feature contributions)
 3. KUCCPS Cluster Weight Calculations (kuccps.py)
@@ -59,13 +59,14 @@ from kuccps import (
     FEATURE_COLUMN,
     GRADE_POINTS,
     ML_FEATURE_SUBJECTS,
+    TOOK_COLUMN,
     UNDECIDED_ASPIRATION,
     aggregate_points,
+    build_subject_features,
     cluster_weighted_points,
     eligibility_status,
     university_cutoff_summary,
     cutoff_tier,
-    extract_ml_feature_points,
     find_grade_for_subject,
     grade_to_points,
     meets_minimum_requirements,
@@ -189,7 +190,7 @@ def _load_live_catalog() -> None:
 # ---------------------------------------------------------------------------
 # Model loading
 # ---------------------------------------------------------------------------
-MODEL_FILENAME = "uniguide_xgb_v2.joblib"
+MODEL_FILENAME = "uniguide_xgb_v4.joblib"
 MODEL_PATH = os.path.join(os.path.dirname(__file__), MODEL_FILENAME)
 _pipeline = None
 _explainer = None
@@ -222,7 +223,7 @@ def _load_model() -> None:
 
 def model_version() -> str:
     """Identifies the model that produced a result. Training writes a version into
-    model_metrics_v2.json; a model trained before that existed falls back to the date
+    model_metrics_v4.json; a model trained before that existed falls back to the date
     its file was last written, so every result still says which model made it."""
     try:
         with open(METRICS_PATH, encoding="utf-8") as f:
@@ -232,7 +233,7 @@ def model_version() -> str:
     except (OSError, ValueError):
         pass
     try:
-        return "rf-" + datetime.fromtimestamp(os.path.getmtime(MODEL_PATH), timezone.utc).strftime("%Y%m%d")
+        return "xgb-v4-" + datetime.fromtimestamp(os.path.getmtime(MODEL_PATH), timezone.utc).strftime("%Y%m%d")
     except OSError:
         return "unknown"
 
@@ -247,8 +248,8 @@ TRAIN_SCRIPT_PATHS = [
     os.path.join(os.path.dirname(__file__), "export_model_metrics.py"),
 ]
 MODEL_BACKUPS_DIR = os.path.join(os.path.dirname(__file__), "model_backups")
-METRICS_PATH = os.path.join(os.path.dirname(__file__), "model_metrics_v2.json")
-# Backups of the deployed model: uniguide_xgb_v2_<timestamp>.joblib. Backups of the
+METRICS_PATH = os.path.join(os.path.dirname(__file__), "model_metrics_v4.json")
+# Backups of the deployed model: uniguide_xgb_v4_<timestamp>.joblib. Backups of the
 # earlier skills-trained model use a different name and cannot serve this API.
 BACKUP_PREFIX = MODEL_FILENAME.rsplit(".", 1)[0] + "_"
 BACKUP_SUFFIX = ".joblib"
@@ -365,11 +366,13 @@ def _stop_scheduler() -> None:
 
 
 _load_model()
+print(f"Model version: {model_version()}", flush=True)
 init_firebase()
 _load_live_catalog()
 
 NUMERIC_LABELS = {FEATURE_COLUMN[subject]: subject for subject in ML_FEATURE_SUBJECTS}
 NUMERIC_LABELS["mean_points"] = "KCSE Mean Points"
+TOOK_LABELS = {column: subject for subject, column in TOOK_COLUMN.items()}
 CATEGORY_INFO = {
     "aspiration": ("Aspirations", "Aspiration"),
 }
@@ -555,10 +558,9 @@ def _is_duplicate_submission(uid: str, payload: StudentProfilePayload, now: Opti
 def profile_to_feature_row(payload: StudentProfilePayload):
     grades = payload.grades or {}
     mean_grade = payload.kcseMeanGrade or "C+"
-    feature_points = extract_ml_feature_points(grades, mean_grade)
     mean_points = payload.kcseMeanPoints or grade_to_points(mean_grade)
 
-    row = {FEATURE_COLUMN[subject]: feature_points[subject] for subject in ML_FEATURE_SUBJECTS}
+    row = build_subject_features(grades, mean_grade)
     row["mean_points"] = mean_points
     row.update(build_trait_features(payload.interests or [], payload.strengths or []))
     row.update(build_cluster_score_features(grades, mean_grade))
@@ -603,10 +605,19 @@ def describe_feature(raw_name: str, row: dict):
             )
             return category, feature_name, desc
 
+        if rest in TOOK_LABELS:
+            subject = TOOK_LABELS[rest]
+            if row.get(rest):
+                return "Academic", f"Took {subject}", f"You took {subject}, an academic factor behind this recommendation."
+            return "Academic", f"Did not take {subject}", f"You did not take {subject}."
+
         label = NUMERIC_LABELS.get(rest, rest)
         if rest == "mean_points":
             feature_name = f"{label}: {row[rest]}"
             desc = f"An overall KCSE mean of {row[rest]} points is a contributing academic factor."
+        elif pd.isna(row.get(rest)):
+            feature_name = f"{label} (not taken)"
+            desc = f"You did not take {label}."
         else:
             grade = points_to_grade(int(row[rest]))
             feature_name = f"{label} (Grade {grade})"

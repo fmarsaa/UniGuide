@@ -4,7 +4,7 @@ requirements must never be ranked into that programme's recommendation
 slot on raw model confidence alone - eligibility_status has to say so
 honestly rather than a misleading 'high risk'. Exercises
 main.select_recommended_indices directly (no HTTP layer, no Firebase Auth,
-no Firestore writes) - needs backend/uniguide_xgb_v2.joblib to already
+no Firestore writes) - needs backend/uniguide_xgb_v4.joblib to already
 exist (run train_evaluate.py first if this errors on import).
 """
 
@@ -14,7 +14,7 @@ import pytest
 import main
 from kuccps import eligibility_status, meets_minimum_requirements
 
-pytestmark = pytest.mark.skipif(main._pipeline is None, reason="uniguide_xgb_v2.joblib not trained yet")
+pytestmark = pytest.mark.skipif(main._pipeline is None, reason="uniguide_xgb_v4.joblib not trained yet")
 
 
 def _feature_row(grades, mean_grade):
@@ -186,3 +186,29 @@ def test_after_the_best_fit_a_programme_you_can_reach_outranks_a_stretch():
         assert top_idx[:3] == [0, 2, 1]
     finally:
         _restore(saved)
+
+
+def test_a_student_without_geography_gets_a_missing_grade_and_still_gets_recommendations():
+    import json
+    import math
+
+    grades = {
+        "Mathematics": "B+", "English": "B", "Kiswahili": "B", "Chemistry": "B+",
+        "Biology": "B", "Physics": "B+", "History": "B-",
+    }
+    payload = main.StudentProfilePayload(
+        kcseMeanGrade="B", grades=grades,
+        interests=["Software Development & Coding"],
+        strengths=["Logical & Analytical Reasoning"],
+        aspirations=[],
+    )
+    row_df, _, _ = main.profile_to_feature_row(payload)
+    assert math.isnan(row_df.iloc[0]["geography_score"])
+    assert row_df.iloc[0]["took_geography"] == 0
+    assert row_df.iloc[0]["took_history"] == 1
+
+    response = main.get_recommendations(payload, {"uid": "student-1", "email_verified": True}, preview=True)
+    results = response["recommendations"]
+    assert 0 < len(results) <= 3
+    assert all(r["meetsMinimumRequirements"] for r in results)
+    json.dumps(response, allow_nan=False)

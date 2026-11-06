@@ -38,7 +38,7 @@ from sklearn.model_selection import StratifiedKFold, cross_val_predict, train_te
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 
-from kuccps import ML_FEATURE_SUBJECTS, FEATURE_COLUMN
+from kuccps import SUBJECT_FEATURE_COLUMNS
 from synthetic_data_generator import (
     CLUSTER_SCORE_FEATURE_COLUMNS,
     THIN_CLASS_FLOOR,
@@ -49,7 +49,7 @@ from synthetic_data_generator import (
 INCLUDE_CLUSTER_SCORE_FEATURES = False
 
 NUMERIC_FEATURES = (
-    [FEATURE_COLUMN[s] for s in ML_FEATURE_SUBJECTS]
+    SUBJECT_FEATURE_COLUMNS
     + ["mean_points"]
     + TRAIT_FEATURE_COLUMNS
     + (CLUSTER_SCORE_FEATURE_COLUMNS if INCLUDE_CLUSTER_SCORE_FEATURES else [])

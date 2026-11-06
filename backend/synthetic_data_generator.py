@@ -43,10 +43,11 @@ from kuccps import (
     FULL_OPTIONAL_SUBJECTS,
     GRADE_POINTS,
     ML_FEATURE_SUBJECTS,
+    SUBJECT_FEATURE_COLUMNS,
     UNDECIDED_ASPIRATION,
     aggregate_points,
+    build_subject_features,
     cluster_weighted_points,
-    extract_ml_feature_points,
     grade_to_points,
     meets_minimum_requirements,
     points_to_grade,
@@ -868,11 +869,9 @@ def _build_profile_for_target(profile_id: int, target_title: str) -> dict:
         aspiration = UNDECIDED_ASPIRATION
 
     label = assign_programme_label(grades, mean_grade, interests, strengths, aspiration)
-    feature_points = extract_ml_feature_points(grades, mean_grade)
 
     record = {"student_id": f"std_{profile_id:05d}"}
-    for subject in ML_FEATURE_SUBJECTS:
-        record[FEATURE_COLUMN[subject]] = feature_points[subject]
+    record.update(build_subject_features(grades, mean_grade))
     record["mean_points"] = mean_points
     record.update(build_trait_features(interests, strengths))
     record.update(build_cluster_score_features(grades, mean_grade))
@@ -956,7 +955,7 @@ def generate_dataset(seed: int = 42) -> pd.DataFrame:
 
     # Model feature columns for exact duplicate detection
     model_feature_cols = (
-        [FEATURE_COLUMN[s] for s in ML_FEATURE_SUBJECTS] +
+        SUBJECT_FEATURE_COLUMNS +
         ["mean_points"] +
         list(INTEREST_COLUMN.values()) +
         list(STRENGTH_COLUMN.values()) +
@@ -984,7 +983,7 @@ def generate_dataset(seed: int = 42) -> pd.DataFrame:
             elif rec["programme_label"] == title:
                 rec_series = pd.Series({col: rec[col] for col in model_feature_cols})
                 # Check for duplicates on model feature columns
-                matches = (df[model_feature_cols] == rec_series).all(axis=1)
+                matches = (df[model_feature_cols].fillna(-1) == rec_series.fillna(-1)).all(axis=1)
                 if not matches.any():
                     df = pd.concat([df, pd.DataFrame([rec])], ignore_index=True)
                     post_counts[title] = post_counts.get(title, 0) + 1
@@ -1055,7 +1054,7 @@ def create_synthetic_dataset(n_samples: int = 6000, seed: int = 42) -> pd.DataFr
 
 if __name__ == "__main__":
     out_dir = os.path.dirname(__file__)
-    csv_path = os.path.join(out_dir, "xgboost_training_dataset_v3.csv")
+    csv_path = os.path.join(out_dir, "xgboost_training_dataset_v4.csv")
     df = generate_dataset(seed=42)
     df.to_csv(csv_path, index=False)
     print(f"Saved dataset to {csv_path}")

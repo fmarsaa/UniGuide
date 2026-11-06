@@ -1,0 +1,117 @@
+﻿a) Source of the functions in kuccps.py
+
+--- kuccps.meets_minimum_requirements ---
+def meets_minimum_requirements(grades: Dict[str, str], minimum_requirements: Dict[str, str], mean_grade: str = "C+") -> bool:
+    if grade_to_points(mean_grade) < GRADE_POINTS["C+"]:
+        return False
+    for subject, min_grade in minimum_requirements.items():
+        candidate_grade = find_grade_for_subject(grades, subject)
+        # A subject the student did not sit cannot satisfy a minimum-grade
+        # requirement for it (e.g. no Biology -> no Medicine). This used to
+        # fall back to the mean grade, which was harmless while every gated
+        # subject was compulsory, but would let a student who skipped an
+        # optional subject (Biology, Physics, Geography) clear its gate.
+        if candidate_grade is None:
+            return False
+        if grade_to_points(candidate_grade) < grade_to_points(min_grade):
+            return False
+    return True
+
+--- kuccps.raw_cluster_points ---
+def raw_cluster_points(grades: Dict[str, str], cluster_subjects: Iterable[str], mean_grade: str = "C+") -> int:
+    """Sum of grade points across a programme's required cluster subjects (max 48)."""
+    total = 0
+    for subject in cluster_subjects:
+        grade = find_grade_for_subject(grades, subject)
+        total += grade_to_points(grade, default=mean_grade)
+    return max(4, min(48, total))
+
+--- kuccps.aggregate_points ---
+def aggregate_points(grades: Dict[str, str], mean_grade: str = "C+") -> int:
+    """Approximates the KCSE aggregate (best-7 subjects, max 84) from what was captured.
+
+    Real KUCCPS aggregate is the sum of a candidate's best 7 subjects, not
+    every subject sat (some candidates sit 8-9). If more than 7 grades are
+    given, take the top 7 by points rather than diluting the aggregate with
+    weaker optional subjects. If fewer than 7 are given, scale up so a
+    partially-filled profile still produces a reasonable estimate.
+    """
+    if grades:
+        points = sorted((grade_to_points(g, default=mean_grade) for g in grades.values()), reverse=True)
+        n = len(points)
+        if n >= 7:
+            return max(14, min(84, sum(points[:7])))
+        scaled = round(sum(points) * (7 / n))
+        return max(14, min(84, scaled))
+    return max(14, min(84, grade_to_points(mean_grade) * 7))
+
+--- kuccps.cluster_weighted_points ---
+def cluster_weighted_points(raw_points: int, agg_points: int, max_cluster_points: int = 48) -> float:
+    """Official KUCCPS CWP formula: sqrt((r/m) * (t/48)) * 48."""
+    if raw_points <= 0 or agg_points <= 0:
+        return 0.0
+    t = (agg_points / 84.0) * 48.0
+    cwp = math.sqrt((raw_points / max_cluster_points) * (t / 48.0)) * 48.0
+    return round(cwp, 3)
+
+--- kuccps.find_grade_for_subject ---
+def find_grade_for_subject(grades: Dict[str, str], subject: str) -> Optional[str]:
+    """Case/substring-tolerant lookup, e.g. 'Chemistry/Computer' cluster labels."""
+    subject_l = subject.lower()
+    for name, grade in grades.items():
+        name_l = name.lower()
+        if name_l == subject_l or name_l in subject_l or subject_l in name_l:
+            return grade
+    return None
+
+--- kuccps.grade_to_points ---
+def grade_to_points(grade: Optional[str], default: str = "C+") -> int:
+    fallback = GRADE_POINTS[default.strip().upper()]
+    if not grade:
+        return fallback
+    return GRADE_POINTS.get(grade.strip().upper() if isinstance(grade, str) else grade, fallback)
+
+--- kuccps.extract_ml_feature_points ---
+def extract_ml_feature_points(grades: Dict[str, str], mean_grade: str = "C+") -> Dict[str, int]:
+    """Returns {subject: points} for every ML_FEATURE_SUBJECTS entry.
+
+    A subject the student didn't take defaults to their mean grade (the same
+    fallback used everywhere else in this module) rather than a fabricated
+    weak grade - the model then treats it roughly as "about average", not
+    "failed this subject". Used identically by the training pipeline
+    (synthetic_data_generator.py) and by main.py at inference time, so the
+    two can never drift apart.
+    """
+    return {
+        subject: grade_to_points(find_grade_for_subject(grades, subject), default=mean_grade)
+        for subject in ML_FEATURE_SUBJECTS
+    }
+
+a) Every call site outside kuccps.py (file:line: code)
+main.py:558: feature_points = extract_ml_feature_points(grades, mean_grade)
+main.py:871: active_mask[i] and meets_minimum_requirements(grades, CATALOG_BY_TITLE[c]["minimumSubjectRequirements"], mean_grade)
+main.py:881: agg = aggregate_points(grades, mean_grade)
+main.py:885: cwp = cluster_weighted_points(raw_cluster_points(grades, programme["clusterSubjects"], mean_grade), agg)
+main.py:943: agg = aggregate_points(grades, mean_grade)
+main.py:954: raw_cluster = raw_cluster_points(grades, programme["clusterSubjects"], mean_grade)
+main.py:955: cwp = cluster_weighted_points(raw_cluster, agg)
+synthetic_data_generator.py:628: agg = aggregate_points(grades, mean_grade)
+synthetic_data_generator.py:632: raw = raw_cluster_points(grades, programme["clusterSubjects"], mean_grade)
+synthetic_data_generator.py:633: cwp = cluster_weighted_points(raw, agg)
+synthetic_data_generator.py:686: agg = aggregate_points(grades, mean_grade)
+synthetic_data_generator.py:690: if meets_minimum_requirements(grades, CATALOG_BY_TITLE[title]["minimumSubjectRequirements"], mean_grade)
+synthetic_data_generator.py:698: raw = raw_cluster_points(grades, programme["clusterSubjects"], mean_grade)
+synthetic_data_generator.py:699: margins[title] = cluster_weighted_points(raw, agg) - programme["averageCutoff"]
+synthetic_data_generator.py:871: feature_points = extract_ml_feature_points(grades, mean_grade)
+
+b) Untaken subjects filled in the v3 dataset (seed-42 replay)
+   replay rows: 11135, v3 rows: 11135, student_id and labels identical: True
+   Mathematics       (math_score): untaken in 0 of 11135 rows; filled with the mean grade points in 0
+   English           (eng_score): untaken in 0 of 11135 rows; filled with the mean grade points in 0
+   Kiswahili         (kis_score): untaken in 0 of 11135 rows; filled with the mean grade points in 0
+   Chemistry         (chem_score): untaken in 0 of 11135 rows; filled with the mean grade points in 0
+   Biology           (bio_score): untaken in 5982 of 11135 rows; filled with the mean grade points in 5982
+   Physics           (phys_score): untaken in 5820 of 11135 rows; filled with the mean grade points in 5820
+   History           (history_score): untaken in 8961 of 11135 rows; filled with the mean grade points in 8961
+   Business Studies  (business_score): untaken in 8613 of 11135 rows; filled with the mean grade points in 8613
+   Geography         (geography_score): untaken in 8415 of 11135 rows; filled with the mean grade points in 8415

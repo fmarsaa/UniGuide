@@ -8,7 +8,7 @@ import pytest
 
 import main
 
-pytestmark = pytest.mark.skipif(main._pipeline is None, reason="uniguide_xgb_v2.joblib not trained yet")
+pytestmark = pytest.mark.skipif(main._pipeline is None, reason="uniguide_xgb_v4.joblib not trained yet")
 
 USER = {"uid": "student-1", "email": "student@example.com", "email_verified": True}
 ADMIN = {"uid": "admin-1", "email": "admin@example.com"}

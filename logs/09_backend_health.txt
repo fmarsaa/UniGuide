@@ -1,0 +1,1 @@
+{"status":"healthy","system":"UniGuide Mobile ML Backend","model":null,"model_loaded":true,"model_version":"xgb-v4-20261106","model_metrics":null,"explainability":"SHAP (SHapley Additive exPlanations)","firestore_configured":true,"author":"Fatuma Omar Marsa (159056), Strathmore University"}

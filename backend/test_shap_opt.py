@@ -1,7 +1,7 @@
 import joblib
 import psutil
 
-pipeline = joblib.load("uniguide_xgb_v2.joblib")
+pipeline = joblib.load("uniguide_xgb_v4.joblib")
 clf = pipeline.named_steps["classifier"]
 clf = getattr(clf, "clf_", clf)  # the XGBoost model inside the string-label wrapper
 

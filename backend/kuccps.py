@@ -5,7 +5,7 @@ FastAPI inference service so that grade handling stays consistent everywhere.
 """
 
 import math
-from typing import Dict, Iterable, Optional
+from typing import Dict, Iterable, List, Optional
 
 GRADE_POINTS: Dict[str, int] = {
     "A": 12, "A-": 11, "B+": 10, "B": 9, "B-": 8,
@@ -51,6 +51,14 @@ FEATURE_COLUMN: Dict[str, str] = {
     "Geography": "geography_score",
 }
 assert set(FEATURE_COLUMN) == set(ML_FEATURE_SUBJECTS)
+
+# A 0/1 model feature per subject a student may not have taken.
+TOOK_COLUMN: Dict[str, str] = {
+    subject: "took_" + FEATURE_COLUMN[subject][: -len("_score")] for subject in CLUSTER_OPTIONAL_SUBJECTS
+}
+SUBJECT_FEATURE_COLUMNS: List[str] = (
+    [FEATURE_COLUMN[s] for s in ML_FEATURE_SUBJECTS] + [TOOK_COLUMN[s] for s in CLUSTER_OPTIONAL_SUBJECTS]
+)
 
 # The full KNEC optional subject list offered in the app's subject picker,
 # beyond the 4 compulsory ones. Only the CLUSTER_OPTIONAL_SUBJECTS above feed
@@ -157,20 +165,25 @@ def unmet_requirements(grades: Dict[str, str], minimum_requirements: Dict[str, s
     return notes
 
 
-def extract_ml_feature_points(grades: Dict[str, str], mean_grade: str = "C+") -> Dict[str, int]:
-    """Returns {subject: points} for every ML_FEATURE_SUBJECTS entry.
+def extract_ml_feature_points(grades: Dict[str, str], mean_grade: str = "C+") -> Dict[str, float]:
+    """Returns {subject: points} for every ML_FEATURE_SUBJECTS entry, with NaN for a
+    subject the student did not take."""
+    points: Dict[str, float] = {}
+    for subject in ML_FEATURE_SUBJECTS:
+        grade = find_grade_for_subject(grades, subject)
+        points[subject] = float("nan") if grade is None else float(grade_to_points(grade, default=mean_grade))
+    return points
 
-    A subject the student didn't take defaults to their mean grade (the same
-    fallback used everywhere else in this module) rather than a fabricated
-    weak grade - the model then treats it roughly as "about average", not
-    "failed this subject". Used identically by the training pipeline
-    (synthetic_data_generator.py) and by main.py at inference time, so the
-    two can never drift apart.
-    """
-    return {
-        subject: grade_to_points(find_grade_for_subject(grades, subject), default=mean_grade)
-        for subject in ML_FEATURE_SUBJECTS
-    }
+
+def build_subject_features(grades: Dict[str, str], mean_grade: str = "C+") -> Dict[str, float]:
+    """The subject columns the model sees: one grade-points column per ML_FEATURE_SUBJECTS
+    entry (NaN when not taken) and a 0/1 took_ column per optional subject. Used by both
+    the training data generator and main.py at inference time."""
+    points = extract_ml_feature_points(grades, mean_grade)
+    row: Dict[str, float] = {FEATURE_COLUMN[subject]: points[subject] for subject in ML_FEATURE_SUBJECTS}
+    for subject in CLUSTER_OPTIONAL_SUBJECTS:
+        row[TOOK_COLUMN[subject]] = 0 if math.isnan(points[subject]) else 1
+    return row
 
 
 def university_cutoff_summary(student_score: float, offerings, fallback_cutoff: Optional[float] = None):

@@ -1,6 +1,6 @@
-"""Writes backend/model_metrics_v2.json, the summary the backend serves on
+"""Writes backend/model_metrics_v4.json, the summary the backend serves on
 /api/health for the admin dashboard, from the metrics train_evaluate.py saved
-in report_outputs_v2/metrics.json. Every number is copied from that file;
+in report_outputs_v4/metrics.json. Every number is copied from that file;
 nothing is recomputed here. The figures are the XGBoost test-set results of
 the training-split model (the deployed model itself is fitted on all rows and
 is not evaluated).
@@ -13,8 +13,8 @@ import subprocess
 from datetime import datetime
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SOURCE = os.path.join(os.path.dirname(HERE), "report_outputs_v2", "metrics.json")
-TARGET = os.path.join(HERE, "model_metrics_v2.json")
+SOURCE = os.path.join(os.path.dirname(HERE), "report_outputs_v4", "metrics.json")
+TARGET = os.path.join(HERE, "model_metrics_v4.json")
 
 
 def main():
@@ -27,8 +27,8 @@ def main():
         commit = "nogit"
     summary = {
         "model_type": "Extreme Gradient Boosting (XGBoost)",
-        "model_version": f"xgb-v2-{datetime.fromtimestamp(os.path.getmtime(SOURCE)).strftime('%Y%m%d')}-{commit}",
-        "model_file": "uniguide_xgb_v2.joblib",
+        "model_version": f"xgb-v4-{datetime.fromtimestamp(os.path.getmtime(SOURCE)).strftime('%Y%m%d')}-{commit}",
+        "model_file": "uniguide_xgb_v4.joblib",
         "accuracy": detail["accuracy"],
         "weighted_f1": detail["weighted_f1"],
         "macro_f1": detail["macro_f1"],

@@ -5,7 +5,8 @@
    subject-eligible programmes include none the student reaches, so the label is a
    reachable programme with a lower score. The CSV does not record which optional
    subjects were sat, so the seed-42 generation is replayed in memory (nothing is
-   written) to recover each row's raw grades, and the replay must match the CSV exactly.
+   written) to recover each row's raw grades, and the replay must match the CSV in every
+   column except the subject grade points (the generator now writes untaken subjects as NaN).
 3. assign_programme_label on 1,000 fresh profiles drawn with a different seed, then on
    1,000 profiles with uniform random grades (mean C+ or above).
 
@@ -21,10 +22,11 @@ import numpy as np
 import pandas as pd
 
 import synthetic_data_generator as gen
-from kuccps import meets_minimum_requirements
+from kuccps import FEATURE_COLUMN, meets_minimum_requirements
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 CSV_PATH = os.path.join(HERE, "xgboost_training_dataset_v3.csv")
+SUBJECT_SCORE_COLUMNS = list(FEATURE_COLUMN.values())
 FRESH_SEED = 2026
 FRESH_COUNT = 1000
 
@@ -67,12 +69,12 @@ def replay_generation() -> tuple:
 
 def check_redirects(df: pd.DataFrame) -> None:
     replay, calls = replay_generation()
-    csv_cols = list(df.columns)
+    csv_cols = [c for c in df.columns if c not in SUBJECT_SCORE_COLUMNS]
     replay = replay[csv_cols]
     replay_csv = pd.read_csv(io.StringIO(replay.to_csv(index=False)))
-    identical = replay_csv.equals(df)
+    identical = replay_csv.equals(df[csv_cols])
     print("\n2. Profiles redirected to a reachable programme by the cutoff rule")
-    print(f"   replay of seed 42 identical to the CSV: {identical}")
+    print(f"   replay of seed 42 identical to the CSV (all columns except subject grade points): {identical}")
     if not identical:
         raise SystemExit("Replay does not match the CSV; redirect count not computed.")
 

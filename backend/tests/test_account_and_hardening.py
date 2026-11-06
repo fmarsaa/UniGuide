@@ -3,6 +3,7 @@ the same profile saved twice by a double tap) and the model version that is reco
 with every result. Uses in-memory stand-ins for Firestore and Firebase Auth."""
 
 import json
+import re
 
 import pytest
 from fastapi import HTTPException
@@ -191,7 +192,7 @@ def test_the_dataset_fingerprint_changes_when_the_data_changes():
 
 def test_a_model_without_a_recorded_version_still_reports_one(monkeypatch, tmp_path):
     monkeypatch.setattr(main, "METRICS_PATH", str(tmp_path / "missing.json"))
-    assert main.model_version().startswith("rf-") or main.model_version() == "unknown"
+    assert re.fullmatch(r"xgb-v4-\d{8}", main.model_version())
 
 
 def test_a_recorded_version_is_the_one_reported(monkeypatch, tmp_path):
