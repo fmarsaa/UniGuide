@@ -13,10 +13,12 @@ Implements the synthetic data generation pipeline described in Chapter 3:
   option lists presented to students in the mobile app, so the trained model's
   vocabulary matches what the app can ever submit.
 - Programme labels are assigned using the multi-criteria rule described in the
-  proposal: first gate on KUCCPS minimum subject requirements, then match the
-  student's stated interests/strengths/aspirations against each eligible
-  programme, and finally break ties by closeness of the computed Cluster
-  Weighted Points (CWP) to the programme's average cutoff. The seeded,
+  proposal: first gate on KUCCPS minimum subject requirements and on the
+  student's Cluster Weighted Points (CWP) reaching the programme's average
+  cutoff, then match the student's stated interests/strengths/aspirations
+  against each reachable programme, and finally break ties by the smallest
+  margin of CWP above that cutoff. Profiles that reach no programme's cutoff
+  are discarded. The seeded,
   programme-biased random generator in this module (no LLM is involved in
   generating the training data) is only responsible for producing profiles;
   this deterministic rule assigns the ground-truth label used to train the
@@ -656,7 +658,7 @@ GENERATOR_STATS = {
     "top_score_zero": 0,
     "tie_before_tiebreak": 0,
 }
-_LAST_LABEL_FLAGS = {"top_score_zero": False, "tie_before_tiebreak": False}
+_LAST_LABEL_FLAGS = {"top_score_zero": False, "tie_before_tiebreak": False, "no_cutoff_reached": False}
 
 
 def _score_programme(title: str, interests: List[str], strengths: List[str],
@@ -677,6 +679,7 @@ def assign_programme_label(grades: Dict[str, str], mean_grade: str, interests: L
                             strengths: List[str], aspiration: str) -> Optional[str]:
     _LAST_LABEL_FLAGS["top_score_zero"] = False
     _LAST_LABEL_FLAGS["tie_before_tiebreak"] = False
+    _LAST_LABEL_FLAGS["no_cutoff_reached"] = False
     if grade_to_points(mean_grade) < GRADE_POINTS["C+"]:
         return "Not eligible for degree study"
 
@@ -689,13 +692,24 @@ def assign_programme_label(grades: Dict[str, str], mean_grade: str, interests: L
     if not eligible:
         return None
 
-    scored = [(title, _score_programme(title, interests, strengths, aspiration)) for title in eligible]
+    margins: Dict[str, float] = {}
+    for title in eligible:
+        programme = CATALOG_BY_TITLE[title]
+        raw = raw_cluster_points(grades, programme["clusterSubjects"], mean_grade)
+        margins[title] = cluster_weighted_points(raw, agg) - programme["averageCutoff"]
+
+    reachable = [title for title in eligible if margins[title] >= 0]
+    if not reachable:
+        _LAST_LABEL_FLAGS["no_cutoff_reached"] = True
+        return None
+
+    scored = [(title, _score_programme(title, interests, strengths, aspiration)) for title in reachable]
     best_score = max(s for _, s in scored)
 
     if best_score <= 0:
         GENERATOR_STATS["top_score_zero"] += 1
         _LAST_LABEL_FLAGS["top_score_zero"] = True
-        candidates = eligible
+        candidates = reachable
     else:
         candidates = [title for title, s in scored if s == best_score]
 
@@ -703,22 +717,7 @@ def assign_programme_label(grades: Dict[str, str], mean_grade: str, interests: L
         GENERATOR_STATS["tie_before_tiebreak"] += 1
         _LAST_LABEL_FLAGS["tie_before_tiebreak"] = True
 
-    def cwp_and_cutoff(title: str):
-        programme = CATALOG_BY_TITLE[title]
-        raw = raw_cluster_points(grades, programme["clusterSubjects"], mean_grade)
-        cwp = cluster_weighted_points(raw, agg)
-        return cwp, programme["averageCutoff"]
-
-    qualifying_candidates = []
-    for title in candidates:
-        cwp, cutoff = cwp_and_cutoff(title)
-        if cwp >= cutoff:
-            qualifying_candidates.append((title, cwp - cutoff))
-
-    if qualifying_candidates:
-        return min(qualifying_candidates, key=lambda x: x[1])[0]
-    else:
-        return min(candidates, key=lambda t: abs(cwp_and_cutoff(t)[0] - cwp_and_cutoff(t)[1]))
+    return min(candidates, key=lambda title: margins[title])
 
 
 _JITTER_SPREADS = {
@@ -881,7 +880,17 @@ def _build_profile_for_target(profile_id: int, target_title: str) -> dict:
     record["programme_label"] = label
     record["_tie_before_tiebreak"] = _LAST_LABEL_FLAGS["tie_before_tiebreak"]
     record["_top_score_zero"] = _LAST_LABEL_FLAGS["top_score_zero"]
+    record["_no_cutoff_reached"] = _LAST_LABEL_FLAGS["no_cutoff_reached"]
     return record
+
+
+def _discard_reason(rec: dict) -> Optional[str]:
+    label = rec["programme_label"]
+    if label == "Not eligible for degree study":
+        return "below C+"
+    if label is None:
+        return "reaches no programme's cutoff" if rec["_no_cutoff_reached"] else "no eligible programme"
+    return None
 
 
 def generate_dataset(seed: int = 42) -> pd.DataFrame:
@@ -894,6 +903,7 @@ def generate_dataset(seed: int = 42) -> pd.DataFrame:
     discards_by_reason = {
         "no eligible programme": 0,
         "below C+": 0,
+        "reaches no programme's cutoff": 0,
     }
 
     pass1_kept = 0
@@ -908,11 +918,9 @@ def generate_dataset(seed: int = 42) -> pd.DataFrame:
         pass1_attempts += 1
         target_title = random.choice(TRAINED_PROGRAMME_TITLES)
         rec = _build_profile_for_target(pid, target_title)
-        label = rec["programme_label"]
-        if label is None:
-            discards_by_reason["no eligible programme"] += 1
-        elif label == "Not eligible for degree study":
-            discards_by_reason["below C+"] += 1
+        reason = _discard_reason(rec)
+        if reason:
+            discards_by_reason[reason] += 1
         else:
             kept_records.append(rec)
             pid += 1
@@ -932,12 +940,10 @@ def generate_dataset(seed: int = 42) -> pd.DataFrame:
         while counts.get(title, 0) < floor and attempts_prog < max_attempts_prog:
             attempts_prog += 1
             rec = _build_profile_for_target(pid, title)
-            label = rec["programme_label"]
-            if label is None:
-                discards_by_reason["no eligible programme"] += 1
-            elif label == "Not eligible for degree study":
-                discards_by_reason["below C+"] += 1
-            elif label == title:
+            reason = _discard_reason(rec)
+            if reason:
+                discards_by_reason[reason] += 1
+            elif rec["programme_label"] == title:
                 kept_records.append(rec)
                 counts[title] = counts.get(title, 0) + 1
                 pass2_kept += 1
@@ -972,12 +978,10 @@ def generate_dataset(seed: int = 42) -> pd.DataFrame:
         while post_counts.get(title, 0) < floor and attempts_extra < max_extra:
             attempts_extra += 1
             rec = _build_profile_for_target(pid, title)
-            label = rec["programme_label"]
-            if label is None:
-                discards_by_reason["no eligible programme"] += 1
-            elif label == "Not eligible for degree study":
-                discards_by_reason["below C+"] += 1
-            elif label == title:
+            reason = _discard_reason(rec)
+            if reason:
+                discards_by_reason[reason] += 1
+            elif rec["programme_label"] == title:
                 rec_series = pd.Series({col: rec[col] for col in model_feature_cols})
                 # Check for duplicates on model feature columns
                 matches = (df[model_feature_cols] == rec_series).all(axis=1)
@@ -1008,7 +1012,7 @@ def generate_dataset(seed: int = 42) -> pd.DataFrame:
 
     kept_ties = int(df["_tie_before_tiebreak"].sum())
     kept_top_zero = int(df["_top_score_zero"].sum())
-    df = df.drop(columns=["_tie_before_tiebreak", "_top_score_zero"])
+    df = df.drop(columns=["_tie_before_tiebreak", "_top_score_zero", "_no_cutoff_reached"])
     labels_not_in_catalogue = sorted(set(df["programme_label"]) - set(TRAINED_PROGRAMME_TITLES))
 
     # Print all required metrics
@@ -1017,6 +1021,8 @@ def generate_dataset(seed: int = 42) -> pd.DataFrame:
     print(f"Pass 2 kept: {pass2_kept}")
     print(f"Discards by reason - no eligible programme: {discards_by_reason['no eligible programme']}")
     print(f"Discards by reason - below C+: {discards_by_reason['below C+']}")
+    no_cutoff_discards = discards_by_reason["reaches no programme's cutoff"]
+    print(f"Discards by reason - reaches no programme's cutoff: {no_cutoff_discards}")
     print(f"Duplicates removed: {duplicates_removed}")
     print(f"Extra top-ups after deduplication: {extra_top_ups}")
     print(f"Final row count: {final_row_count}")
@@ -1049,7 +1055,7 @@ def create_synthetic_dataset(n_samples: int = 6000, seed: int = 42) -> pd.DataFr
 
 if __name__ == "__main__":
     out_dir = os.path.dirname(__file__)
-    csv_path = os.path.join(out_dir, "xgboost_training_dataset_v2_noskills.csv")
+    csv_path = os.path.join(out_dir, "xgboost_training_dataset_v3.csv")
     df = generate_dataset(seed=42)
     df.to_csv(csv_path, index=False)
     print(f"Saved dataset to {csv_path}")

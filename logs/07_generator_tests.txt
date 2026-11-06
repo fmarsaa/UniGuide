@@ -1,0 +1,18 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.12.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\fatma\AppData\Local\Programs\Python\Python312\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\fatma\Downloads\testing2\backend
+configfile: pytest.ini
+plugins: anyio-4.15.1
+collecting ... collected 8 items
+
+tests/test_synthetic_data_generator.py::test_all_53_catalogue_programmes_are_trained PASSED [ 12%]
+tests/test_synthetic_data_generator.py::test_every_trained_programme_has_at_least_two_aspiration_options PASSED [ 25%]
+tests/test_synthetic_data_generator.py::test_fallback_order_only_contains_trained_programmes PASSED [ 37%]
+tests/test_synthetic_data_generator.py::test_fallback_order_is_nonempty PASSED [ 50%]
+tests/test_synthetic_data_generator.py::test_assign_programme_label_returns_a_trained_programme PASSED [ 62%]
+tests/test_synthetic_data_generator.py::test_assign_programme_label_never_picks_an_ineligible_programme PASSED [ 75%]
+tests/test_synthetic_data_generator.py::test_assign_programme_label_discards_a_profile_below_every_eligible_cutoff PASSED [ 87%]
+tests/test_synthetic_data_generator.py::test_generated_dataset_contains_only_degree_eligible_profiles PASSED [100%]
+
+======================== 8 passed in 78.37s (0:01:18) =========================

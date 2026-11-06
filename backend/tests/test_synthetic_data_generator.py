@@ -75,6 +75,38 @@ def test_assign_programme_label_never_picks_an_ineligible_programme():
     assert label == "Not eligible for degree study"
 
 
+def test_assign_programme_label_discards_a_profile_below_every_eligible_cutoff():
+    from kuccps import meets_minimum_requirements
+    from synthetic_data_generator import (
+        CATALOG_BY_TITLE,
+        CLUSTER_SCORE_COLUMN,
+        _LAST_LABEL_FLAGS,
+        build_cluster_score_features,
+    )
+
+    grades = {
+        "Mathematics": "C", "English": "D+", "Kiswahili": "D+", "Biology": "D+",
+        "Chemistry": "D+", "Physics": "D+", "History": "D+", "Business Studies": "D+",
+        "Geography": "D+",
+    }
+    eligible = [
+        title for title in TRAINED_PROGRAMME_TITLES
+        if meets_minimum_requirements(grades, CATALOG_BY_TITLE[title]["minimumSubjectRequirements"], "C+")
+    ]
+    margins = build_cluster_score_features(grades, "C+")
+    assert eligible
+    assert all(margins[CLUSTER_SCORE_COLUMN[title]] < 0 for title in eligible)
+
+    label = assign_programme_label(
+        grades, mean_grade="C+",
+        interests=["General Business Administration & Strategy"],
+        strengths=["Leadership & Strategic Direction"],
+        aspiration="Business Manager / Administrator",
+    )
+    assert label is None
+    assert _LAST_LABEL_FLAGS["no_cutoff_reached"] is True
+
+
 def test_generated_dataset_contains_only_degree_eligible_profiles():
     from synthetic_data_generator import create_synthetic_dataset
 

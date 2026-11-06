@@ -1,0 +1,71 @@
+﻿Dataset: C:\Users\fatma\Downloads\testing2\backend\xgboost_training_dataset_v3.csv
+Rows: 11135  Classes: 53
+Feature count (before one-hot): 61 (60 numeric + 1 categorical)
+Feature list:
+  math_score
+  eng_score
+  kis_score
+  chem_score
+  bio_score
+  phys_score
+  history_score
+  business_score
+  geography_score
+  mean_points
+  int_healthcare_clinical_medicine
+  int_patient_care_nursing
+  int_pharmaceutical_sciences
+  int_software_development_coding
+  int_artificial_intelligence_machine_learning
+  int_data_analytics_statistics
+  int_cybersecurity_network_defense
+  int_civil_infrastructure_structural_engineering
+  int_electrical_electronic_systems
+  int_robotics_mechatronics_automation
+  int_corporate_law_constitutional_advocacy
+  int_financial_markets_investment_banking
+  int_actuarial_modeling_risk_analysis
+  int_agribusiness_food_sustainability
+  int_dental_oral_health_care
+  int_veterinary_animal_health_care
+  int_food_science_nutrition
+  int_mechanical_systems_manufacturing
+  int_architecture_building_design
+  int_mathematical_research_data_science
+  int_economic_policy_market_analysis
+  int_journalism_media_production
+  int_business_systems_enterprise_technology
+  int_public_health_epidemiology
+  int_clinical_laboratory_diagnostic_sciences
+  int_physical_rehabilitation_therapy
+  int_environmental_conservation_sustainability
+  int_chemical_materials_sciences
+  int_physics_applied_sciences_research
+  int_food_production_agro_processing
+  int_social_research_community_development
+  int_counseling_mental_health_support
+  int_teaching_curriculum_development
+  int_tourism_destination_management
+  int_hospitality_guest_services
+  int_human_resource_organizational_development
+  int_international_trade_global_business
+  int_procurement_supply_chain_management
+  int_urban_planning_land_use
+  int_geospatial_mapping_remote_sensing
+  int_political_governance_studies
+  int_criminal_justice_security_studies
+  int_general_business_administration_strategy
+  str_perseverance_discipline
+  str_logical_analytical_reasoning
+  str_attention_to_precision
+  str_empathy_human_care
+  str_creative_problem_solving
+  str_leadership_strategic_direction
+  str_team_collaboration
+  aspiration
+XGBoost: n_estimators=200, max_depth=5, learning_rate=0.08, subsample=0.8, colsample_bytree=0.8, tree_method=hist, random_state=42
+Training time: 66.3s
+Feature count after one-hot: 126
+Class count: 53
+Saved deployment model: C:\Users\fatma\Downloads\testing2\backend\uniguide_xgb_v3.joblib (4.48 MB)
+No evaluation was run; this model is for app testing and deployment only.
