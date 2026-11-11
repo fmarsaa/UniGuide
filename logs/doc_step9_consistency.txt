@@ -1,0 +1,8 @@
+limitations 2 and 5
+Table 5.2: Firebase Auth 5.7.0, Uvicorn row
+Table 5.1: SSD size
+increment example
+chapter 5 introduction
+figure and equation references
+spelling replacements: 8
+saved
