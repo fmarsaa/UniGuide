@@ -1,0 +1,4 @@
+Performing Streamed Install
+Success
+    versionCode=3 minSdk=24 targetSdk=35
+    versionName=1.0.0-demo

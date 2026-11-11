@@ -1,0 +1,20 @@
+﻿Loaded model uniguide_xgb_v3.joblib: XGBoostStringClassifier, classes_[:3]=['Bachelor of Architecture', 'Bachelor of Arts in Counseling Psychology', 'Bachelor of Arts in Criminology and Security Studies'] types=['str', 'str', 'str']
+python : INFO:uniguide:XGBoostStringClassifier pipeline and SHAP explainer loaded (53 classes).
+At line:1 char:416
++ ... FFERED='1'; python -m uvicorn main:app --host 0.0.0.0 --port 8000 2>& ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (INFO:uniguide:X...d (53 classes).:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+INFO:uniguide:Firebase Admin initialized. Firestore persistence and auth verification enabled.
+INFO:     Started server process [33628]
+INFO:     Waiting for application startup.
+INFO:apscheduler.scheduler:Adding job tentatively -- it will be properly scheduled when the scheduler starts
+INFO:apscheduler.scheduler:Added job "_scheduled_freshness_check" to job store "default"
+INFO:apscheduler.scheduler:Scheduler started
+INFO:uniguide:Scheduled catalogue freshness check registered (runs every 7 days).
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:55511 - "GET / HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:55517 - "GET /docs HTTP/1.1" 200 OK
+INFO:     192.168.1.6:55518 - "GET /api/health HTTP/1.1" 200 OK

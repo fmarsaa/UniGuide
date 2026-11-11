@@ -1,0 +1,15 @@
+- Creating Android SHA certificate with Android app Id [1m1:354261772252:android:0d5ea1691be16b1d2c9119[22m
+✔ Creating Android SHA certificate with Android app Id [1m1:354261772252:android:0d5ea1691be16b1d2c9119[22m
+- Creating Android SHA certificate with Android app Id [1m1:354261772252:android:0d5ea1691be16b1d2c9119[22m
+✔ Creating Android SHA certificate with Android app Id [1m1:354261772252:android:0d5ea1691be16b1d2c9119[22m
+- Preparing the list of your Firebase Android app SHA certificate hashes
+✔ Preparing the list of your Firebase Android app SHA certificate hashes
+[90m┌───────────────────────────────────────────────[39m[90m┬──────────────────[39m[90m┬──────────────────────────────────────────────────────────────────[39m[90m┬───────────────┐[39m
+[90m│[39m[32m App Id                                        [39m[90m│[39m[32m SHA Id           [39m[90m│[39m[32m SHA Hash                                                         [39m[90m│[39m[32m SHA Hash Type [39m[90m│[39m
+[90m├───────────────────────────────────────────────[39m[90m┼──────────────────[39m[90m┼──────────────────────────────────────────────────────────────────[39m[90m┼───────────────┤[39m
+[90m│[39m 1:354261772252:android:0d5ea1691be16b1d2c9119 [90m│[39m 6eac4d3718019ff0 [90m│[39m a09f1684397ccffebd959587eb88b0625e9edfdf                         [90m│[39m SHA_1         [90m│[39m
+[90m├───────────────────────────────────────────────[39m[90m┼──────────────────[39m[90m┼──────────────────────────────────────────────────────────────────[39m[90m┼───────────────┤[39m
+[90m│[39m 1:354261772252:android:0d5ea1691be16b1d2c9119 [90m│[39m 903c1b5dddf41924 [90m│[39m 36bebcd454d7e60b90280730a3b5ace0aa8984c470e5053eefae1498b1e81984 [90m│[39m SHA_256       [90m│[39m
+[90m└───────────────────────────────────────────────[39m[90m┴──────────────────[39m[90m┴──────────────────────────────────────────────────────────────────[39m[90m┴───────────────┘[39m
+
+2 SHA hash(es) total.

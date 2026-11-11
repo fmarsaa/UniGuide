@@ -1,0 +1,3 @@
+Loaded model uniguide_xgb_v4.joblib: XGBoostStringClassifier, classes_[:3]=['Bachelor of Architecture', 'Bachelor of Arts in Counseling Psychology', 'Bachelor of Arts in Criminology and Security Studies'] types=['str', 'str', 'str']
+Model version: xgb-v4-20261111-60b7c60
+INFO:     192.168.1.21:58366 - "GET /api/health HTTP/1.1" 200 OK
