@@ -1,0 +1,2 @@
+﻿Stopped python process 10288: "C:\Users\fatma\AppData\Local\Programs\Python\Python312\python.exe" -m uvicorn main:app --host 0.0.0.0 --port 8000 
+Stopped python process 4692: "C:\Users\fatma\AppData\Local\Programs\Python\Python312\python.exe" -m http.server 5000 --bind 0.0.0.0 --directory flutter_app\build\web_demo

@@ -1,0 +1,38 @@
+﻿Copied XGBoost model uniguide_xgb_v4.joblib (4.16 MB)
+Copied model_metrics_v4.json
+Model files in bundle: ['uniguide_xgb_v4.joblib']
+33 files written to C:\Users\fatma\Downloads\testing2\deploy\space_bundle:
+  Dockerfile
+  README.md
+  analytics.py
+  build_v4_dataset.py
+  catalogue_freshness.py
+  check_model.py
+  check_v3_labels.py
+  check_v4_inputs.py
+  compress_model.py
+  demo_profiles.py
+  demo_smoke.py
+  estimate_time.py
+  export_model_metrics.py
+  firebase_setup.py
+  get_sha256.py
+  kuccps.py
+  list_accounts.py
+  main.py
+  model_metrics_v4.json
+  model_store.py
+  package_model.py
+  programmes_catalog.py
+  requirements.txt
+  reset_student_accounts.py
+  reset_student_data.py
+  synthetic_data_generator.py
+  test_shap_opt.py
+  train_evaluate.py
+  train_random_forest.py
+  train_xgboost.py
+  uniguide_xgb_v4.joblib
+  upload_model.py
+  verify_accuracy.py
+EXIT CODE: 0
