@@ -1,0 +1,1 @@
+declaration words: 64 | log rows: 4 | table style: Table Grid

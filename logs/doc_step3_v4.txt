@@ -1,0 +1,25 @@
+rewrites applied: 10 missing: set()
+Table 5.5 updated
+Table 5.6 updated
+ 2 x  Random Forest, Gradient Boosting and XGBoost
+ 1 x  Profiles were also checked for missing values and duplicates
+ 1 x  the C+ minimum and missing values.
+ 1 x  (.......)
+ 1 x  stratified five-fold cross-validation across the full datase
+ 1 x  the Chemistry, Biology and Mathematics grades were the most 
+ 1 x  backend/model_metrics.json
+ 1 x  86.44%
+ 1 x  86.82%
+ 1 x  (86.40%)
+ 1 x  (82.28%)
+ 1 x  97.84%
+ 6 x  12,057
+ 5 x  6,057
+ 3 x  2,412
+ 0 x  9,645
+figure image 14 -> fig_dataset_sample.png (2055x509)
+figure image 15 -> fig_class_distribution.png (1742x2236)
+figure image 17 -> fig_model_comparison.png (1683x701)
+figure image 18 -> fig_confusion_full.png (2317x2159)
+figure image 19 -> fig_shap_global_top15.png (1645x834)
+saved C:/Users/fatma/OneDrive/Desktop/Graphics/159056-Documentation (edited).docx
