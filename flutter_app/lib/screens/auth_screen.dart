@@ -316,7 +316,7 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   // ---------------------------------------------------------------------------
-  // Social Logins & Guest
+  // Social Login
   // ---------------------------------------------------------------------------
   Future<void> _signInWithGoogle() async {
     setState(() {
@@ -355,42 +355,6 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
-  Future<void> _signInWithApple() async {
-    setState(() {
-      _isLoading = true;
-      _errorText = null;
-    });
-
-    try {
-      final appleProvider = AppleAuthProvider();
-      await FirebaseAuth.instance.signInWithProvider(appleProvider);
-    } on FirebaseAuthException catch (e) {
-      setState(() => _errorText = _messageForAuthError(e));
-    } catch (e) {
-      setState(() => _errorText =
-          'Apple Sign-In is not configured yet in Firebase Console.');
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
-
-  Future<void> _continueAsGuest() async {
-    setState(() {
-      _isLoading = true;
-      _errorText = null;
-    });
-
-    try {
-      await FirebaseAuth.instance.signInAnonymously();
-    } on FirebaseAuthException catch (e) {
-      setState(() => _errorText = _messageForAuthError(e));
-    } catch (e) {
-      setState(() =>
-          _errorText = 'Could not start guest session ($e). Check connection.');
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
 
   String _messageForAuthError(FirebaseAuthException e) {
     switch (e.code) {
@@ -954,63 +918,29 @@ class _AuthScreenState extends State<AuthScreen> {
 
                       const SizedBox(height: 14),
 
-                      // Social Login Buttons (Google + Apple)
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _buildSocialButton(
-                              label: 'Google',
-                              iconWidget: Container(
-                                width: 18,
-                                height: 18,
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.white,
-                                ),
-                                alignment: Alignment.center,
-                                child: const Text(
-                                  'G',
-                                  style: TextStyle(
-                                    color: Color(0xFF4285F4),
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 12,
-                                  ),
-                                ),
+                      // Social Login Button (Google)
+                      SizedBox(
+                        width: double.infinity,
+                        child: _buildSocialButton(
+                          label: 'Google',
+                          iconWidget: Container(
+                            width: 18,
+                            height: 18,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                            ),
+                            alignment: Alignment.center,
+                            child: const Text(
+                              'G',
+                              style: TextStyle(
+                                color: Color(0xFF4285F4),
+                                fontWeight: FontWeight.w900,
+                                fontSize: 12,
                               ),
-                              onPressed: _isLoading ? null : _signInWithGoogle,
                             ),
                           ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: _buildSocialButton(
-                              label: 'Apple',
-                              iconWidget: const Icon(
-                                Icons.apple,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                              onPressed: _isLoading ? null : _signInWithApple,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 10),
-
-                      // Continue as Guest Button
-                      Center(
-                        child: TextButton.icon(
-                          onPressed: _isLoading ? null : _continueAsGuest,
-                          icon: const Icon(Icons.person_outline,
-                              size: 16, color: Color(0xFF94A3B8)),
-                          label: const Text(
-                            'Continue as Guest',
-                            style: TextStyle(
-                              color: Color(0xFF94A3B8),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
+                          onPressed: _isLoading ? null : _signInWithGoogle,
                         ),
                       ),
                     ],
