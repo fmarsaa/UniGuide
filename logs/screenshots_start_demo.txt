@@ -1,0 +1,7 @@
+﻿No demo backend or portal was running.
+Waiting for the backend to load the model...
+
+Laptop IP on this network : 192.168.1.21
+Server address for the app: http://192.168.1.21:8000
+Admin portal on the phone : http://192.168.1.21:5000
+Health check              : status=healthy model_loaded=True model_version=xgb-v4-20261111-60b7c60 firestore_configured=True

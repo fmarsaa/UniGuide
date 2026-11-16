@@ -1,0 +1,6 @@
+Demo students: 40 (35 with grades, 5 registered only)
+Recommendation records: 64
+Saved programmes: 28
+Feedback entries: 11
+Registration dates: last 30 days
+Dry run - nothing written. Add --yes to write these to Firestore.

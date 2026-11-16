@@ -1,0 +1,7 @@
+totals: {'students': 42, 'newLast7Days': 5, 'active7Days': 10, 'active30Days': 37, 'recommendations': 73, 'savedProgrammes': 35, 'feedback': 11, 'averageRating': 4.27}
+funnel: [('Registered', 42), ('Entered grades', 37), ('Received recommendations', 37), ('Saved a programme', 23), ('Gave feedback', 11)]
+grades: [('A', 4), ('A-', 10), ('B+', 14), ('B', 8), ('C+', 1)]
+career choice: {'decided': 25, 'undecided': 12} | shown vs cutoff: {'meetsCutoff': 218, 'belowCutoff': 1, 'missingSubject': 0}
+top saved: [('Bachelor of Commerce (BCom) - Finance & Accou', 5), ('Bachelor of Science in Business Information T', 4), ('Bachelor of Science in Actuarial Science', 3), ('Bachelor of Science in Statistics', 2), ('Bachelor of Science in Environmental Science', 2)]
+most recommended: [('Bachelor of Science in Actuarial Science', 20), ('Bachelor of Commerce (BCom) - Finance & Accou', 18), ('Bachelor of Science in Business Information T', 16), ('Bachelor of Science in Medical Laboratory Sci', 12), ('Bachelor of Science in Informatics and Comput', 11)]
+feedback entries: 11 | newest: 3 demo.student11@example.com ''
