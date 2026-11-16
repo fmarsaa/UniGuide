@@ -1,0 +1,8 @@
+profiles tried: 1500
+New cutoff message:
+Fewer than three:
+  mean C+ {'Mathematics': 'C-', 'English': 'C', 'Kiswahili': 'B', 'Chemistry': 'C+', 'Biology': 'B-', 'History & Government': 'B', 'Christian Religious Education (CRE)': 'C'} -> [('Bachelor of Science in Environmental Science', 'Meets the latest cutoff')]
+  mean C+ {'Mathematics': 'C-', 'English': 'C-', 'Kiswahili': 'B', 'Chemistry': 'B', 'Business Studies': 'C-', 'Biology': 'B+', 'Physics': 'B'} -> [('Bachelor of Science in Environmental Science', 'Meets the latest cutoff')]
+  mean C+ {'Mathematics': 'D+', 'English': 'D+', 'Kiswahili': 'B+', 'Chemistry': 'B', 'Biology': 'B-', 'Physics': 'B-', 'History & Government': 'D+'} -> [('Bachelor of Science in Environmental Science', 'Meets the latest cutoff')]
+example 1: computed mean C+ | programmes meeting subject requirements: ['Bachelor of Science in Environmental Science']
+shown: ['Bachelor of Science in Environmental Science']

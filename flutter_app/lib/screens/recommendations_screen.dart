@@ -61,7 +61,7 @@ class RecommendationsScreen extends StatelessWidget {
             onPressed: () async {
               final messenger = ScaffoldMessenger.of(context);
               try {
-                await ReportService.shareReport(profile, recommendations);
+                await ReportService.shareReport(profile, recommendations, message: message);
               } catch (_) {
                 messenger.showSnackBar(const SnackBar(content: Text('Could not create the report. Please try again.')));
               }

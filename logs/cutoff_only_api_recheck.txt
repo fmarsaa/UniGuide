@@ -1,0 +1,17 @@
+FT-07 1. Strong science student: HTTP 200, 3 recommendations, message=None
+   1. Bachelor of Science in Nursing | Meets the latest cutoff at all 2 universities | meets 2 of 2 | SHAP items 4
+   2. Bachelor of Science in Medical Laboratory Sciences | Meets the latest cutoff at all 2 universities | meets 2 of 2 | SHAP items 4
+   3. Bachelor of Science in Informatics and Computer Science | Meets the latest cutoff at 1 of 2 universities | meets 1 of 2 | SHAP items 4
+FT-07 2. Undecided student (Not sure yet): HTTP 200, 3 recommendations, message=None
+   1. Bachelor of Arts in Journalism and Mass Communication | Meets the latest cutoff at all 3 universities | meets 3 of 3 | SHAP items 4
+   2. Bachelor of Science in Community Health and Development | Meets the latest cutoff at all 2 universities | meets 2 of 2 | SHAP items 4
+   3. Bachelor of Science in Business Information Technology (BBIT) | Meets the latest cutoff | meets 1 of 1 | SHAP items 4
+FT-07 3. C+ mean, meets no programme's subject requirements: HTTP 200, 0 recommendations, message='No programmes match your subject grades.'
+FT-07 report-screenshot profile (Demo Student): HTTP 200, 3 recommendations, message=None
+   1. Bachelor of Science in Medical Laboratory Sciences | Meets the latest cutoff at all 2 universities | meets 2 of 2 | SHAP items 4
+   2. Bachelor of Science in Actuarial Science | Meets the latest cutoff | meets 1 of 1 | SHAP items 4
+   3. Bachelor of Science in Statistics | Meets the latest cutoff at all 3 universities | meets 3 of 3 | SHAP items 4
+FT-11 what-if: Biology and Chemistry raised to A (preview): HTTP 200, 3 recommendations, message=None
+   1. Bachelor of Science in Medical Laboratory Sciences | Meets the latest cutoff at all 2 universities | meets 2 of 2 | SHAP items 4
+   2. Bachelor of Science in Nursing | Meets the latest cutoff at all 2 universities | meets 2 of 2 | SHAP items 4
+   3. Bachelor of Science in Actuarial Science | Meets the latest cutoff | meets 1 of 1 | SHAP items 4

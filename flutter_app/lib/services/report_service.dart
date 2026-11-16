@@ -15,13 +15,14 @@ class ReportService {
 
   /// Opens the phone's share sheet (or downloads, in a browser) with the report.
   static Future<void> shareReport(
-      StudentProfile profile, List<RecommendationItem> recommendations) async {
-    final bytes = await buildReport(profile, recommendations);
+      StudentProfile profile, List<RecommendationItem> recommendations, {String? message}) async {
+    final bytes = await buildReport(profile, recommendations, message: message);
     await Printing.sharePdf(bytes: bytes, filename: 'UniGuide-report.pdf');
   }
 
+  /// [message] is the server's explanation when there are no recommendations.
   static Future<Uint8List> buildReport(
-      StudentProfile profile, List<RecommendationItem> recommendations) async {
+      StudentProfile profile, List<RecommendationItem> recommendations, {String? message}) async {
     final doc = pw.Document(title: 'My UniGuide report', author: 'UniGuide');
     final today = DateTime.now();
     final date =
@@ -85,7 +86,7 @@ class ReportService {
           small('Mean grade: ${profile.kcseMeanGrade}', bold: true),
           heading('Your top programme matches'),
           if (recommendations.isEmpty)
-            small('No programmes match your subject grades.')
+            small(message ?? 'No programmes match your subject grades.')
           else
             for (final rec in recommendations) ...[
             pw.Container(

@@ -161,31 +161,76 @@ def _restore(saved):
         main.CATALOG_BY_TITLE[t]["minimumSubjectRequirements"] = reqs
 
 
-def test_the_best_fit_is_shown_first_even_when_it_is_a_stretch():
+def _with_every_cutoff(cutoff):
+    """Temporarily gives every catalogue programme the same latest cutoff."""
+    saved = {t: (p["offeringUniversities"], p.get("averageCutoff")) for t, p in main.CATALOG_BY_TITLE.items()}
+    for p in main.CATALOG_BY_TITLE.values():
+        p["offeringUniversities"] = [{"universityName": "U", "latestCutoff": cutoff}]
+        p["averageCutoff"] = cutoff
+    return saved
+
+
+def _restore_every_cutoff(saved):
+    for t, (unis, average) in saved.items():
+        main.CATALOG_BY_TITLE[t]["offeringUniversities"] = unis
+        main.CATALOG_BY_TITLE[t]["averageCutoff"] = average
+
+
+def test_a_best_fit_whose_cutoff_the_student_misses_is_not_shown():
     classes = main._pipeline.classes_
     saved = _with_cutoffs([90.0, 5.0])
     try:
         proba = np.zeros(len(classes))
         proba[0], proba[1] = 0.70, 0.30
         grades = {"Mathematics": "B", "English": "B", "Kiswahili": "B", "Chemistry": "B"}
-        top_idx, _ = main.select_recommended_indices(proba, classes, grades, "B")
-        assert top_idx[0] == 0  # the 0.70 fit leads although its cutoff is far above the student
-        assert top_idx[1] == 1  # then a programme the student can reach
+        top_idx, eligible_mask = main.select_recommended_indices(proba, classes, grades, "B")
+        assert eligible_mask[0] is True  # it meets the subject requirements...
+        assert 0 not in top_idx  # ...but the student's points are below its cutoff
+        assert top_idx[0] == 1
     finally:
         _restore(saved)
 
 
-def test_after_the_best_fit_a_programme_you_can_reach_outranks_a_stretch():
+def test_programmes_within_the_cutoff_are_ranked_by_fit():
     classes = main._pipeline.classes_
-    saved = _with_cutoffs([90.0, 90.0, 5.0])
+    saved = _with_cutoffs([5.0, 5.0, 90.0, 5.0])
     try:
         proba = np.zeros(len(classes))
-        proba[0], proba[1], proba[2] = 0.50, 0.30, 0.20
+        proba[0], proba[1], proba[2], proba[3] = 0.20, 0.30, 0.90, 0.25
         grades = {"Mathematics": "B", "English": "B", "Kiswahili": "B", "Chemistry": "B"}
         top_idx, _ = main.select_recommended_indices(proba, classes, grades, "B")
-        assert top_idx[:3] == [0, 2, 1]
+        assert top_idx[:3] == [1, 3, 0]
     finally:
         _restore(saved)
+
+
+def test_no_recommendations_and_a_cutoff_message_when_every_cutoff_is_out_of_reach():
+    saved = _with_every_cutoff(99.0)
+    try:
+        payload = main.StudentProfilePayload(
+            kcseMeanGrade="B",
+            grades={"Mathematics": "B", "English": "B", "Kiswahili": "B", "Chemistry": "B",
+                    "Biology": "B", "Physics": "B", "Geography": "B"},
+        )
+        response = main.get_recommendations(payload, {"uid": "cutoff-test", "email_verified": True}, preview=True)
+        assert response["recommendations"] == []
+        assert response["message"] == (
+            "Your grades meet the subject requirements for some programmes, but your points are below their latest cutoffs."
+        )
+    finally:
+        _restore_every_cutoff(saved)
+
+
+def test_every_recommendation_meets_a_university_cutoff():
+    payload = main.StudentProfilePayload(
+        kcseMeanGrade="B",
+        grades={"Mathematics": "B", "English": "B+", "Kiswahili": "B", "Chemistry": "B-",
+                "Biology": "B", "History & Government": "A-", "Business Studies": "B+"},
+    )
+    response = main.get_recommendations(payload, {"uid": "cutoff-test", "email_verified": True}, preview=True)
+    for item in response["recommendations"]:
+        assert item["universityCutoffs"]["meets"] > 0
+        assert item["eligibilityStatus"].startswith("Meets the latest cutoff")
 
 
 def test_a_student_without_geography_gets_a_missing_grade_and_still_gets_recommendations():

@@ -48,6 +48,15 @@ def _split_catalogue(grades, mean_grade):
     return eligible, ineligible
 
 
+def _meets_a_cutoff(title, grades, mean_grade):
+    prog = CATALOG_BY_TITLE[title]
+    cwp = main.cluster_weighted_points(
+        main.raw_cluster_points(grades, prog["clusterSubjects"], mean_grade), main.aggregate_points(grades, mean_grade)
+    )
+    summary = main.university_cutoff_summary(cwp, prog.get("offeringUniversities"), prog.get("averageCutoff"))
+    return summary is not None and summary["meets"] > 0
+
+
 def test_select_recommended_indices_returns_only_eligible_in_probability_order():
     payload = StudentProfilePayload(
         kcseMeanGrade="B",
@@ -63,9 +72,10 @@ def test_select_recommended_indices_returns_only_eligible_in_probability_order()
     )
     mean_grade = _mean_grade_as_endpoint_computes_it(payload)
     eligible, ineligible = _split_catalogue(payload.grades, mean_grade)
+    eligible = [t for t in eligible if _meets_a_cutoff(t, payload.grades, mean_grade)]
     if len(eligible) < 2 or len(ineligible) < 1:
         pytest.fail(
-            "Could not find 2 eligible and 1 ineligible programme in the catalogue for this student "
+            "Could not find 2 eligible programmes within the cutoff and 1 ineligible programme in the catalogue for this student "
             f"(eligible={len(eligible)}, ineligible={len(ineligible)})"
         )
 

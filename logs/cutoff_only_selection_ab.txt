@@ -1,0 +1,1 @@
+selection step, 600 calls each: old median 0.81 ms | new median 0.76 ms

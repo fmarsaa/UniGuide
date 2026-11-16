@@ -66,7 +66,6 @@ from kuccps import (
     cluster_weighted_points,
     eligibility_status,
     university_cutoff_summary,
-    cutoff_tier,
     find_grade_for_subject,
     grade_to_points,
     meets_minimum_requirements,
@@ -856,10 +855,10 @@ def list_all_programmes_for_admin(decoded: dict = Depends(require_admin)):
 def select_recommended_indices(
     proba: np.ndarray, classes: np.ndarray, grades: Dict[str, str], mean_grade: str
 ) -> tuple:
-    """Picks up to three programmes to show: the best fit among the genuinely eligible
-    programmes first, then the best two the student can reach. Only eligible
-    programmes are returned; with fewer than 3 eligible, fewer are returned
-    and with none eligible the list is empty. Returns
+    """Picks up to three programmes to show: the student's best fits, by model
+    probability, among the programmes they are eligible for AND whose latest
+    cutoff they meet at one or more offering universities. With fewer than 3
+    such programmes, fewer are returned; with none, the list is empty. Returns
     (top_idx, eligible_mask). Factored out of get_recommendations so it's
     unit-testable (backend/tests/test_recommend_eligibility.py) without
     going through the HTTP layer, Firebase Auth, or Firestore persistence.
@@ -884,29 +883,20 @@ def select_recommended_indices(
     ]
     eligible_idx = [i for i in range(n_classes) if eligible_mask[i]]
 
-    # Within the eligible programmes, prefer ones the student can realistically
-    # get into: compare their points with EACH university's own latest cutoff
-    # (cutoffs differ by university), then rank by model probability inside each
-    # tier. A programme the model barely considers (probability under the
-    # 1-in-53 chance level) never jumps ahead of one it does, whatever its tier.
+    # A programme is only shown when the student's Cluster Weighted Points meet the
+    # latest cutoff at one or more of its universities (cutoffs differ by university).
+    # The training labels used each programme's averageCutoff instead, which for some
+    # programmes is below every university's latest cutoff, so the two can disagree.
     agg = aggregate_points(grades, mean_grade)
 
-    def rank_key(i):
+    def meets_a_cutoff(i):
         programme = CATALOG_BY_TITLE[classes[i]]
         cwp = cluster_weighted_points(raw_cluster_points(grades, programme["clusterSubjects"], mean_grade), agg)
         summary = university_cutoff_summary(cwp, programme.get("offeringUniversities"), programme.get("averageCutoff"))
-        tier = cutoff_tier(summary) + (3 if proba[i] < 0.02 else 0)
-        return (tier, -proba[i])
+        return summary is not None and summary["meets"] > 0
 
-    # The model's best fit is always shown first, even when it is a stretch (the app says so in
-    # plain words). The other two places go to the best programmes the student can reach. Ranking
-    # purely by reachability pushed good fits out of the three shown: on out-of-fold profiles the
-    # labelled programme was shown 73% of the time, against 92% with this rule (Experiment 9).
-    # Only eligible programmes are ever ranked; with fewer than 3 eligible, fewer are returned.
-    top_idx = []
-    if eligible_idx:
-        best_fit = max(eligible_idx, key=lambda i: proba[i])
-        top_idx = [best_fit] + [i for i in sorted(eligible_idx, key=rank_key) if i != best_fit][:2]
+    reachable_idx = [i for i in eligible_idx if meets_a_cutoff(i)]
+    top_idx = sorted(reachable_idx, key=lambda i: -proba[i])[:3]
     return top_idx, eligible_mask
 
 
@@ -991,7 +981,13 @@ def get_recommendations(payload: StudentProfilePayload, decoded: dict = Depends(
 
     if not preview and not _is_duplicate_submission(uid, payload):
         _persist_recommendation(uid, decoded.get("email"), payload, results)
-    message = None if results else "No programmes match your subject grades."
+    message = None
+    if not results:
+        message = (
+            "Your grades meet the subject requirements for some programmes, but your points are below their latest cutoffs."
+            if any(eligible_mask)
+            else "No programmes match your subject grades."
+        )
     return {"recommendations": results, "message": message}
 
 
